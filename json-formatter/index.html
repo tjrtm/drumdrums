@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DrumDrums — JSON Formatter</title>
+<style>
+:root{
+    --bg-start:#ec4899;
+    --bg-end:#db2777;
+    --surface:#ffffff;
+    --surface-muted:#f8fafc;
+    --text:#0f172a;
+    --text-muted:#64748b;
+    --border:#e2e8f0;
+    --accent:#ec4899;
+    --accent-strong:#db2777;
+    --hero-text:#ffffff;
+    --hero-muted:rgba(255,255,255,0.8);
+    --shadow:0 20px 60px rgba(15,23,42,0.3);
+    --error-bg:#fef2f2;
+  }
+  
+  :root[data-theme="dark"]{
+    --bg-start:#2b0617;
+    --bg-end:#4c0519;
+    --surface:rgba(2,6,23,0.95);
+    --surface-muted:rgba(15,23,42,0.85);
+    --text:#f8fafc;
+    --text-muted:#cbd5f5;
+    --border:rgba(148,163,184,0.35);
+    --accent:#f472b6;
+    --accent-strong:#ec4899;
+    --hero-text:#ffe4f0;
+    --hero-muted:rgba(255,255,255,0.75);
+    --shadow:0 20px 50px rgba(2,6,23,0.75);
+    --error-bg:rgba(248,113,113,0.2);
+  }
+  
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{
+    font-family: Inter, system-ui, sans-serif;
+    background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: var(--text);
+  }
+  
+  .container{
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  h1{
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--hero-text);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  
+  .subtitle{
+    color: var(--hero-muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  
+  .panel{
+    background: var(--surface);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+  
+  .panel-header{
+    background: var(--surface-muted);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .panel-title{
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+  }
+  
+  .actions{
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .btn{
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .btn:hover{
+    background: var(--accent-strong);
+    transform: translateY(-1px);
+  }
+  
+  .btn:active{
+    transform: translateY(0);
+  }
+  
+  .btn-secondary{
+    background: #6366f1;
+  }
+  
+  .btn-secondary:hover{
+    background: #4f46e5;
+  }
+  
+  .btn-danger{
+    background: #ef4444;
+  }
+  
+  .btn-danger:hover{
+    background: #dc2626;
+  }
+  
+  textarea{
+    width: 100%;
+    min-height: 400px;
+    padding: 20px;
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    background: var(--surface-muted);
+    color: var(--text);
+  }
+  
+  textarea:focus{
+    outline: none;
+    background: var(--surface);
+  }
+  
+  textarea.error{
+    background: var(--error-bg);
+    color: #dc2626;
+  }
+  
+  .status{
+    background: var(--surface-muted);
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+  }
+  
+  .status-badge{
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .status-badge.valid{
+    background: #dcfce7;
+    color: #16a34a;
+  }
+  
+  .status-badge.invalid{
+    background: #fee2e2;
+    color: #dc2626;
+  }
+  
+  .status-info{
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  
+  .toast{
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--accent-strong);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    display: none;
+    animation: slideIn 0.3s ease;
+  }
+  
+  .toast.show{
+    display: block;
+  }
+  
+  .toast.error{
+    background: #ef4444;
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  .examples{
+    margin-top: 24px;
+  }
+  
+  .examples-title{
+    color: var(--hero-text);
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  
+  .examples-grid{
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .example-btn{
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.1);
+    color: var(--hero-text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .example-btn:hover{
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.5);
+  }
+</style>
+<style data-inline-theme>
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: calc(env(safe-area-inset-right, 0px) + 16px);
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 85%, transparent);
+  color: var(--text, #0f172a);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  z-index: 999;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.5);
+  outline-offset: 3px;
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+:root[data-theme="dark"] .theme-toggle {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.55);
+}
+
+.theme-toggle__icon {
+  pointer-events: none;
+  display: inline-flex;
+}
+
+.theme-toggle__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.theme-toggle--inline {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 90%, transparent);
+  color: inherit;
+  box-shadow: none;
+  margin-left: 8px;
+}
+
+:root[data-theme="dark"] .theme-toggle--inline {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+}
+
+.theme-toggle--inline .theme-toggle__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.drumdrums-banner{
+  margin:12px auto;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px dashed rgba(15,23,42,0.16);
+  background:color-mix(in srgb, var(--panel, #ffffff) 86%, transparent);
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  max-width:460px;
+}
+:root[data-theme="dark"] .drumdrums-banner{
+  border-color:rgba(148,163,184,0.35);
+  background:rgba(10,15,25,0.6);
+}
+.drumdrums-banner strong{
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:11px;
+  display:block;
+  margin-bottom:4px;
+}
+.drumdrums-note{
+  font-weight:500;
+  font-size:12px;
+  color:var(--muted, #475569);
+}
+
+</style>
+<script data-inline-theme>
+(function () {
+  const STORAGE_KEY = 'drumdrums-theme';
+  const root = document.documentElement;
+  const systemMedia = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  const icons = {
+    moon: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 8.5 8.5 0 1 0 21 14.5Z" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+    sun: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-linecap="round" /></svg>'
+  };
+
+  const readStoredTheme = () => {
+    try {
+      return localStorage.getItem(STORAGE_KEY);
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const persistTheme = (value) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, value);
+    } catch (err) {
+      /* no-op */
+    }
+  };
+
+  const systemPrefersDark = () => systemMedia ? systemMedia.matches : false;
+
+  const initialStored = readStoredTheme();
+  let currentTheme = initialStored === 'light' || initialStored === 'dark'
+    ? initialStored
+    : (root.dataset.theme === 'light' || root.dataset.theme === 'dark')
+      ? root.dataset.theme
+      : (systemPrefersDark() ? 'dark' : 'light');
+  root.dataset.theme = currentTheme;
+  if (document.body) {
+    document.body.setAttribute('data-theme', currentTheme);
+  }
+
+  let userLocked = initialStored === 'light' || initialStored === 'dark';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'theme-toggle';
+  const srLabel = document.createElement('span');
+  srLabel.className = 'sr-only';
+  srLabel.textContent = 'Toggle color theme';
+  const iconSlot = document.createElement('span');
+  iconSlot.className = 'theme-toggle__icon';
+  button.append(srLabel, iconSlot);
+
+  const syncButton = () => {
+    button.setAttribute('aria-pressed', currentTheme === 'dark');
+    iconSlot.innerHTML = currentTheme === 'dark' ? icons.sun : icons.moon;
+    button.title = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  };
+
+  const applyTheme = (nextTheme, { persist } = { persist: false }) => {
+    currentTheme = nextTheme;
+    root.dataset.theme = nextTheme;
+    if (document.body) {
+      document.body.setAttribute('data-theme', nextTheme);
+    }
+    syncButton();
+    if (persist) {
+      persistTheme(nextTheme);
+      userLocked = true;
+    }
+  };
+
+  const toggleTheme = () => {
+    const next = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(next, { persist: true });
+  };
+
+  const init = () => {
+    if (document.querySelector('.theme-toggle')) return;
+    button.addEventListener('click', toggleTheme);
+    const anchor = document.querySelector('[data-theme-anchor]') ||
+      document.querySelector('.theme-toggle-anchor') ||
+      document.querySelector('header .actions') ||
+      document.querySelector('header .navIcons') ||
+      document.querySelector('header');
+    if (anchor) {
+      button.classList.add('theme-toggle--inline');
+      anchor.appendChild(button);
+    } else {
+      document.body.appendChild(button);
+    }
+    applyTheme(currentTheme);
+  };
+
+  if (systemMedia && typeof systemMedia.addEventListener === 'function') {
+    systemMedia.addEventListener('change', (event) => {
+      if (!userLocked) {
+        applyTheme(event.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+</script>
+</head>
+<body>
+  <div class="container">
+    <h1>{ } JSON Formatter</h1>
+    <p class="subtitle">Beautify, minify, or validate JSON instantly!</p>
+    
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">✍️ JSON Input</div>
+        <div class="actions">
+          <button class="btn" onclick="beautify()">✨ Beautify</button>
+          <button class="btn" onclick="minify()">📦 Minify</button>
+          <button class="btn btn-secondary" onclick="copyJSON()">📋 Copy</button>
+          <button class="btn btn-danger" onclick="clearEditor()">🗑️ Clear</button>
+        </div>
+      </div>
+      <textarea id="editor" placeholder='Paste your JSON here...
+
+Example:
+{"name":"John","age":30,"city":"New York"}'></textarea>
+      <div class="status">
+        <div>
+          <span class="status-badge" id="statusBadge">Valid JSON</span>
+        </div>
+        <div class="status-info" id="statusInfo">0 characters</div>
+      </div>
+    </div>
+    
+    <div class="examples">
+      <div class="examples-title">Quick Examples</div>
+      <div class="examples-grid">
+        <button class="example-btn" onclick="loadExample('simple')">Simple Object</button>
+        <button class="example-btn" onclick="loadExample('array')">Array</button>
+        <button class="example-btn" onclick="loadExample('nested')">Nested</button>
+        <button class="example-btn" onclick="loadExample('complex')">Complex</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const editor = document.getElementById('editor');
+    const statusBadge = document.getElementById('statusBadge');
+    const statusInfo = document.getElementById('statusInfo');
+    const toast = document.getElementById('toast');
+
+    const examples = {
+      simple: {
+        "name": "John Doe",
+        "age": 30,
+        "email": "john@example.com",
+        "active": true
+      },
+      array: [
+        {"id": 1, "name": "Alice"},
+        {"id": 2, "name": "Bob"},
+        {"id": 3, "name": "Charlie"}
+      ],
+      nested: {
+        "user": {
+          "name": "Jane",
+          "profile": {
+            "age": 25,
+            "city": "London",
+            "interests": ["coding", "music", "travel"]
+          }
+        },
+        "metadata": {
+          "created": "2026-02-11",
+          "version": "1.0"
+        }
+      },
+      complex: {
+        "api": "users",
+        "version": "2.0",
+        "data": [
+          {
+            "id": 101,
+            "username": "alice_dev",
+            "profile": {
+              "name": "Alice",
+              "roles": ["admin", "developer"],
+              "settings": {
+                "theme": "dark",
+                "notifications": true
+              }
+            }
+          },
+          {
+            "id": 102,
+            "username": "bob_user",
+            "profile": {
+              "name": "Bob",
+              "roles": ["user"],
+              "settings": {
+                "theme": "light",
+                "notifications": false
+              }
+            }
+          }
+        ],
+        "meta": {
+          "total": 2,
+          "page": 1
+        }
+      }
+    };
+
+    function validateJSON() {
+      const text = editor.value.trim();
+      
+      if (!text) {
+        statusBadge.textContent = 'Empty';
+        statusBadge.className = 'status-badge';
+        statusInfo.textContent = '0 characters';
+        editor.classList.remove('error');
+        return null;
+      }
+
+      try {
+        const parsed = JSON.parse(text);
+        statusBadge.textContent = '✓ Valid JSON';
+        statusBadge.className = 'status-badge valid';
+        statusInfo.textContent = `${text.length} characters`;
+        editor.classList.remove('error');
+        return parsed;
+      } catch (e) {
+        statusBadge.textContent = '✗ Invalid JSON';
+        statusBadge.className = 'status-badge invalid';
+        statusInfo.textContent = e.message;
+        editor.classList.add('error');
+        return null;
+      }
+    }
+
+    function beautify() {
+      const parsed = validateJSON();
+      if (parsed !== null) {
+        editor.value = JSON.stringify(parsed, null, 2);
+        validateJSON();
+        showToast('✨ JSON beautified!');
+      } else {
+        showToast('❌ Invalid JSON - cannot beautify', true);
+      }
+    }
+
+    function minify() {
+      const parsed = validateJSON();
+      if (parsed !== null) {
+        editor.value = JSON.stringify(parsed);
+        validateJSON();
+        showToast('📦 JSON minified!');
+      } else {
+        showToast('❌ Invalid JSON - cannot minify', true);
+      }
+    }
+
+    function copyJSON() {
+      const text = editor.value;
+      if (!text) {
+        showToast('❌ Nothing to copy', true);
+        return;
+      }
+      
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('📋 Copied to clipboard!');
+      });
+    }
+
+    function clearEditor() {
+      if (editor.value && !confirm('Clear all content?')) return;
+      editor.value = '';
+      validateJSON();
+    }
+
+    function loadExample(type) {
+      editor.value = JSON.stringify(examples[type], null, 2);
+      validateJSON();
+      showToast(`Loaded ${type} example`);
+    }
+
+    function showToast(message, isError = false) {
+      toast.textContent = message;
+      toast.className = 'toast show' + (isError ? ' error' : '');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // Live validation
+    editor.addEventListener('input', validateJSON);
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey)) {
+        if (e.key === 'b') {
+          e.preventDefault();
+          beautify();
+        } else if (e.key === 'm') {
+          e.preventDefault();
+          minify();
+        }
+      }
+    });
+
+    // Initial validation
+    validateJSON();
+  </script>
+
+  <!-- DrumDrums Offline Module -->
+  <style>
+    .drumdrum-offline-shelf{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:min(320px,calc(100% - 48px));background:var(--panel,rgba(255,255,255,0.96));color:var(--text,#0f172a);box-shadow:0 20px 50px rgba(15,23,42,0.2);border-radius:24px;border:1px solid rgba(15,23,42,0.1);padding:20px;font-family:inherit;z-index:9999;line-height:1.4}
+    [data-theme="dark"] .drumdrum-offline-shelf{background:rgba(2,6,23,0.92);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35);box-shadow:0 25px 60px rgba(2,6,23,0.75)}
+    .drumdrum-offline-shelf[data-offline-hidden="true"]{display:none}
+    .drumdrum-offline-label{text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.12em;opacity:.75;margin-bottom:4px}
+    .drumdrum-offline-head h2{font-size:17px;margin:0 0 6px;font-weight:900}
+    .drumdrum-offline-head p{margin:0;font-size:13px;opacity:.9}
+    .drumdrum-offline-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+    .drumdrum-offline-actions button{border:none;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s ease,opacity .15s ease;background:var(--accent,#2563eb);color:#fff;box-shadow:0 10px 25px rgba(37,99,235,0.25)}
+    .drumdrum-offline-actions button.secondary{background:rgba(15,23,42,0.08);color:inherit;box-shadow:none;border:1px solid rgba(15,23,42,0.12)}
+    [data-theme="dark"] .drumdrum-offline-actions button.secondary{background:rgba(148,163,184,0.15);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35)}
+    .drumdrum-offline-actions button:disabled{opacity:.7;cursor:default}
+    .drumdrum-offline-actions button:active{transform:scale(0.98)}
+    .drumdrum-offline-guide{margin-top:14px;border-radius:14px;padding:12px;font-size:13px;background:rgba(15,23,42,0.05);border:1px dashed rgba(15,23,42,0.25)}
+    .drumdrum-offline-guide p{margin:8px 0 0}
+    .drumdrum-offline-guide ol{margin:8px 0 0;padding-left:18px}
+    [data-theme="dark"] .drumdrum-offline-guide{background:rgba(15,23,42,0.4);border-color:rgba(148,163,184,0.3)}
+    .drumdrum-offline-dismiss{position:absolute;top:6px;right:8px;border:none;background:rgba(15,23,42,0.08);color:inherit;font-size:22px;line-height:1;cursor:pointer;width:48px;height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0;border:2px solid rgba(15,23,42,0.15);box-shadow:0 6px 14px rgba(15,23,42,0.18);touch-action:manipulation}
+    [data-theme="dark"] .drumdrum-offline-dismiss{background:rgba(148,163,184,0.25);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.4);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
+    .drumdrum-offline-dismiss:focus-visible,.drumdrum-offline-actions button:focus-visible{outline:3px solid rgba(59,130,246,0.7);outline-offset:2px}
+    .drumdrum-mention{cursor:pointer}
+    .drumdrum-mention:not(.btn){background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline}
+    .drumdrum-mention.btn{cursor:pointer}
+    .drumdrum-offline-toggle{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:56px;height:56px;border-radius:999px;border:none;background:var(--accent,#2563eb);color:#fff;box-shadow:0 18px 35px rgba(15,23,42,0.18);cursor:pointer;font-size:20px;font-weight:700;z-index:9998;display:flex;align-items:center;justify-content:center;transition:transform .2s ease,box-shadow .2s ease}
+    [data-theme="dark"] .drumdrum-offline-toggle{background:rgba(37,99,235,0.92);box-shadow:0 20px 45px rgba(2,6,23,0.75)}
+    .drumdrum-offline-toggle:focus-visible{outline:3px solid rgba(59,130,246,0.6);outline-offset:2px}
+    .drumdrum-offline-toggle:active{transform:scale(0.95)}
+    @media (max-width:640px){.drumdrum-offline-shelf{left:16px;right:16px;width:auto;bottom:calc(16px + env(safe-area-inset-bottom, 0px));padding:16px}.drumdrum-offline-toggle{bottom:calc(16px + env(safe-area-inset-bottom, 0px));right:calc(16px + env(safe-area-inset-right, 0px));width:52px;height:52px}}
+  </style>
+  <section class="drumdrum-offline-shelf" data-drumdrum-offline>
+    <button type="button" class="drumdrum-offline-dismiss" data-offline-dismiss aria-label="Hide offline helper">×</button>
+    <div class="drumdrum-offline-head">
+      <p class="drumdrum-offline-label">DrumDrums Offline</p>
+      <h2>Save this DrumDrum</h2>
+      <p>Download once. Launch anywhere — even without internet.</p>
+    </div>
+    <div class="drumdrum-offline-actions">
+      <button type="button" data-offline-download>Save offline (.html)</button>
+      <button type="button" class="secondary" data-offline-guide>Home screen tips</button>
+    </div>
+    <div class="drumdrum-offline-guide" data-offline-guide-panel hidden>
+      <strong>Install on your phone</strong>
+      <ol>
+        <li>Tap your browser's share/menu button.</li>
+        <li>Choose “Add to Home Screen” / “Add shortcut”.</li>
+        <li>Launch it later. No signal required.</li>
+      </ol>
+      <p>Offline copies remove DrumDrums library links automatically.</p>
+    </div>
+  </section>
+  <button type="button" class="drumdrum-offline-toggle" data-offline-toggle hidden aria-label="Show DrumDrums Offline helper">⬇️</button>
+  <script>
+    (() => {
+      const ready = (fn) => (document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', fn) : fn();
+      ready(() => {
+        const shelf = document.querySelector('[data-drumdrum-offline]');
+        if (!shelf) return;
+        const downloadButton = shelf.querySelector('[data-offline-download]');
+        const guideButton = shelf.querySelector('[data-offline-guide]');
+        const guidePanel = shelf.querySelector('[data-offline-guide-panel]');
+        const dismissButton = shelf.querySelector('[data-offline-dismiss]');
+        const toggleButton = document.querySelector('[data-offline-toggle]');
+        const baseGuide = guidePanel ? guidePanel.innerHTML : '';
+        const guideDefaultLabel = guideButton ? guideButton.textContent.trim() : '';
+        const isLibraryHome = document.body && document.body.dataset.libraryHome === 'true';
+
+        const collapseShelf = ({ focusToggle = false } = {}) => {
+          shelf.setAttribute('data-offline-hidden', 'true');
+          if (toggleButton) {
+            toggleButton.hidden = false;
+            if (focusToggle) {
+              try {
+                toggleButton.focus({ preventScroll: true });
+              } catch (err) {
+                toggleButton.focus();
+              }
+            }
+          }
+        };
+
+        const revealShelf = () => {
+          shelf.removeAttribute('data-offline-hidden');
+          if (toggleButton) {
+            toggleButton.hidden = true;
+          }
+        };
+
+        if (downloadButton) {
+          const defaultText = downloadButton.textContent.trim();
+          downloadButton.addEventListener('click', () => {
+            const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const slug = (document.title || 'drumdrum-app')
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '') || 'drumdrum-app';
+            link.href = url;
+            link.download = slug + '.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+            downloadButton.textContent = 'Saved ✅';
+            downloadButton.disabled = true;
+            setTimeout(() => {
+              downloadButton.disabled = false;
+              downloadButton.textContent = defaultText;
+            }, 2200);
+          });
+        }
+
+        if (guideButton && guidePanel) {
+          guidePanel.hidden = true;
+          guideButton.addEventListener('click', () => {
+            if (guidePanel.hidden) {
+              guidePanel.innerHTML = baseGuide;
+              guidePanel.hidden = false;
+              guideButton.textContent = 'Hide tips';
+            } else {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        if (guidePanel) {
+          guidePanel.setAttribute('tabindex', '-1');
+        }
+
+        if (dismissButton) {
+          dismissButton.addEventListener('click', () => collapseShelf({ focusToggle: true }));
+        }
+
+        if (toggleButton) {
+          toggleButton.addEventListener('click', () => {
+            revealShelf();
+            if (guidePanel && guideButton) {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        const showMentionNote = (slug, label) => {
+          revealShelf();
+          if (!guidePanel) return;
+          guidePanel.hidden = false;
+          guidePanel.innerHTML = `<strong>${label || 'DrumDrum app'}</strong><p>This reference opens another DrumDrum app (${slug}). Download it separately when you're back online.</p>`;
+          if (guideButton) {
+            guideButton.textContent = 'Hide tips';
+          }
+          try {
+            guidePanel.focus({ preventScroll: false });
+          } catch (err) {
+            guidePanel.focus();
+          }
+        };
+
+        if (location.protocol === 'file:') {
+          document.querySelectorAll('a[href^="../"], a[href^="./"], a[href^="/"]').forEach((anchor) => {
+            const href = anchor.getAttribute('href');
+            if (!href || href.startsWith('#')) return;
+            const slug = href
+              .replace(/^\.\.\//, '')
+              .replace(/^\.\//, '')
+              .replace(/^\//, '')
+              .replace(/\/$/, '') || 'drumdrums-app';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.innerHTML = anchor.innerHTML;
+            const anchorClass = anchor.getAttribute('class');
+            button.className = anchorClass ? anchorClass + ' drumdrum-mention' : 'drumdrum-mention';
+            Array.from(anchor.attributes).forEach((attr) => {
+              if (['href', 'class', 'target', 'rel'].includes(attr.name)) return;
+              button.setAttribute(attr.name, attr.value);
+            });
+            button.addEventListener('click', () => showMentionNote(slug, anchor.textContent.trim()));
+            button.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showMentionNote(slug, anchor.textContent.trim());
+              }
+            });
+            anchor.replaceWith(button);
+          });
+        }
+
+        if (isLibraryHome) {
+          collapseShelf();
+        }
+      });
+    })();
+  </script>
+
+
+</body>
+</html>

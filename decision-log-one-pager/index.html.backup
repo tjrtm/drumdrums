@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Decision Log (One‑pager)</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
+    :root{
+      --r: 14px;
+      --accent: #33d1ff;
+      --accent2:#ffb020;
+      --danger:#e11d48;
+      --ok:#16a34a;
+      --bg:#0a0e1a;
+      --bg2:#060815;
+      --panel: rgba(255,255,255,.07);
+      --panel2: rgba(255,255,255,.04);
+      --text:#f0f4ff;
+      --muted: rgba(240,244,255,.66);
+      --line: rgba(255,255,255,.12);
+      --shadow: 0 18px 46px rgba(51,209,255,.10);
+    }
+    [data-theme="light"]{
+      --bg:#f6f8fb;
+      --bg2:#eef3f9;
+      --panel: rgba(255,255,255,.94);
+      --panel2: rgba(255,255,255,.70);
+      --text:#0b1220;
+      --muted: rgba(11,18,32,.62);
+      --line: rgba(15,23,42,.12);
+      --shadow: 0 18px 44px rgba(15,23,42,.10);
+    }
+    *{box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+    html,body{height:100%}
+    body{margin:0; font-family: Inter, system-ui, Segoe UI, Roboto, Arial; color:var(--text);
+      background:
+        radial-gradient(900px 600px at 18% 0%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 60%),
+        radial-gradient(800px 560px at 88% 8%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      background-attachment: fixed, fixed, fixed;
+    }
+    header{position:sticky; top:0; z-index:5; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px);
+      border-bottom:1px solid var(--line); padding: 12px 14px;}
+    .top{max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap}
+    .brand{display:flex; gap:12px; align-items:flex-start}
+    .mark{width:40px;height:40px;border-radius:16px;border:1px solid var(--line);
+      background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 22%, transparent), color-mix(in srgb,var(--accent2) 14%, transparent)); box-shadow: var(--shadow);
+    }
+    h1{margin:0; font-size:15px; font-weight:950; letter-spacing:.2px}
+    .sub{margin-top:3px; font-size:12px; color:var(--muted)}
+    .kbd{font: 12px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding:2px 6px; border-radius: 8px; border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 80%, transparent); color: color-mix(in srgb, var(--text) 80%, transparent)}
+    .actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
+    .btn{cursor:pointer;border-radius:14px;padding:9px 11px;border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 84%, transparent); color:var(--text); font-weight:950; text-decoration:none; user-select:none;}
+    .btn.primary{background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 22%, transparent), color-mix(in srgb,var(--accent2) 14%, transparent))}
+    .btn.danger{border-color: color-mix(in srgb, var(--danger) 44%, transparent)}
+    .btn:focus{outline:2px solid color-mix(in srgb, var(--accent) 34%, transparent); outline-offset:2px}
+    .toggle{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:14px;border:1px solid var(--line);
+      background:color-mix(in srgb, var(--panel) 78%, transparent); color:var(--muted); font-size:12px; font-weight:950; user-select:none}
+    .toggle input{width:15px;height:15px}
+
+    main{max-width:1100px; margin: 14px auto 28px; padding: 0 14px}
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:12px; align-items:start}
+    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+    .card{background: color-mix(in srgb, var(--panel) 96%, transparent); border:1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow:hidden}
+    .cardHead{padding:12px 14px; border-bottom:1px solid color-mix(in srgb, var(--line) 78%, transparent); display:flex; justify-content:space-between; gap:10px; align-items:baseline; flex-wrap:wrap}
+    .cardHead b{font-size:12px; letter-spacing:1px; text-transform:uppercase; font-family: Space Grotesk, ui-monospace, Menlo, monospace;
+      color: color-mix(in srgb, var(--text) 74%, transparent)}
+    .cardBody{padding:12px 14px}
+
+    textarea, input[type="text"], select{width:100%; padding: 10px 12px; border-radius: 14px; border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 86%, transparent); color: var(--text); font: inherit;}
+    textarea{min-height: 340px; resize: vertical; font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; tab-size:2;}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    label{font-size:12px; font-weight:950; color: color-mix(in srgb, var(--text) 72%, transparent)}
+    .field{display:flex; flex-direction:column; gap:6px; flex:1; min-width: 200px}
+    .pillRow{display:flex; gap:8px; flex-wrap:wrap; align-items:center; color:var(--muted); font-size:12px}
+    .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 9px; border-radius: 14px; border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel2) 86%, transparent)}
+
+    .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:14px; z-index:10;
+      background: color-mix(in srgb, var(--bg) 72%, var(--panel)); border:1px solid var(--line); border-radius: 16px; padding: 10px 12px;
+      min-width: min(560px, calc(100vw - 24px)); display:flex; justify-content:space-between; align-items:center; gap:12px;
+      box-shadow: var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease;}
+    .toast.show{opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(-2px)}
+    .toast small{color:var(--muted)}
+    .mini{padding:6px 9px; border-radius: 14px; border:1px solid var(--line); background: color-mix(in srgb, var(--panel) 86%, transparent);
+      font-size:12px; font-weight:950; cursor:pointer}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="top">
+      <div class="brand">
+        <div class="mark" aria-hidden="true"></div>
+        <div>
+          <h1>Decision Log (One‑pager)</h1>
+          <div class="sub">Capture decisions with date/context and export a clean log. <span style="color:var(--muted)">Shortcuts:</span> <span class="kbd">Ctrl/⌘+S</span> save, <span class="kbd">Ctrl/⌘+E</span> copy, <span class="kbd">Ctrl/⌘+Shift+E</span> export JSON.</div>
+        </div>
+      </div>
+      <div class="actions">
+        <label class="toggle" title="Toggle light mode"><input id="themeToggle" type="checkbox" /><span>Light</span></label>
+        <a class="btn" href="/mockups/">Mockups</a>
+        <button class="btn" id="btnClear">Clear</button>
+        <button class="btn primary" id="btnCopy">Copy</button>
+        <button class="btn" id="btnExport">Export .md</button>
+        <button class="btn" id="btnExportJson">Export .json</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card" aria-label="Work">
+        <div class="cardHead">
+          <b>Work</b>
+          <div class="pillRow" id="stats"></div>
+        </div>
+        <div class="cardBody">
+          <div class="pillRow" style="margin-bottom:10px">
+            <span class="pill"><b>What problem it solves</b> <span class="muted">Stop losing decisions in chat/notes — capture them with context so you can remember (and share) later.</span></span>
+          </div>
+          <div class="pillRow" style="margin-bottom:10px">
+            <span class="pill"><b>Real‑world scenarios</b></span>
+            <span class="pill"><span class="muted">• After a meeting: log 3 decisions + 1 sentence why</span></span>
+            <span class="pill"><span class="muted">• When someone asks “why did we do this?”: search/copy the entry</span></span>
+            <span class="pill"><span class="muted">• Weekly recap: export a clean decision list for your notes</span></span>
+          </div>
+          <div class="field">
+            <label for="input">Your notes / inputs</label>
+            <textarea id="input" spellcheck="false" placeholder="Type here…"></textarea>
+          </div>
+          <div class="pillRow" style="margin-top:10px">
+            <span class="pill"><b id="saveState">Saved</b> <span class="muted" id="savedAt">—</span></span>
+            <span class="pill">This page autosaves locally.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Output">
+        <div class="cardHead"><b>Output</b><div class="pillRow"><span class="pill">Copy <span class="kbd">Ctrl/⌘+E</span></span></div></div>
+        <div class="cardBody">
+          <div class="field">
+            <label for="output">Export preview (Markdown)</label>
+            <textarea id="output" spellcheck="false" readonly></textarea>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <div><div style="font-weight:950" id="toastTitle">—</div><small id="toastBody">—</small></div>
+    <div class="row"><button class="mini" id="toastOk">OK</button></div>
+  </div>
+
+<script>
+(() => {
+  const LS_KEY = 'mock_one_page_starter_v1_' + "decision-log-one-pager";
+
+  const els = {
+    themeToggle: document.querySelector('#themeToggle'),
+    input: document.querySelector('#input'),
+    output: document.querySelector('#output'),
+    stats: document.querySelector('#stats'),
+    saveState: document.querySelector('#saveState'),
+    savedAt: document.querySelector('#savedAt'),
+    btnClear: document.querySelector('#btnClear'),
+    btnCopy: document.querySelector('#btnCopy'),
+    btnExport: document.querySelector('#btnExport'),
+    btnExportJson: document.querySelector('#btnExportJson'),
+    toast: document.querySelector('#toast'),
+    toastTitle: document.querySelector('#toastTitle'),
+    toastBody: document.querySelector('#toastBody'),
+    toastOk: document.querySelector('#toastOk'),
+  };
+
+  const state = { theme:'dark', input:'', lastSavedAt:null, dirty:false };
+
+  function setTheme(theme){
+    state.theme = theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    els.themeToggle.checked = theme === 'light';
+  }
+
+  function toast(title, body){
+    els.toastTitle.textContent = title;
+    els.toastBody.textContent = body || '';
+    els.toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(hideToast, 3000);
+  }
+  function hideToast(){ els.toast.classList.remove('show'); }
+  els.toastOk.addEventListener('click', hideToast);
+
+  function markDirty(d=true){
+    state.dirty = d;
+    els.saveState.textContent = d ? 'Unsaved changes' : 'Saved';
+  }
+
+  function toMarkdown(){
+    const lines = [];
+    lines.push('# ' + "Decision Log (One‑pager)");
+    if ("Capture decisions with date/context and export a clean log.".trim()) lines.push('', "Capture decisions with date/context and export a clean log.");
+    if ("After a meeting, record decisions with short rationale and share/export.".trim()) lines.push('', '## Scenario', "After a meeting, record decisions with short rationale and share/export.");
+    lines.push('', '## Notes', '```', (els.input.value||'').trimEnd(), '```');
+    return lines.join("\\n");
+  }
+
+  function render(){
+    const txt = els.input.value || '';
+    els.output.value = toMarkdown();
+    const lines = txt.split(/\r?\n/).filter(l => l.trim()).length;
+    els.stats.innerHTML = '<span class="pill"><b>' + lines + '</b> <span class="muted">lines</span></span>';
+  }
+
+  function serialize(){
+    return { theme: state.theme, input: els.input.value, lastSavedAt: state.lastSavedAt };
+  }
+
+  function save(){
+    state.lastSavedAt = new Date().toISOString();
+    localStorage.setItem(LS_KEY, JSON.stringify(serialize()));
+    els.savedAt.textContent = new Date(state.lastSavedAt).toLocaleString();
+    markDirty(false);
+  }
+
+  function load(){
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw){ setTheme('dark'); render(); return; }
+    try{
+      const obj = JSON.parse(raw);
+      setTheme(obj.theme || 'dark');
+      els.input.value = obj.input || '';
+      if (obj.lastSavedAt){
+        state.lastSavedAt = obj.lastSavedAt;
+        els.savedAt.textContent = new Date(obj.lastSavedAt).toLocaleString();
+        markDirty(false);
+      } else {
+        markDirty(true);
+      }
+      render();
+    }catch{
+      localStorage.removeItem(LS_KEY);
+      setTheme('dark');
+      toast('Reset', 'Saved data was corrupted — starting fresh.');
+      render();
+    }
+  }
+
+  function download(filename, content, type){
+    const blob = new Blob([content], {type});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+  }
+
+  function copyOut(){
+    const text = els.output.value || '';
+    if (!text.trim()) return toast('Copy', 'Nothing to copy.');
+    navigator.clipboard?.writeText(text)
+      .then(() => toast('Copied', 'Markdown copied to clipboard.'))
+      .catch(() => toast('Copy', 'Clipboard blocked — use Export instead.'));
+  }
+
+  // events
+  els.themeToggle.addEventListener('change', () => { setTheme(els.themeToggle.checked ? 'light' : 'dark'); markDirty(true); save(); });
+  els.input.addEventListener('input', () => { markDirty(true); render(); scheduleSave(); });
+
+  els.btnClear.addEventListener('click', () => { els.input.value=''; markDirty(true); render(); toast('Cleared', 'Input cleared.'); });
+  els.btnCopy.addEventListener('click', copyOut);
+  els.btnExport.addEventListener('click', () => { save(); const name="decision-log-one-pager"; download((name||'export') + '.md', els.output.value, 'text/markdown;charset=utf-8'); toast('Exported','Downloaded .md'); });
+  els.btnExportJson.addEventListener('click', () => { save(); const name="decision-log-one-pager"; download((name||'export') + '.json', JSON.stringify(serialize(),null,2), 'application/json'); toast('Exported','Downloaded .json'); });
+
+  window.addEventListener('keydown', (ev) => {
+    const mod = ev.ctrlKey || ev.metaKey;
+    if (!mod) return;
+    if (ev.key.toLowerCase()==='s'){ ev.preventDefault(); save(); toast('Saved','State saved.'); }
+    if (ev.key.toLowerCase()==='e' && !ev.shiftKey){ ev.preventDefault(); copyOut(); }
+    if (ev.key.toLowerCase()==='e' && ev.shiftKey){ ev.preventDefault(); save(); const name="decision-log-one-pager"; download((name||'export') + '.json', JSON.stringify(serialize(),null,2), 'application/json'); toast('Exported','Downloaded .json'); }
+  });
+
+  let t=null;
+  function scheduleSave(){ clearTimeout(t); t=setTimeout(() => { save(); }, 650); }
+
+  load();
+})();
+</script>
+<script src="/mockups/tracking.js"></script>
+</body>
+</html>

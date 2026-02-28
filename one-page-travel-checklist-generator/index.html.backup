@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>One‑Page Travel Checklist Generator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
+    :root{
+      --r: 14px;
+      --accent: #33d1ff;
+      --accent2:#ffb020;
+      --danger:#e11d48;
+      --ok:#16a34a;
+      --bg:#0a0e1a;
+      --bg2:#060815;
+      --panel: rgba(255,255,255,.07);
+      --panel2: rgba(255,255,255,.04);
+      --text:#f0f4ff;
+      --muted: rgba(240,244,255,.66);
+      --line: rgba(255,255,255,.12);
+      --shadow: 0 18px 46px rgba(51,209,255,.10);
+    }
+    [data-theme="light"]{
+      --bg:#f6f8fb;
+      --bg2:#eef3f9;
+      --panel: rgba(255,255,255,.94);
+      --panel2: rgba(255,255,255,.70);
+      --text:#0b1220;
+      --muted: rgba(11,18,32,.62);
+      --line: rgba(15,23,42,.12);
+      --shadow: 0 18px 44px rgba(15,23,42,.10);
+    }
+    *{box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+    html,body{min-height:100%}
+    body{margin:0; font-family: Inter, system-ui, Segoe UI, Roboto, Arial; color:var(--text);
+      background-image:
+        radial-gradient(900px 600px at 18% 0%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 60%),
+        radial-gradient(800px 560px at 88% 8%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      background-attachment: fixed, fixed, fixed;
+    }
+    header{position:sticky; top:0; z-index:5; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px);
+      border-bottom:1px solid var(--line); padding: 12px 14px;}
+    .top{max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap}
+    .brand{display:flex; gap:12px; align-items:flex-start}
+    .mark{width:40px;height:40px;border-radius:16px;border:1px solid var(--line);
+      background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 22%, transparent), color-mix(in srgb,var(--accent2) 14%, transparent)); box-shadow: var(--shadow);
+      display:flex;align-items:center;justify-content:center;font-size:20px;}
+    h1{margin:0; font-size:15px; font-weight:950; letter-spacing:.2px}
+    .sub{margin-top:3px; font-size:12px; color:var(--muted)}
+    .kbd{font: 12px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding:2px 6px; border-radius: 8px; border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 80%, transparent); color: color-mix(in srgb, var(--text) 80%, transparent)}
+    .actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
+    .btn{cursor:pointer;border-radius:14px;padding:12px 14px;border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 84%, transparent); color:var(--text); font-weight:950; text-decoration:none; user-select:none; font-size:13px;}
+    .btn.primary{background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 22%, transparent), color-mix(in srgb,var(--accent2) 14%, transparent))}
+    .btn.danger{border-color: color-mix(in srgb, var(--danger) 44%, transparent)}
+    .btn:focus{outline:2px solid color-mix(in srgb, var(--accent) 34%, transparent); outline-offset:2px}
+    .toggle{display:inline-flex;align-items:center;gap:8px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);
+      background:color-mix(in srgb, var(--panel) 78%, transparent); color:var(--muted); font-size:12px; font-weight:950; user-select:none}
+    .toggle input{width:15px;height:15px}
+
+    main{max-width:1200px; margin: 14px auto 28px; padding: 0 14px}
+    .grid{display:grid; grid-template-columns: 420px 1fr; gap:12px; align-items:start}
+    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+    .card{background: color-mix(in srgb, var(--panel) 96%, transparent); border:1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow:hidden}
+    .cardHead{padding:12px 14px; border-bottom:1px solid color-mix(in srgb, var(--line) 78%, transparent); display:flex; justify-content:space-between; gap:10px; align-items:baseline; flex-wrap:wrap}
+    .cardHead b{font-size:12px; letter-spacing:1px; text-transform:uppercase; font-family: Space Grotesk, ui-monospace, Menlo, monospace;
+      color: color-mix(in srgb, var(--text) 74%, transparent)}
+    .cardBody{padding:12px 14px}
+
+    .pillRow{display:flex; gap:8px; flex-wrap:wrap; align-items:center; color:var(--muted); font-size:12px}
+    .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 9px; border-radius: 14px; border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel2) 86%, transparent)}
+
+    .chipRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .chip{cursor:pointer;padding:8px 12px;border-radius:14px;border:1px solid var(--line);
+      background:color-mix(in srgb,var(--panel) 84%,transparent);font-size:13px;font-weight:950;user-select:none;transition:all .15s ease}
+    .chip:hover{border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
+    .chip.active{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,transparent)}
+
+    .slider{display:flex;gap:12px;align-items:center;margin-top:8px}
+    .slider input[type="range"]{flex:1;height:6px;border-radius:6px;background:color-mix(in srgb,var(--line) 60%,transparent);
+      -webkit-appearance:none;appearance:none}
+    .slider input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;
+      background:var(--accent);cursor:pointer}
+    .slider input[type="range"]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:none}
+    .sliderLabel{font-size:13px;font-weight:950;min-width:60px}
+
+    .checkList{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+    .checkItem{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:14px;border:1px solid var(--line);
+      background:color-mix(in srgb,var(--panel2) 84%,transparent);cursor:pointer;user-select:none;transition:all .1s ease}
+    .checkItem:hover{border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+    .checkItem input[type="checkbox"]{width:17px;height:17px;cursor:pointer}
+    .checkItem.checked{opacity:.55}
+    .checkItem.checked label{text-decoration:line-through;color:var(--muted)}
+    .checkItem label{cursor:pointer;flex:1;font-size:13px}
+    .checkItem .remove{opacity:0;color:var(--danger);font-size:12px;font-weight:950;padding:4px 8px;border-radius:10px;
+      background:color-mix(in srgb,var(--danger) 10%,transparent);border:1px solid color-mix(in srgb,var(--danger) 24%,transparent);cursor:pointer}
+    .checkItem:hover .remove{opacity:1}
+
+    .addBox{display:flex;gap:8px;margin-top:8px}
+    .addBox input{flex:1;padding:9px 12px;border-radius:14px;border:1px solid var(--line);
+      background:color-mix(in srgb,var(--panel) 86%,transparent);color:var(--text);font:inherit}
+    .addBox button{padding:9px 12px;border-radius:14px;border:1px solid var(--line);
+      background:color-mix(in srgb,var(--accent) 16%,transparent);border-color:var(--accent);color:var(--text);font-weight:950;cursor:pointer}
+
+    .catSection{margin-bottom:16px}
+    .catTitle{font-size:12px;font-weight:950;text-transform:uppercase;letter-spacing:1px;color:color-mix(in srgb,var(--text) 72%,transparent);
+      margin-bottom:8px;font-family:Space Grotesk,monospace}
+
+    textarea{width:100%;min-height:240px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);
+      background:color-mix(in srgb,var(--panel) 86%,transparent);color:var(--text);font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      resize:vertical;tab-size:2}
+
+    .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:14px; z-index:10;
+      background: color-mix(in srgb, var(--bg) 72%, var(--panel)); border:1px solid var(--line); border-radius: 16px; padding: 10px 12px;
+      min-width: min(560px, calc(100vw - 24px)); display:flex; justify-content:space-between; align-items:center; gap:12px;
+      box-shadow: var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease;}
+    .toast.show{opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(-2px)}
+    .toast small{color:var(--muted)}
+    .mini{padding:6px 9px; border-radius: 14px; border:1px solid var(--line); background: color-mix(in srgb, var(--panel) 86%, transparent);
+      font-size:12px; font-weight:950; cursor:pointer}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="top">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">✈️</div>
+        <div>
+          <h1>One‑Page Travel Checklist Generator</h1>
+          <div class="sub">Pick trip type + duration and generate a checklist you can export. <span style="color:var(--muted)">Shortcuts:</span> <span class="kbd">Ctrl/⌘+S</span> save, <span class="kbd">Ctrl/⌘+E</span> copy, <span class="kbd">Ctrl/⌘+Shift+E</span> export JSON.</div>
+        </div>
+      </div>
+      <div class="actions">
+        <label class="toggle" title="Toggle light mode"><input id="themeToggle" type="checkbox" /><span>Light</span></label>
+        <a class="btn" href="/mockups/">Mockups</a>
+        <button class="btn" id="btnReset">Reset</button>
+        <button class="btn primary" id="btnCopy">Copy</button>
+        <button class="btn" id="btnExport">Export .md</button>
+        <button class="btn" id="btnExportJson">Export .json</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card" aria-label="Configure">
+        <div class="cardHead">
+          <b>Configure Trip</b>
+        </div>
+        <div class="cardBody">
+          <div>
+            <label class="catTitle">Trip Type</label>
+            <div class="chipRow" id="tripTypes"></div>
+          </div>
+          <div style="margin-top:16px">
+            <label class="catTitle">Duration</label>
+            <div class="slider">
+              <span class="sliderLabel" id="durationLabel">3 days</span>
+              <input type="range" id="durationSlider" min="1" max="21" value="3" step="1" />
+            </div>
+          </div>
+          <div style="margin-top:16px">
+            <label class="catTitle">Quick Add</label>
+            <div class="chipRow" id="quickAdd"></div>
+          </div>
+          <div style="margin-top:16px">
+            <div class="pillRow">
+              <span class="pill"><b id="totalItems">0</b> <span class="muted">items</span></span>
+              <span class="pill"><b id="checkedItems">0</b> <span class="muted">checked</span></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Checklist">
+        <div class="cardHead">
+          <b>Your Checklist</b>
+          <div class="pillRow">
+            <button class="btn" id="btnCheckAll" style="padding:6px 9px;font-size:12px">Check All</button>
+            <button class="btn" id="btnUncheckAll" style="padding:6px 9px;font-size:12px">Uncheck All</button>
+          </div>
+        </div>
+        <div class="cardBody" id="checklistBody">
+          <!-- Categories will be dynamically inserted here -->
+        </div>
+        <div class="cardHead" style="border-top:1px solid var(--line);border-bottom:none">
+          <b>Add Custom Item</b>
+        </div>
+        <div class="cardBody">
+          <div class="addBox">
+            <input type="text" id="customItemInput" placeholder="Enter item name..." />
+            <button id="btnAddCustom">Add</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <div><div style="font-weight:950" id="toastTitle">—</div><small id="toastBody">—</small></div>
+    <div class="row"><button class="mini" id="toastOk">OK</button></div>
+  </div>
+
+<script>
+(() => {
+  const LS_KEY = 'travel_checklist_v1';
+
+  // TEMPLATES
+  const TRIP_TYPES = [
+    { id: 'weekend', label: '🌆 Weekend', categories: ['essentials','clothing','toiletries','tech'] },
+    { id: 'business', label: '💼 Business', categories: ['essentials','business','clothing','toiletries','tech'] },
+    { id: 'vacation', label: '🏖️ Vacation', categories: ['essentials','clothing','toiletries','beach','tech','documents'] },
+    { id: 'camping', label: '🏕️ Camping', categories: ['essentials','camping','clothing','food','tech'] },
+    { id: 'ski', label: '⛷️ Ski Trip', categories: ['essentials','ski','clothing','toiletries','tech'] }
+  ];
+
+  const CATEGORY_ITEMS = {
+    essentials: { title: '🎒 Essentials', items: ['Passport/ID','Wallet','Phone','Keys','Tickets/Confirmations','Medication'] },
+    clothing: { title: '👕 Clothing', items: ['Underwear','Socks','Shirts','Pants/Shorts','Jacket','Shoes','Sleepwear','Belt'] },
+    toiletries: { title: '🧴 Toiletries', items: ['Toothbrush','Toothpaste','Deodorant','Shampoo','Soap','Razor','Sunscreen','Hairbrush'] },
+    tech: { title: '📱 Tech', items: ['Phone Charger','Laptop','Laptop Charger','Headphones','Power Bank','Camera','Cables'] },
+    business: { title: '💼 Business', items: ['Laptop','Chargers','Business Cards','Presentation Files','Notebook','Pen','Suit/Formal Wear'] },
+    beach: { title: '🏖️ Beach', items: ['Swimsuit','Towel','Sunglasses','Beach Bag','Flip Flops','Sunscreen','Hat','Snorkel Gear'] },
+    camping: { title: '⛺ Camping', items: ['Tent','Sleeping Bag','Flashlight','Matches','Water Bottle','First Aid Kit','Knife','Rope'] },
+    food: { title: '🍽️ Food', items: ['Snacks','Water','Cooler','Utensils','Plates','Can Opener'] },
+    ski: { title: '⛷️ Ski Gear', items: ['Skis/Snowboard','Boots','Poles','Goggles','Helmet','Gloves','Thermal Underwear','Hand Warmers'] },
+    documents: { title: '📄 Documents', items: ['Passport','Travel Insurance','Hotel Reservations','Flight Tickets','Emergency Contacts'] }
+  };
+
+  const QUICK_ADD_ITEMS = ['Charger','Water Bottle','Snacks','Book','Umbrella','Sunglasses','Hat','First Aid'];
+
+  // STATE
+  const state = {
+    theme: 'dark',
+    tripType: 'weekend',
+    duration: 3,
+    items: {} // { categoryId_itemName: {checked:bool, custom:bool, category:str, name:str} }
+  };
+
+  // ELEMENTS
+  const els = {
+    themeToggle: document.querySelector('#themeToggle'),
+    tripTypes: document.querySelector('#tripTypes'),
+    durationSlider: document.querySelector('#durationSlider'),
+    durationLabel: document.querySelector('#durationLabel'),
+    quickAdd: document.querySelector('#quickAdd'),
+    checklistBody: document.querySelector('#checklistBody'),
+    customItemInput: document.querySelector('#customItemInput'),
+    btnAddCustom: document.querySelector('#btnAddCustom'),
+    btnCheckAll: document.querySelector('#btnCheckAll'),
+    btnUncheckAll: document.querySelector('#btnUncheckAll'),
+    btnReset: document.querySelector('#btnReset'),
+    btnCopy: document.querySelector('#btnCopy'),
+    btnExport: document.querySelector('#btnExport'),
+    btnExportJson: document.querySelector('#btnExportJson'),
+    totalItems: document.querySelector('#totalItems'),
+    checkedItems: document.querySelector('#checkedItems'),
+    toast: document.querySelector('#toast'),
+    toastTitle: document.querySelector('#toastTitle'),
+    toastBody: document.querySelector('#toastBody'),
+    toastOk: document.querySelector('#toastOk')
+  };
+
+  // HELPERS
+  function setTheme(theme){
+    state.theme = theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    els.themeToggle.checked = theme === 'light';
+  }
+
+  function toast(title, body){
+    els.toastTitle.textContent = title;
+    els.toastBody.textContent = body || '';
+    els.toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(hideToast, 3000);
+  }
+  function hideToast(){ els.toast.classList.remove('show'); }
+  els.toastOk.addEventListener('click', hideToast);
+
+  function itemKey(category, name){
+    return category + '_' + name.toLowerCase().replace(/[^a-z0-9]+/g,'_');
+  }
+
+  function save(){
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+  }
+
+  function load(){
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return;
+    try{
+      const obj = JSON.parse(raw);
+      Object.assign(state, obj);
+    }catch{
+      localStorage.removeItem(LS_KEY);
+      toast('Reset', 'Saved data was corrupted — starting fresh.');
+    }
+  }
+
+  // RENDER TRIP TYPES
+  function renderTripTypes(){
+    els.tripTypes.innerHTML = '';
+    TRIP_TYPES.forEach(t => {
+      const chip = document.createElement('div');
+      chip.className = 'chip' + (state.tripType === t.id ? ' active' : '');
+      chip.textContent = t.label;
+      chip.addEventListener('click', () => {
+        state.tripType = t.id;
+        renderTripTypes();
+        regenerateChecklist();
+        save();
+      });
+      els.tripTypes.appendChild(chip);
+    });
+  }
+
+  // RENDER DURATION
+  function renderDuration(){
+    els.durationSlider.value = state.duration;
+    els.durationLabel.textContent = state.duration + (state.duration === 1 ? ' day' : ' days');
+  }
+
+  els.durationSlider.addEventListener('input', () => {
+    state.duration = parseInt(els.durationSlider.value, 10);
+    renderDuration();
+    save();
+  });
+
+  // QUICK ADD
+  function renderQuickAdd(){
+    els.quickAdd.innerHTML = '';
+    QUICK_ADD_ITEMS.forEach(item => {
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.textContent = '+ ' + item;
+      chip.addEventListener('click', () => {
+        addItem('custom', item, true);
+        toast('Added', item + ' added to Custom category.');
+      });
+      els.quickAdd.appendChild(chip);
+    });
+  }
+
+  // ADD ITEM
+  function addItem(category, name, custom = false){
+    const key = itemKey(category, name);
+    if (state.items[key]) return; // already exists
+    state.items[key] = { checked: false, custom, category, name };
+    save();
+    renderChecklist();
+  }
+
+  // REMOVE ITEM
+  function removeItem(key){
+    delete state.items[key];
+    save();
+    renderChecklist();
+  }
+
+  // TOGGLE ITEM
+  function toggleItem(key){
+    if (!state.items[key]) return;
+    state.items[key].checked = !state.items[key].checked;
+    save();
+    renderChecklist();
+  }
+
+  // REGENERATE CHECKLIST based on trip type
+  function regenerateChecklist(){
+    const tripType = TRIP_TYPES.find(t => t.id === state.tripType);
+    if (!tripType) return;
+
+    // Remove non-custom items that don't belong to current trip type
+    const validCategories = new Set(tripType.categories);
+    Object.keys(state.items).forEach(key => {
+      const item = state.items[key];
+      if (!item.custom && !validCategories.has(item.category)){
+        delete state.items[key];
+      }
+    });
+
+    // Add default items for selected categories
+    tripType.categories.forEach(catId => {
+      const cat = CATEGORY_ITEMS[catId];
+      if (!cat) return;
+      cat.items.forEach(itemName => {
+        addItem(catId, itemName, false);
+      });
+    });
+
+    save();
+    renderChecklist();
+  }
+
+  // RENDER CHECKLIST
+  function renderChecklist(){
+    els.checklistBody.innerHTML = '';
+
+    // Group items by category
+    const categories = {};
+    Object.keys(state.items).forEach(key => {
+      const item = state.items[key];
+      if (!categories[item.category]) categories[item.category] = [];
+      categories[item.category].push({ key, ...item });
+    });
+
+    // Render each category
+    Object.keys(categories).sort().forEach(catId => {
+      const catData = CATEGORY_ITEMS[catId] || { title: '📦 Custom' };
+      const section = document.createElement('div');
+      section.className = 'catSection';
+
+      const title = document.createElement('div');
+      title.className = 'catTitle';
+      title.textContent = catData.title || catId;
+      section.appendChild(title);
+
+      const list = document.createElement('div');
+      list.className = 'checkList';
+
+      categories[catId].sort((a,b) => a.name.localeCompare(b.name)).forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'checkItem' + (item.checked ? ' checked' : '');
+
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = item.checked;
+        cb.addEventListener('change', () => toggleItem(item.key));
+
+        const lbl = document.createElement('label');
+        lbl.textContent = item.name;
+        lbl.addEventListener('click', () => toggleItem(item.key));
+
+        const rmBtn = document.createElement('button');
+        rmBtn.className = 'remove';
+        rmBtn.textContent = 'Remove';
+        rmBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          removeItem(item.key);
+          toast('Removed', item.name + ' removed.');
+        });
+
+        div.appendChild(cb);
+        div.appendChild(lbl);
+        if (item.custom) div.appendChild(rmBtn);
+        list.appendChild(div);
+      });
+
+      section.appendChild(list);
+      els.checklistBody.appendChild(section);
+    });
+
+    updateStats();
+  }
+
+  // UPDATE STATS
+  function updateStats(){
+    const total = Object.keys(state.items).length;
+    const checked = Object.values(state.items).filter(i => i.checked).length;
+    els.totalItems.textContent = total;
+    els.checkedItems.textContent = checked;
+  }
+
+  // CUSTOM ITEM
+  els.btnAddCustom.addEventListener('click', () => {
+    const name = els.customItemInput.value.trim();
+    if (!name) return toast('Error', 'Enter an item name.');
+    addItem('custom', name, true);
+    els.customItemInput.value = '';
+    toast('Added', name + ' added to Custom category.');
+  });
+
+  els.customItemInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter'){
+      e.preventDefault();
+      els.btnAddCustom.click();
+    }
+  });
+
+  // CHECK / UNCHECK ALL
+  els.btnCheckAll.addEventListener('click', () => {
+    Object.keys(state.items).forEach(key => { state.items[key].checked = true; });
+    save();
+    renderChecklist();
+    toast('Checked', 'All items checked.');
+  });
+
+  els.btnUncheckAll.addEventListener('click', () => {
+    Object.keys(state.items).forEach(key => { state.items[key].checked = false; });
+    save();
+    renderChecklist();
+    toast('Unchecked', 'All items unchecked.');
+  });
+
+  // RESET
+  els.btnReset.addEventListener('click', () => {
+    if (!confirm('Reset everything?')) return;
+    state.items = {};
+    state.tripType = 'weekend';
+    state.duration = 3;
+    save();
+    renderTripTypes();
+    renderDuration();
+    regenerateChecklist();
+    toast('Reset', 'Checklist reset.');
+  });
+
+  // EXPORT
+  function toMarkdown(){
+    const tripType = TRIP_TYPES.find(t => t.id === state.tripType);
+    const lines = [];
+    lines.push('# ✈️ Travel Checklist');
+    lines.push('');
+    lines.push(`**Trip Type:** ${tripType ? tripType.label : state.tripType}`);
+    lines.push(`**Duration:** ${state.duration} day${state.duration === 1 ? '' : 's'}`);
+    lines.push('');
+
+    // Group by category
+    const categories = {};
+    Object.keys(state.items).forEach(key => {
+      const item = state.items[key];
+      if (!categories[item.category]) categories[item.category] = [];
+      categories[item.category].push(item);
+    });
+
+    Object.keys(categories).sort().forEach(catId => {
+      const catData = CATEGORY_ITEMS[catId] || { title: '📦 Custom' };
+      lines.push(`## ${catData.title || catId}`);
+      lines.push('');
+      categories[catId].sort((a,b) => a.name.localeCompare(b.name)).forEach(item => {
+        lines.push(`- [${item.checked ? 'x' : ' '}] ${item.name}`);
+      });
+      lines.push('');
+    });
+
+    return lines.join('\n');
+  }
+
+  function download(filename, content, type){
+    const blob = new Blob([content], {type});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+  }
+
+  els.btnCopy.addEventListener('click', () => {
+    const text = toMarkdown();
+    navigator.clipboard?.writeText(text)
+      .then(() => toast('Copied', 'Checklist copied to clipboard.'))
+      .catch(() => toast('Copy', 'Clipboard blocked — use Export instead.'));
+  });
+
+  els.btnExport.addEventListener('click', () => {
+    const text = toMarkdown();
+    download('travel-checklist.md', text, 'text/markdown;charset=utf-8');
+    toast('Exported', 'Downloaded .md');
+  });
+
+  els.btnExportJson.addEventListener('click', () => {
+    const json = JSON.stringify(state, null, 2);
+    download('travel-checklist.json', json, 'application/json');
+    toast('Exported', 'Downloaded .json');
+  });
+
+  // KEYBOARD SHORTCUTS
+  window.addEventListener('keydown', (ev) => {
+    const mod = ev.ctrlKey || ev.metaKey;
+    if (!mod) return;
+    if (ev.key.toLowerCase() === 's'){
+      ev.preventDefault();
+      save();
+      toast('Saved', 'State saved.');
+    }
+    if (ev.key.toLowerCase() === 'e' && !ev.shiftKey){
+      ev.preventDefault();
+      els.btnCopy.click();
+    }
+    if (ev.key.toLowerCase() === 'e' && ev.shiftKey){
+      ev.preventDefault();
+      els.btnExportJson.click();
+    }
+  });
+
+  // THEME TOGGLE
+  els.themeToggle.addEventListener('change', () => {
+    setTheme(els.themeToggle.checked ? 'light' : 'dark');
+    save();
+  });
+
+  // INIT
+  load();
+  setTheme(state.theme);
+  renderTripTypes();
+  renderDuration();
+  renderQuickAdd();
+  regenerateChecklist();
+})();
+</script>
+</body>
+</html>

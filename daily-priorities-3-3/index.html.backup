@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Daily Priorities (3×3)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&display=swap');
+  
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+  html,body{height:100%}
+  
+  body{
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #dbeafe 0%, #fef3c7 50%, #fce7f3 100%);
+      background-attachment: fixed, fixed, fixed;
+    color: #0f172a;
+    min-height: 100vh;
+  }
+
+  header{
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(0,0,0,.08);
+    padding: 20px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .container{
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .brand{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo{
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 8px 24px rgba(59,130,246,.3);
+  }
+
+  h1{
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .subtitle{
+    color: #64748b;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  .kbd{
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    padding: 3px 7px;
+    border-radius: 6px;
+    background: rgba(0,0,0,.06);
+    border: 1px solid rgba(0,0,0,.1);
+  }
+
+  .actions{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn{
+    padding: 11px 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: all 200ms ease;
+    display: inline-block;
+  }
+
+  .btn-primary{
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+    box-shadow: 0 4px 14px rgba(59,130,246,.4);
+  }
+
+  .btn-primary:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59,130,246,.5);
+  }
+
+  .btn-ghost{
+    background: white;
+    color: #3b82f6;
+    border: 2px solid rgba(59,130,246,.2);
+  }
+
+  .btn-ghost:hover{
+    border-color: #3b82f6;
+    background: #eff6ff;
+  }
+
+  main{
+    padding: 32px 24px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .info{
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 2px solid rgba(0,0,0,.06);
+  }
+
+  .info h2{
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: #0f172a;
+  }
+
+  .info p{
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .scenarios{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .scenario{
+    padding: 8px 14px;
+    background: linear-gradient(135deg, rgba(59,130,246,.1), rgba(139,92,246,.08));
+    border-radius: 10px;
+    font-size: 13px;
+    color: #3b82f6;
+    font-weight: 600;
+  }
+
+  .grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media(max-width: 900px){
+    .grid{
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .card{
+    background: white;
+    border-radius: 18px;
+    padding: 28px;
+    border: 2px solid rgba(0,0,0,.06);
+    box-shadow: 0 4px 16px rgba(0,0,0,.04);
+  }
+
+  .card h3{
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-icon{
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  textarea{
+    width: 100%;
+    min-height: 420px;
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid rgba(0,0,0,.08);
+    background: #f8fafc;
+    font-family: ui-monospace, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    transition: all 200ms ease;
+  }
+
+  textarea:focus{
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59,130,246,.1);
+    background: white;
+  }
+
+  textarea[readonly]{
+    background: #f1f5f9;
+    color: #475569;
+  }
+
+  .meta{
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: #64748b;
+  }
+
+  .meta-item{
+    padding: 6px 12px;
+    background: rgba(0,0,0,.04);
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  .toast{
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15,23,42,.95);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 300ms ease;
+    z-index: 1000;
+  }
+
+  .toast.show{
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(-4px);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="top">
+      <div class="brand">
+        <div class="logo">⭐</div>
+        <div>
+          <h1>Daily Priorities (3×3)</h1>
+          <div class="subtitle">3 priorities + 3 actions each. <span class="kbd">⌘/Ctrl+E</span> copy • <span class="kbd">⌘/Ctrl+S</span> save</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" id="btnClear">Clear</button>
+        <button class="btn btn-ghost" id="btnExportMd">Export .md</button>
+        <button class="btn btn-ghost" id="btnExportJson">Export .json</button>
+        <button class="btn btn-primary" id="btnCopy">Copy</button>
+        <a href="/mockups/" class="btn btn-ghost">← Library</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    
+    <div class="info">
+      <h2>💡 What problem it solves</h2>
+      <p>Turn a vague day into <strong>3 clear priorities + tiny next steps</strong> you can share/export.</p>
+      <div class="scenarios">
+        <div class="scenario">🌅 Morning reset: pick 3 outcomes + next action</div>
+        <div class="scenario">📤 Send plan to teammate/partner</div>
+        <div class="scenario">🔄 After lunch: rewrite priorities</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      
+      <div class="card">
+        <h3><span class="card-icon">📝</span> Your Notes</h3>
+        <textarea id="input" placeholder="Type here...
+
+Example format:
+1. Finish project proposal
+   - Draft outline
+   - Gather data
+   - Review with team
+
+2. Reply to important emails
+   - Client A follow-up
+   - Budget approval
+   - Schedule meeting
+
+3. Plan next week
+   - Review calendar
+   - Set 3 goals
+   - Block focus time"></textarea>
+        <div class="meta">
+          <div class="meta-item" id="saveState">✓ Saved</div>
+          <div class="meta-item" id="savedAt"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="card-icon">📋</span> Output (Markdown)</h3>
+        <textarea id="output" readonly></textarea>
+        <div class="meta">
+          <div class="meta-item">Autosaves to localStorage</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  const KEY = 'daily-priorities-v1';
+  const $ = id => document.getElementById(id);
+
+  function load(){
+    try{
+      return JSON.parse(localStorage.getItem(KEY) || '{}');
+    }catch{
+      return {};
+    }
+  }
+
+  function save(data){
+    try{
+      localStorage.setItem(KEY, JSON.stringify(data));
+      updateSaveState();
+    }catch{}
+  }
+
+  function updateSaveState(){
+    const now = new Date().toLocaleTimeString();
+    $('saveState').textContent = '✓ Saved';
+    $('savedAt').textContent = now;
+  }
+
+  function updateOutput(){
+    const text = $('input').value;
+    $('output').value = text || '# Daily Priorities\n\n(Empty)';
+  }
+
+  function showToast(msg){
+    $('toast').textContent = msg;
+    $('toast').classList.add('show');
+    setTimeout(() => $('toast').classList.remove('show'), 2500);
+  }
+
+  function copyText(text){
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(text);
+    }else{
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+  }
+
+  function downloadFile(filename, content){
+    const blob = new Blob([content], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Load saved data
+  const data = load();
+  if(data.input) $('input').value = data.input;
+  updateOutput();
+  updateSaveState();
+
+  // Auto-save on input
+  let saveTimer;
+  $('input').addEventListener('input', () => {
+    updateOutput();
+    clearTimeout(saveTimer);
+    $('saveState').textContent = '⏳ Saving...';
+    saveTimer = setTimeout(() => {
+      save({ input: $('input').value });
+    }, 500);
+  });
+
+  // Copy
+  $('btnCopy').addEventListener('click', () => {
+    copyText($('output').value);
+    showToast('✓ Copied to clipboard!');
+  });
+
+  // Export .md
+  $('btnExportMd').addEventListener('click', () => {
+    const date = new Date().toISOString().split('T')[0];
+    downloadFile(`priorities-${date}.md`, $('output').value);
+    showToast('✓ Exported Markdown file!');
+  });
+
+  // Export .json
+  $('btnExportJson').addEventListener('click', () => {
+    const date = new Date().toISOString().split('T')[0];
+    const json = JSON.stringify(load(), null, 2);
+    downloadFile(`priorities-${date}.json`, json);
+    showToast('✓ Exported JSON file!');
+  });
+
+  // Clear
+  $('btnClear').addEventListener('click', () => {
+    if(!confirm('Clear all notes?')) return;
+    $('input').value = '';
+    updateOutput();
+    save({ input: '' });
+    showToast('✓ Cleared!');
+  });
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', e => {
+    if((e.ctrlKey || e.metaKey) && e.key === 's'){
+      e.preventDefault();
+      save({ input: $('input').value });
+      showToast('✓ Saved manually!');
+    }
+    if((e.ctrlKey || e.metaKey) && e.key === 'e'){
+      e.preventDefault();
+      copyText($('output').value);
+      showToast('✓ Copied!');
+    }
+  });
+
+})();
+</script>
+
+<script src="/mockups/tracking.js"></script>
+</body>
+</html>

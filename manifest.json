@@ -1,0 +1,31 @@
+{
+  "name": "DrumDrums Library",
+  "short_name": "DrumDrums",
+  "description": "30 mobile-first web apps - button-driven, instant, no signup required",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f6f8fb",
+  "theme_color": "#0077ff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Featured DrumDrums",
+      "url": "./featured/",
+      "description": "Top 5 curated apps"
+    },
+    {
+      "name": "Builder's DrumLog",
+      "url": "./builder-log/",
+      "description": "What I learned building 30 apps"
+    }
+  ]
+}

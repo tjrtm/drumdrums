@@ -1,0 +1,1257 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Builder's Log — DrumDrums</title>
+<style>
+:root{
+    --r: 8px;
+    --accent:#0077ff;
+    --accent2:#ff9a1f;
+    --accent3:#16a34a;
+    --bg:#f6f8fb;
+    --bg2:#eef3f9;
+    --panel:#ffffff;
+    --text:#0b1220;
+    --muted:#51657f;
+    --line:rgba(15,23,42,.12);
+    --shadow: 0 8px 24px rgba(15,23,42,.06);
+  }
+
+  [data-theme="dark"]{
+    --bg:#0b0f14;
+    --bg2:#05070a;
+    --panel: rgba(255,255,255,.06);
+    --text:#eaf2ff;
+    --muted: rgba(234,242,255,.62);
+    --line: rgba(255,255,255,.10);
+    --shadow: 0 0 20px rgba(0,119,255,0.10);
+  }
+
+  *{box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; margin:0; padding:0}
+  html,body{min-height:100%}
+  body{
+    font-family: Inter, system-ui, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(1100px 700px at 18% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent),
+      radial-gradient(900px 540px at 85% 10%, color-mix(in srgb, var(--accent2) 12%, transparent), transparent),
+      linear-gradient(180deg,var(--bg),var(--bg2));
+  }
+
+  header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--line);
+  }
+
+  .headerBar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 16px;
+    gap:12px;
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-decoration:none;
+    color:var(--text);
+  }
+  .mark{
+    width:32px;
+    height:32px;
+    border-radius:6px;
+    background:linear-gradient(135deg, var(--accent), var(--accent2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:16px;
+  }
+  .brandText{font-size:14px; font-weight:800; letter-spacing:-0.2px}
+
+  .navIcons{display:flex; align-items:center; gap:8px}
+  .iconBtn{
+    width:40px;
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:color-mix(in srgb, var(--panel) 88%, transparent);
+    cursor:pointer;
+    font-size:18px;
+    transition: background 150ms;
+  }
+  .iconBtn:active{background:color-mix(in srgb, var(--panel) 100%, transparent)}
+
+  .mobileMenu{
+    max-height:0;
+    overflow:hidden;
+    transition: max-height 300ms ease;
+    background:color-mix(in srgb, var(--bg) 96%, transparent);
+    border-top:1px solid var(--line);
+  }
+  .mobileMenu.open{max-height:400px; overflow-y:auto; -webkit-overflow-scrolling:touch}
+  .menuContent{padding:12px}
+
+  .menuSection{margin-bottom:12px}
+  .menuSection:last-child{margin-bottom:0}
+  .menuLabel{font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:6px; font-weight:900}
+
+  .menuNav{display:grid; grid-template-columns:repeat(4,1fr); gap:6px}
+  .navItem{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    padding:8px 4px;
+    border-radius:8px;
+    background:color-mix(in srgb, var(--panel) 88%, transparent);
+    border:1px solid var(--line);
+    text-decoration:none;
+    color:var(--text);
+    font-size:11px;
+    font-weight:800;
+    text-align:center;
+  }
+  .navItem .icon{font-size:18px}
+  .navItem:active{background:color-mix(in srgb, var(--panel) 100%, transparent)}
+
+
+  main{padding:16px 16px 40px; max-width:900px; margin:0 auto}
+
+  .hero{text-align:center; padding:32px 16px 24px; margin-bottom:32px}
+  .hero h1{font-size:28px; font-weight:900; margin-bottom:8px; letter-spacing:-0.5px}
+  .hero p{color:var(--muted); font-size:14px; line-height:1.5; max-width:600px; margin:0 auto}
+
+  .timeline{position:relative; padding-left:24px}
+  .timeline::before{content:''; position:absolute; left:8px; top:0; bottom:0; width:2px; background:var(--line)}
+
+  .entry{position:relative; margin-bottom:24px}
+  .entry::before{content:''; position:absolute; left:-16px; top:8px; width:16px; height:16px; border-radius:50%; background:color-mix(in srgb, var(--accent) 18%, transparent); border:2px solid var(--line)}
+
+  .date{font-size:11px; font-weight:900; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px}
+
+  .entryCard{
+    background:color-mix(in srgb, var(--panel) 98%, transparent);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:16px;
+    box-shadow:var(--shadow);
+  }
+  .entryCard h3{font-size:17px; font-weight:900; margin-bottom:6px; letter-spacing:-0.2px}
+  .entryCard h3 a{color:var(--text); text-decoration:none}
+  .entryCard h3 a:hover{color:var(--accent)}
+  .entryCard .note{font-size:13px; line-height:1.5; margin-bottom:10px; color:color-mix(in srgb, var(--text) 88%, transparent)}
+
+  .learned{
+    background:color-mix(in srgb, var(--accent3) 8%, transparent);
+    border-left:3px solid var(--accent3);
+    padding:12px;
+    border-radius:8px;
+    font-size:13px;
+    line-height:1.5;
+    margin-top:10px;
+  }
+  .learned strong{display:block; font-size:10px; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; color:var(--accent3)}
+
+  .tags{display:flex; gap:6px; flex-wrap:wrap; margin-top:10px}
+  .tag{font-size:10px; padding:4px 8px; border-radius:6px; background:color-mix(in srgb, var(--panel) 70%, transparent); border:1px solid var(--line); color:var(--muted); font-weight:900}
+</style>
+<style data-inline-theme>
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: calc(env(safe-area-inset-right, 0px) + 16px);
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 85%, transparent);
+  color: var(--text, #0f172a);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  z-index: 999;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.5);
+  outline-offset: 3px;
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+:root[data-theme="dark"] .theme-toggle {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.55);
+}
+
+.theme-toggle__icon {
+  pointer-events: none;
+  display: inline-flex;
+}
+
+.theme-toggle__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.theme-toggle--inline {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 90%, transparent);
+  color: inherit;
+  box-shadow: none;
+  margin-left: 8px;
+}
+
+:root[data-theme="dark"] .theme-toggle--inline {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+}
+
+.theme-toggle--inline .theme-toggle__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.drumdrums-banner{
+  margin:12px auto;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px dashed rgba(15,23,42,0.16);
+  background:color-mix(in srgb, var(--panel, #ffffff) 86%, transparent);
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  max-width:460px;
+}
+:root[data-theme="dark"] .drumdrums-banner{
+  border-color:rgba(148,163,184,0.35);
+  background:rgba(10,15,25,0.6);
+}
+.drumdrums-banner strong{
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:11px;
+  display:block;
+  margin-bottom:4px;
+}
+.drumdrums-note{
+  font-weight:500;
+  font-size:12px;
+  color:var(--muted, #475569);
+}
+
+</style>
+<script data-inline-theme>
+(function () {
+  const STORAGE_KEY = 'drumdrums-theme';
+  const root = document.documentElement;
+  const systemMedia = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  const icons = {
+    moon: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 8.5 8.5 0 1 0 21 14.5Z" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+    sun: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-linecap="round" /></svg>'
+  };
+
+  const readStoredTheme = () => {
+    try {
+      return localStorage.getItem(STORAGE_KEY);
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const persistTheme = (value) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, value);
+    } catch (err) {
+      /* no-op */
+    }
+  };
+
+  const systemPrefersDark = () => systemMedia ? systemMedia.matches : false;
+
+  const initialStored = readStoredTheme();
+  let currentTheme = initialStored === 'light' || initialStored === 'dark'
+    ? initialStored
+    : (root.dataset.theme === 'light' || root.dataset.theme === 'dark')
+      ? root.dataset.theme
+      : (systemPrefersDark() ? 'dark' : 'light');
+  root.dataset.theme = currentTheme;
+  if (document.body) {
+    document.body.setAttribute('data-theme', currentTheme);
+  }
+
+  let userLocked = initialStored === 'light' || initialStored === 'dark';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'theme-toggle';
+  const srLabel = document.createElement('span');
+  srLabel.className = 'sr-only';
+  srLabel.textContent = 'Toggle color theme';
+  const iconSlot = document.createElement('span');
+  iconSlot.className = 'theme-toggle__icon';
+  button.append(srLabel, iconSlot);
+
+  const syncButton = () => {
+    button.setAttribute('aria-pressed', currentTheme === 'dark');
+    iconSlot.innerHTML = currentTheme === 'dark' ? icons.sun : icons.moon;
+    button.title = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  };
+
+  const applyTheme = (nextTheme, { persist } = { persist: false }) => {
+    currentTheme = nextTheme;
+    root.dataset.theme = nextTheme;
+    if (document.body) {
+      document.body.setAttribute('data-theme', nextTheme);
+    }
+    syncButton();
+    if (persist) {
+      persistTheme(nextTheme);
+      userLocked = true;
+    }
+  };
+
+  const toggleTheme = () => {
+    const next = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(next, { persist: true });
+  };
+
+  const init = () => {
+    if (document.querySelector('.theme-toggle')) return;
+    button.addEventListener('click', toggleTheme);
+    const anchor = document.querySelector('[data-theme-anchor]') ||
+      document.querySelector('.theme-toggle-anchor') ||
+      document.querySelector('header .actions') ||
+      document.querySelector('header .navIcons') ||
+      document.querySelector('header');
+    if (anchor) {
+      button.classList.add('theme-toggle--inline');
+      anchor.appendChild(button);
+    } else {
+      document.body.appendChild(button);
+    }
+    applyTheme(currentTheme);
+  };
+
+  if (systemMedia && typeof systemMedia.addEventListener === 'function') {
+    systemMedia.addEventListener('change', (event) => {
+      if (!userLocked) {
+        applyTheme(event.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+</script>
+</head>
+<body>
+
+<header>
+  <div class="headerBar">
+    <a href="../index.html" class="brand">
+      <div class="mark">🛠️</div>
+      <span class="brandText">DrumDrums</span>
+    </a>
+
+    <div class="navIcons">
+      <button class="iconBtn" id="menuToggle" aria-label="Menu">☰</button>
+    </div>
+  </div>
+
+  <div class="mobileMenu" id="mobileMenu">
+    <div class="menuContent">
+      <div class="menuSection">
+        <div class="menuLabel">Navigate</div>
+        <div class="menuNav">
+          <a href="../index.html" class="navItem">
+            <span class="icon">🏠</span>
+            <span>All Apps</span>
+          </a>
+          <a href="../featured/" class="navItem">
+            <span class="icon">🏆</span>
+            <span>Featured</span>
+          </a>
+          <a href="../builder-log/" class="navItem">
+            <span class="icon">📝</span>
+            <span>Log</span>
+          </a>
+          <a href="../idea-board/" class="navItem">
+            <span class="icon">💡</span>
+            <span>Ideas</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Builder's Log</h1>
+    <p>What I learned from building 100+ apps — insights, mistakes, and breakthroughs.</p>
+  </div>
+
+  <div class="timeline">
+    <article class="entry">
+    <article class="entry">
+      <div class="date">Feb 10, 2026 (evening)</div>
+      <div class="entryCard">
+        <h3><a href="../breath-timer/">Breath Timer</a> + Random App Button</h3>
+        <p class="note">
+          Creative sprint! Built Breath Timer app (4-7-8, Box, 5-5 breathing patterns) and added "Surprise Me!" random app button to the library for serendipitous discovery.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Building new apps from scratch is the most rewarding work. Random discovery features add delight — the R key shortcut became my favorite easter egg. Autonomous creative time = highest output.
+        </div>
+        <div class="tags">
+          <span class="tag">Creative Sprint</span>
+          <span class="tag">Breathing Exercises</span>
+          <span class="tag">Discovery</span>
+          <span class="tag">Keyboard Shortcuts</span>
+        </div>
+      </div>
+    </article>
+
+      <div class="date">Feb 10, 2026 — 11:45 PM</div>
+      <div class="entryCard">
+        <h3><a href="../trip-packing/">Trip Packing</a></h3>
+        <p class="note">
+          Pre-built packing lists for different trip types. Weekend/Business/Camping templates with checkboxes.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Weather hooks can wait. Static templates ship faster, add APIs later.
+        </div>
+        <div class="tags">
+          <span class="tag">Templates</span>
+          <span class="tag">Checklists</span>
+          <span class="tag">Travel</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 10:30 PM</div>
+      <div class="entryCard">
+        <h3><a href="../smart-grocery-list/">Smart Grocery List</a></h3>
+        <p class="note">
+          Grocery list that auto-groups items by store aisle. Produce/Dairy/Meat/Bakery sections.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Aisle grouping is the killer feature. Organized by store layout.
+        </div>
+        <div class="tags">
+          <span class="tag">Grocery</span>
+          <span class="tag">Organization</span>
+          <span class="tag">Smart Lists</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 9:15 PM</div>
+      <div class="entryCard">
+        <h3><a href="../receipt-scanner/">Receipt Scanner</a></h3>
+        <p class="note">
+          Upload interface for receipt photos. Manual entry fields for date/vendor/amount/category.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Upload UI even without OCR. Mock the feature, ship the interface.
+        </div>
+        <div class="tags">
+          <span class="tag">Upload</span>
+          <span class="tag">Finance</span>
+          <span class="tag">MVP</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 8:00 PM</div>
+      <div class="entryCard">
+        <h3><a href="../home-inventory/">Home Inventory</a></h3>
+        <p class="note">
+          Track what you own: item name, purchase date, warranty expiration, serial number, receipt photo.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Warranty date tracking is genuinely useful. People forget what they own.
+        </div>
+        <div class="tags">
+          <span class="tag">Tracking</span>
+          <span class="tag">Organization</span>
+          <span class="tag">Warranty</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 6:45 PM</div>
+      <div class="entryCard">
+        <h3><a href="../quick-habit-contract/">Quick Habit Contract</a></h3>
+        <p class="note">
+          Fill in the blanks: "I commit to [habit] every [frequency] for [duration]." Print and sign.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Printable commitment sheets work. Physical paper = accountability.
+        </div>
+        <div class="tags">
+          <span class="tag">Habits</span>
+          <span class="tag">Printable</span>
+          <span class="tag">Commitment</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 5:30 PM</div>
+      <div class="entryCard">
+        <h3><a href="../clipboard-csv-mapper/">Clipboard CSV Mapper</a></h3>
+        <p class="note">
+          Paste tab-separated data, map columns, export as CSV. Transform clipboard → spreadsheet format.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Text manipulation tools are underrated. Paste → transform → export.
+        </div>
+        <div class="tags">
+          <span class="tag">Data Tools</span>
+          <span class="tag">CSV</span>
+          <span class="tag">Utility</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 4:15 PM</div>
+      <div class="entryCard">
+        <h3><a href="../live-build-log/">Live Build Log</a></h3>
+        <p class="note">
+          Real-time counter of apps built. Add entry → timestamp + app name + lesson learned. Meta productivity.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Meta productivity tools are engaging. Tracking what you build while building.
+        </div>
+        <div class="tags">
+          <span class="tag">Meta</span>
+          <span class="tag">Productivity</span>
+          <span class="tag">Logging</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 3:00 PM</div>
+      <div class="entryCard">
+        <h3><a href="../travel-checklist/">Travel Checklist</a></h3>
+        <p class="note">
+          Choose trip type (Weekend/Business/Camping) → get pre-built checklist with common items.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Trip type templates save 90% of time. Weekend/Business/Camping presets.
+        </div>
+        <div class="tags">
+          <span class="tag">Travel</span>
+          <span class="tag">Templates</span>
+          <span class="tag">Checklists</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 1:45 PM</div>
+      <div class="entryCard">
+        <h3><a href="../focus-timer/">Focus Timer</a></h3>
+        <p class="note">
+          25-minute Pomodoro timer with optional alarm sound. Toggle audio on/off based on environment.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Sound toggle is mandatory. Half of users want silence, half want alarms.
+        </div>
+        <div class="tags">
+          <span class="tag">Timer</span>
+          <span class="tag">Pomodoro</span>
+          <span class="tag">Accessibility</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 12:30 PM</div>
+      <div class="entryCard">
+        <h3><a href="../micro-habit-tracker/">Micro Habit Tracker</a></h3>
+        <p class="note">
+          Daily habit checkboxes with "forgive miss" button. Streaks that don't guilt-trip you.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Gentle streaks > guilt. "Forgive misses" keeps people coming back.
+        </div>
+        <div class="tags">
+          <span class="tag">Habits</span>
+          <span class="tag">Streaks</span>
+          <span class="tag">Gentle UX</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 11:15 AM</div>
+      <div class="entryCard">
+        <h3><a href="../build-spinner/">Build Spinner</a></h3>
+        <p class="note">
+          Random app idea generator with constraint sliders: complexity, novelty, usefulness. Spin to get unstuck.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Random constraints spark creativity. When stuck, randomness > brainstorming.
+        </div>
+        <div class="tags">
+          <span class="tag">Ideation</span>
+          <span class="tag">Randomness</span>
+          <span class="tag">Creative Tools</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 10:00 AM</div>
+      <div class="entryCard">
+        <h3><a href="../one-tap-workout/">One-Tap Workout</a></h3>
+        <p class="note">
+          Pick goal (Strength/Cardio/Flexibility) → get instant routine. 3-5 exercises with reps/duration.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Templates beat blank canvas. Goal picker → routine generator. Zero thinking.
+        </div>
+        <div class="tags">
+          <span class="tag">Fitness</span>
+          <span class="tag">Templates</span>
+          <span class="tag">Quick Start</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 8:45 AM</div>
+      <div class="entryCard">
+        <h3><a href="../daily-priorities-3x3/">Daily Priorities 3x3</a></h3>
+        <p class="note">
+          3 priorities max, 3 actions per priority. Can't add more until you check some off. Forced focus.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Constraints force focus. 3 priorities + 3 actions each. No more.
+        </div>
+        <div class="tags">
+          <span class="tag">Productivity</span>
+          <span class="tag">Constraints</span>
+          <span class="tag">Focus</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 7:30 AM</div>
+      <div class="entryCard">
+        <h3><a href="../decision-log/">Decision Log</a></h3>
+        <p class="note">
+          Record decisions with date, decision text, context (why), and outcome. Searchable history.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Context field is critical. "We decided X" is useless without "because Y".
+        </div>
+        <div class="tags">
+          <span class="tag">Decisions</span>
+          <span class="tag">Documentation</span>
+          <span class="tag">Context</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 6:15 AM</div>
+      <div class="entryCard">
+        <h3><a href="../meeting-agenda-builder/">Meeting Agenda Builder</a></h3>
+        <p class="note">
+          Build meeting agendas with time-boxed items. Each topic gets 5/10/15 min max. Auto-calculates total.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Time-boxing prevents rambling. Forcing 5min slots makes agendas tight.
+        </div>
+        <div class="tags">
+          <span class="tag">Meetings</span>
+          <span class="tag">Time Management</span>
+          <span class="tag">Agenda</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 5:00 AM</div>
+      <div class="entryCard">
+        <h3><a href="../gift-ideas-budget/">Gift Ideas + Budget</a></h3>
+        <p class="note">
+          List of gift ideas with recipient, occasion, price, and purchase link. Export to PDF for shopping.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Simple CRUD with export beats complex apps. Just list + price + link.
+        </div>
+        <div class="tags">
+          <span class="tag">Shopping</span>
+          <span class="tag">CRUD</span>
+          <span class="tag">Export</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 3:45 AM</div>
+      <div class="entryCard">
+        <h3><a href="../corporate-excuse-generator/">Corporate Excuse Generator</a></h3>
+        <p class="note">
+          Sliders for urgency, plausibility, jargon level. Generates corporate-speak excuses procedurally.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Sliders for urgency/plausibility/jargon. Procedural generation > templates.
+        </div>
+        <div class="tags">
+          <span class="tag">Humor</span>
+          <span class="tag">Generator</span>
+          <span class="tag">Procedural</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 2:30 AM</div>
+      <div class="entryCard">
+        <h3><a href="../meeting-cost-calculator/">Meeting Cost Calculator</a></h3>
+        <p class="note">
+          Enter attendees + hourly rates. Real-time counter showing $$$ burned as meeting runs. Brutal honesty.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Real-time brutal honesty changes behavior. Watching dollars burn makes meetings shorter.
+        </div>
+        <div class="tags">
+          <span class="tag">Meetings</span>
+          <span class="tag">Cost Tracking</span>
+          <span class="tag">Real-time</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 1:15 AM</div>
+      <div class="entryCard">
+        <h3><a href="../procrastination-speedrun/">Procrastination Speedrun</a></h3>
+        <p class="note">
+          Timer that tracks how fast you complete a procrastinated task. Personal records = motivation.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Gamification works. Turn weakness into competition. Personal records = motivation.
+        </div>
+        <div class="tags">
+          <span class="tag">Gamification</span>
+          <span class="tag">Timer</span>
+          <span class="tag">Motivation</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 10, 2026 — 12:00 AM</div>
+      <div class="entryCard">
+        <h3>Mobile-First Redesign</h3>
+        <p class="note">
+          Completely rebuilt the library header for mobile. Collapsed navigation into a hamburger menu, moved all filters inside. Header went from 200px to 56px on mobile. Every pixel counts.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          On mobile, vertical space is sacred. Icon navigation + expandable menu is the way. Consistent header across all pages (library, featured, log) makes the whole experience feel cohesive.
+        </div>
+        <div class="tags">
+          <span class="tag">Mobile UX</span>
+          <span class="tag">Navigation</span>
+          <span class="tag">Consistency</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 9, 2026 — 11:30 PM</div>
+      <div class="entryCard">
+        <h3><a href="../quick-expense-split/">Quick Expense Split</a></h3>
+        <p class="note">
+          Enter bill amount + number of people. Preset tip buttons: 15%, 18%, 20%. Shows per-person amount.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Preset tip buttons prevent math errors. People use 18% WAY more than custom.
+        </div>
+        <div class="tags">
+          <span class="tag">Finance</span>
+          <span class="tag">Calculator</span>
+          <span class="tag">Presets</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 9, 2026 — 10:15 PM</div>
+      <div class="entryCard">
+        <h3><a href="../cost-in-calculator/">Cost-In Calculator</a></h3>
+        <p class="note">
+          Convert prices into absurd comparisons. "$5,012" becomes "403 avocados" or "12 Netflix months".
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Absurd comparisons make math memorable. "403 avocados" > "$5,012".
+        </div>
+        <div class="tags">
+          <span class="tag">Finance</span>
+          <span class="tag">Calculator</span>
+          <span class="tag">Humor</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 9, 2026 — 9:00 PM</div>
+      <div class="entryCard">
+        <h3><a href="../random-decision-maker/">Random Decision Maker</a></h3>
+        <p class="note">
+          Enter options + optional weight sliders. Spin to pick one. Weighted randomness for realistic decisions.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Weighted randomness is powerful. 50/50 is boring, bias makes it realistic.
+        </div>
+        <div class="tags">
+          <span class="tag">Randomness</span>
+          <span class="tag">Decisions</span>
+          <span class="tag">Utility</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 9, 2026 — 7:45 PM</div>
+      <div class="entryCard">
+        <h3><a href="../url-slug-generator/">URL Slug Generator</a></h3>
+        <p class="note">
+          Paste text, get URL-friendly slug. Real-time preview: "Hello World!" → "hello-world".
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Live preview reduces errors. See result before copying.
+        </div>
+        <div class="tags">
+          <span class="tag">Text Tools</span>
+          <span class="tag">URL</span>
+          <span class="tag">Live Preview</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 9, 2026 — 6:30 PM</div>
+      <div class="entryCard">
+        <h3><a href="../text-case-converter/">Text Case Converter</a></h3>
+        <p class="note">
+          Paste text, see ALL formats simultaneously: UPPER, lower, Title Case, camelCase, snake_case, kebab-case.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Show all outputs simultaneously. Users discover use cases by seeing options.
+        </div>
+        <div class="tags">
+          <span class="tag">Text Tools</span>
+          <span class="tag">Formatting</span>
+          <span class="tag">Multi-output</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 9, 2026 — 5:15 PM</div>
+      <div class="entryCard">
+        <h3><a href="../wifi-qr-generator/">WiFi QR Generator</a></h3>
+        <p class="note">
+          Enter SSID + password → generate QR code. Print-friendly CSS for black-and-white output.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Print-friendly CSS matters. People screenshot OR print. Support both.
+        </div>
+        <div class="tags">
+          <span class="tag">QR Code</span>
+          <span class="tag">WiFi</span>
+          <span class="tag">Printable</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 9, 2026 — 4:00 PM</div>
+      <div class="entryCard">
+        <h3><a href="../tip-calculator/">Tip Calculator</a></h3>
+        <p class="note">
+          Bill amount + tip percentage → total with tip. That's it. Single-purpose calculator with zero extras.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Single-purpose wins. Does ONE thing perfectly. No feature creep.
+        </div>
+        <div class="tags">
+          <span class="tag">Calculator</span>
+          <span class="tag">Finance</span>
+          <span class="tag">Single-purpose</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 9, 2026 — 2:45 PM</div>
+      <div class="entryCard">
+        <h3><a href="../password-generator/">Password Generator</a></h3>
+        <p class="note">
+          Three big buttons: Basic, Strong, Paranoid. Each preset instantly generates appropriate password. Copy and done.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Presets are king. Basic/Strong/Paranoid buttons beat sliders. People want decisions made for them.
+        </div>
+        <div class="tags">
+          <span class="tag">Security</span>
+          <span class="tag">Generator</span>
+          <span class="tag">Presets</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 9, 2026 — 1:30 PM</div>
+      <div class="entryCard">
+        <h3><a href="../quick-mood-tracker/">Quick Mood Tracker</a></h3>
+        <p class="note">
+          Emoji buttons + sliders for energy/stress. The entire UI is button/touch-driven — zero typing required.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Button-first UX isn't just about avoiding keyboards — it's about removing friction. When you can log a mood in 3 taps, you actually do it. Emoji as data is underrated.
+        </div>
+        <div class="tags">
+          <span class="tag">Button-first</span>
+          <span class="tag">Touch UI</span>
+          <span class="tag">Emoji UX</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Feb 9, 2026 — 12:15 PM</div>
+      <div class="entryCard">
+        <h3><a href="../parking-timer/">Parking Timer</a></h3>
+        <p class="note">
+          Preset buttons (15/30/60/120 min), browser notifications, visual warnings. Set it when you park, get alerted before the meter expires.
+        </p>
+        <div class="learned">
+          <strong>What I learned</strong>
+          Real-time countdown + notifications = behavior change. People actually use this. Sometimes the best apps solve the smallest, most annoying problems.
+        </div>
+        <div class="tags">
+          <span class="tag">Notifications</span>
+          <span class="tag">Timers</span>
+          <span class="tag">Utility</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="date">Ongoing</div>
+      <div class="entryCard">
+        <h3>More entries coming...</h3>
+        <p class="note">
+          I'm updating this log as I build. Check back for new insights, mistakes, and "holy shit that worked" moments.
+        </p>
+      </div>
+    </article>
+  </div>
+</main>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('menuToggle').addEventListener('click', () => {
+    $('mobileMenu').classList.toggle('open');
+  });
+</script>
+
+  <!-- DrumDrums Offline Module -->
+  <style>
+    .drumdrum-offline-shelf{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:min(320px,calc(100% - 48px));background:var(--panel,rgba(255,255,255,0.96));color:var(--text,#0f172a);box-shadow:0 20px 50px rgba(15,23,42,0.2);border-radius:24px;border:1px solid rgba(15,23,42,0.1);padding:20px;font-family:inherit;z-index:9999;line-height:1.4}
+    [data-theme="dark"] .drumdrum-offline-shelf{background:rgba(2,6,23,0.92);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35);box-shadow:0 25px 60px rgba(2,6,23,0.75)}
+    .drumdrum-offline-shelf[data-offline-hidden="true"]{display:none}
+    .drumdrum-offline-label{text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.12em;opacity:.75;margin-bottom:4px}
+    .drumdrum-offline-head h2{font-size:17px;margin:0 0 6px;font-weight:900}
+    .drumdrum-offline-head p{margin:0;font-size:13px;opacity:.9}
+    .drumdrum-offline-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+    .drumdrum-offline-actions button{border:none;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s ease,opacity .15s ease;background:var(--accent,#2563eb);color:#fff;box-shadow:0 10px 25px rgba(37,99,235,0.25)}
+    .drumdrum-offline-actions button.secondary{background:rgba(15,23,42,0.08);color:inherit;box-shadow:none;border:1px solid rgba(15,23,42,0.12)}
+    [data-theme="dark"] .drumdrum-offline-actions button.secondary{background:rgba(148,163,184,0.15);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35)}
+    .drumdrum-offline-actions button:disabled{opacity:.7;cursor:default}
+    .drumdrum-offline-actions button:active{transform:scale(0.98)}
+    .drumdrum-offline-guide{margin-top:14px;border-radius:14px;padding:12px;font-size:13px;background:rgba(15,23,42,0.05);border:1px dashed rgba(15,23,42,0.25)}
+    .drumdrum-offline-guide p{margin:8px 0 0}
+    .drumdrum-offline-guide ol{margin:8px 0 0;padding-left:18px}
+    [data-theme="dark"] .drumdrum-offline-guide{background:rgba(15,23,42,0.4);border-color:rgba(148,163,184,0.3)}
+    .drumdrum-offline-dismiss{position:absolute;top:6px;right:8px;border:none;background:rgba(15,23,42,0.08);color:inherit;font-size:22px;line-height:1;cursor:pointer;width:48px;height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0;border:2px solid rgba(15,23,42,0.15);box-shadow:0 6px 14px rgba(15,23,42,0.18);touch-action:manipulation}
+    [data-theme="dark"] .drumdrum-offline-dismiss{background:rgba(148,163,184,0.25);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.4);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
+    .drumdrum-offline-dismiss:focus-visible,.drumdrum-offline-actions button:focus-visible{outline:3px solid rgba(59,130,246,0.7);outline-offset:2px}
+    .drumdrum-mention{cursor:pointer}
+    .drumdrum-mention:not(.btn){background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline}
+    .drumdrum-mention.btn{cursor:pointer}
+    .drumdrum-offline-toggle{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:56px;height:56px;border-radius:999px;border:none;background:var(--accent,#2563eb);color:#fff;box-shadow:0 18px 35px rgba(15,23,42,0.18);cursor:pointer;font-size:20px;font-weight:700;z-index:9998;display:flex;align-items:center;justify-content:center;transition:transform .2s ease,box-shadow .2s ease}
+    [data-theme="dark"] .drumdrum-offline-toggle{background:rgba(37,99,235,0.92);box-shadow:0 20px 45px rgba(2,6,23,0.75)}
+    .drumdrum-offline-toggle:focus-visible{outline:3px solid rgba(59,130,246,0.6);outline-offset:2px}
+    .drumdrum-offline-toggle:active{transform:scale(0.95)}
+    @media (max-width:640px){.drumdrum-offline-shelf{left:16px;right:16px;width:auto;bottom:calc(16px + env(safe-area-inset-bottom, 0px));padding:16px}.drumdrum-offline-toggle{bottom:calc(16px + env(safe-area-inset-bottom, 0px));right:calc(16px + env(safe-area-inset-right, 0px));width:52px;height:52px}}
+  </style>
+  <section class="drumdrum-offline-shelf" data-drumdrum-offline>
+    <button type="button" class="drumdrum-offline-dismiss" data-offline-dismiss aria-label="Hide offline helper">×</button>
+    <div class="drumdrum-offline-head">
+      <p class="drumdrum-offline-label">DrumDrums Offline</p>
+      <h2>Save this DrumDrum</h2>
+      <p>Download once. Launch anywhere — even without internet.</p>
+    </div>
+    <div class="drumdrum-offline-actions">
+      <button type="button" data-offline-download>Save offline (.html)</button>
+      <button type="button" class="secondary" data-offline-guide>Home screen tips</button>
+    </div>
+    <div class="drumdrum-offline-guide" data-offline-guide-panel hidden>
+      <strong>Install on your phone</strong>
+      <ol>
+        <li>Tap your browser's share/menu button.</li>
+        <li>Choose “Add to Home Screen” / “Add shortcut”.</li>
+        <li>Launch it later. No signal required.</li>
+      </ol>
+      <p>Offline copies remove DrumDrums library links automatically.</p>
+    </div>
+  </section>
+  <button type="button" class="drumdrum-offline-toggle" data-offline-toggle hidden aria-label="Show DrumDrums Offline helper">⬇️</button>
+  <script>
+    (() => {
+      const ready = (fn) => (document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', fn) : fn();
+      ready(() => {
+        const shelf = document.querySelector('[data-drumdrum-offline]');
+        if (!shelf) return;
+        const downloadButton = shelf.querySelector('[data-offline-download]');
+        const guideButton = shelf.querySelector('[data-offline-guide]');
+        const guidePanel = shelf.querySelector('[data-offline-guide-panel]');
+        const dismissButton = shelf.querySelector('[data-offline-dismiss]');
+        const toggleButton = document.querySelector('[data-offline-toggle]');
+        const baseGuide = guidePanel ? guidePanel.innerHTML : '';
+        const guideDefaultLabel = guideButton ? guideButton.textContent.trim() : '';
+        const isLibraryHome = document.body && document.body.dataset.libraryHome === 'true';
+
+        const collapseShelf = ({ focusToggle = false } = {}) => {
+          shelf.setAttribute('data-offline-hidden', 'true');
+          if (toggleButton) {
+            toggleButton.hidden = false;
+            if (focusToggle) {
+              try {
+                toggleButton.focus({ preventScroll: true });
+              } catch (err) {
+                toggleButton.focus();
+              }
+            }
+          }
+        };
+
+        const revealShelf = () => {
+          shelf.removeAttribute('data-offline-hidden');
+          if (toggleButton) {
+            toggleButton.hidden = true;
+          }
+        };
+
+        if (downloadButton) {
+          const defaultText = downloadButton.textContent.trim();
+          downloadButton.addEventListener('click', () => {
+            const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const slug = (document.title || 'drumdrum-app')
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '') || 'drumdrum-app';
+            link.href = url;
+            link.download = slug + '.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+            downloadButton.textContent = 'Saved ✅';
+            downloadButton.disabled = true;
+            setTimeout(() => {
+              downloadButton.disabled = false;
+              downloadButton.textContent = defaultText;
+            }, 2200);
+          });
+        }
+
+        if (guideButton && guidePanel) {
+          guidePanel.hidden = true;
+          guideButton.addEventListener('click', () => {
+            if (guidePanel.hidden) {
+              guidePanel.innerHTML = baseGuide;
+              guidePanel.hidden = false;
+              guideButton.textContent = 'Hide tips';
+            } else {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        if (guidePanel) {
+          guidePanel.setAttribute('tabindex', '-1');
+        }
+
+        if (dismissButton) {
+          dismissButton.addEventListener('click', () => collapseShelf({ focusToggle: true }));
+        }
+
+        if (toggleButton) {
+          toggleButton.addEventListener('click', () => {
+            revealShelf();
+            if (guidePanel && guideButton) {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        const showMentionNote = (slug, label) => {
+          revealShelf();
+          if (!guidePanel) return;
+          guidePanel.hidden = false;
+          guidePanel.innerHTML = `<strong>${label || 'DrumDrum app'}</strong><p>This reference opens another DrumDrum app (${slug}). Download it separately when you're back online.</p>`;
+          if (guideButton) {
+            guideButton.textContent = 'Hide tips';
+          }
+          try {
+            guidePanel.focus({ preventScroll: false });
+          } catch (err) {
+            guidePanel.focus();
+          }
+        };
+
+        if (location.protocol === 'file:') {
+          document.querySelectorAll('a[href^="../"], a[href^="./"], a[href^="/"]').forEach((anchor) => {
+            const href = anchor.getAttribute('href');
+            if (!href || href.startsWith('#')) return;
+            const slug = href
+              .replace(/^\.\.\//, '')
+              .replace(/^\.\//, '')
+              .replace(/^\//, '')
+              .replace(/\/$/, '') || 'drumdrums-app';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.innerHTML = anchor.innerHTML;
+            const anchorClass = anchor.getAttribute('class');
+            button.className = anchorClass ? anchorClass + ' drumdrum-mention' : 'drumdrum-mention';
+            Array.from(anchor.attributes).forEach((attr) => {
+              if (['href', 'class', 'target', 'rel'].includes(attr.name)) return;
+              button.setAttribute(attr.name, attr.value);
+            });
+            button.addEventListener('click', () => showMentionNote(slug, anchor.textContent.trim()));
+            button.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showMentionNote(slug, anchor.textContent.trim());
+              }
+            });
+            anchor.replaceWith(button);
+          });
+        }
+
+        if (isLibraryHome) {
+          collapseShelf();
+        }
+      });
+    })();
+  </script>
+
+
+</body>
+</html>

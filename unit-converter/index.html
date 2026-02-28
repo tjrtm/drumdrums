@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<title>DrumDrums — Unit Converter</title>
+<style>
+:root{
+    --accent:#0077ff;
+    --accent2:#ff9a1f;
+    --bg:#f6f8fb;
+    --panel:#ffffff;
+    --text:#0b1220;
+    --muted:#51657f;
+    --line:rgba(15,23,42,.12);
+  }
+  [data-theme="dark"]{
+    --bg:#0b0f14;--panel:rgba(255,255,255,.06);--text:#eaf2ff;--muted:rgba(234,242,255,.62);--line:rgba(255,255,255,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:auto}
+  body{
+    font-family:Inter,system-ui,sans-serif;
+    color:var(--text);
+    background:linear-gradient(180deg,var(--bg),#dbeafe);
+    padding:20px;
+  }
+  
+  .container{max-width:500px;margin:0 auto}
+  
+  h1{font-size:24px;margin-bottom:8px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:30px}
+  
+  .categories{
+    display:flex;
+    gap:8px;
+    margin-bottom:30px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  
+  .catBtn{
+    cursor:pointer;
+    border-radius:12px;
+    padding:12px 20px;
+    border:2px solid var(--line);
+    background:var(--panel);
+    color:var(--text);
+    font-weight:700;
+    font-size:14px;
+    white-space:nowrap;
+    transition:all 0.15s;
+  }
+  
+  .catBtn.active{
+    border-color:var(--accent);
+    background:color-mix(in srgb,var(--accent) 15%,var(--panel));
+  }
+  
+  .conversionPanel{
+    background:var(--panel);
+    border-radius:16px;
+    padding:24px;
+    border:2px solid var(--line);
+    margin-bottom:24px;
+  }
+  
+  .inputGroup{margin-bottom:20px}
+  .label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+  
+  input[type="number"]{
+    width:100%;
+    padding:16px;
+    border-radius:12px;
+    border:2px solid var(--line);
+    background:var(--bg);
+    color:var(--text);
+    font-size:32px;
+    font-weight:800;
+    font-family:ui-monospace,monospace;
+    text-align:center;
+  }
+  
+  input:focus{outline:none;border-color:var(--accent)}
+  
+  .arrow{
+    text-align:center;
+    font-size:32px;
+    margin:16px 0;
+    color:var(--muted);
+  }
+  
+  .result{
+    font-size:32px;
+    font-weight:900;
+    text-align:center;
+    padding:20px;
+    border-radius:12px;
+    background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,var(--panel)),color-mix(in srgb,var(--accent2) 12%,var(--panel)));
+    color:var(--text);
+    font-family:ui-monospace,monospace;
+    min-height:80px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  
+  .presets{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:20px;
+  }
+  
+  .presetBtn{
+    cursor:pointer;
+    border-radius:12px;
+    padding:16px;
+    border:2px solid var(--line);
+    background:var(--panel);
+    color:var(--text);
+    font-weight:700;
+    font-size:14px;
+    text-align:left;
+    transition:all 0.15s;
+  }
+  
+  .presetBtn:active{transform:scale(0.95)}
+  
+  .presetTitle{font-size:16px;margin-bottom:4px}
+  .presetDesc{font-size:11px;color:var(--muted);font-weight:600}
+  
+  .swap{
+    text-align:center;
+    margin:16px 0;
+  }
+  
+  .swapBtn{
+    cursor:pointer;
+    border-radius:50%;
+    width:48px;
+    height:48px;
+    border:2px solid var(--line);
+    background:var(--panel);
+    color:var(--text);
+    font-size:20px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    transition:all 0.15s;
+  }
+  
+  .swapBtn:active{transform:rotate(180deg) scale(0.9)}
+</style>
+<style data-inline-theme>
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: calc(env(safe-area-inset-right, 0px) + 16px);
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 85%, transparent);
+  color: var(--text, #0f172a);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  z-index: 999;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.5);
+  outline-offset: 3px;
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+:root[data-theme="dark"] .theme-toggle {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.55);
+}
+
+.theme-toggle__icon {
+  pointer-events: none;
+  display: inline-flex;
+}
+
+.theme-toggle__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.theme-toggle--inline {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 90%, transparent);
+  color: inherit;
+  box-shadow: none;
+  margin-left: 8px;
+}
+
+:root[data-theme="dark"] .theme-toggle--inline {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+}
+
+.theme-toggle--inline .theme-toggle__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.drumdrums-banner{
+  margin:12px auto;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px dashed rgba(15,23,42,0.16);
+  background:color-mix(in srgb, var(--panel, #ffffff) 86%, transparent);
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  max-width:460px;
+}
+:root[data-theme="dark"] .drumdrums-banner{
+  border-color:rgba(148,163,184,0.35);
+  background:rgba(10,15,25,0.6);
+}
+.drumdrums-banner strong{
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:11px;
+  display:block;
+  margin-bottom:4px;
+}
+.drumdrums-note{
+  font-weight:500;
+  font-size:12px;
+  color:var(--muted, #475569);
+}
+
+</style>
+<script data-inline-theme>
+(function () {
+  const STORAGE_KEY = 'drumdrums-theme';
+  const root = document.documentElement;
+  const systemMedia = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  const icons = {
+    moon: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 8.5 8.5 0 1 0 21 14.5Z" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+    sun: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-linecap="round" /></svg>'
+  };
+
+  const readStoredTheme = () => {
+    try {
+      return localStorage.getItem(STORAGE_KEY);
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const persistTheme = (value) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, value);
+    } catch (err) {
+      /* no-op */
+    }
+  };
+
+  const systemPrefersDark = () => systemMedia ? systemMedia.matches : false;
+
+  const initialStored = readStoredTheme();
+  let currentTheme = initialStored === 'light' || initialStored === 'dark'
+    ? initialStored
+    : (root.dataset.theme === 'light' || root.dataset.theme === 'dark')
+      ? root.dataset.theme
+      : (systemPrefersDark() ? 'dark' : 'light');
+  root.dataset.theme = currentTheme;
+  if (document.body) {
+    document.body.setAttribute('data-theme', currentTheme);
+  }
+
+  let userLocked = initialStored === 'light' || initialStored === 'dark';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'theme-toggle';
+  const srLabel = document.createElement('span');
+  srLabel.className = 'sr-only';
+  srLabel.textContent = 'Toggle color theme';
+  const iconSlot = document.createElement('span');
+  iconSlot.className = 'theme-toggle__icon';
+  button.append(srLabel, iconSlot);
+
+  const syncButton = () => {
+    button.setAttribute('aria-pressed', currentTheme === 'dark');
+    iconSlot.innerHTML = currentTheme === 'dark' ? icons.sun : icons.moon;
+    button.title = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  };
+
+  const applyTheme = (nextTheme, { persist } = { persist: false }) => {
+    currentTheme = nextTheme;
+    root.dataset.theme = nextTheme;
+    if (document.body) {
+      document.body.setAttribute('data-theme', nextTheme);
+    }
+    syncButton();
+    if (persist) {
+      persistTheme(nextTheme);
+      userLocked = true;
+    }
+  };
+
+  const toggleTheme = () => {
+    const next = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(next, { persist: true });
+  };
+
+  const init = () => {
+    if (document.querySelector('.theme-toggle')) return;
+    button.addEventListener('click', toggleTheme);
+    const anchor = document.querySelector('[data-theme-anchor]') ||
+      document.querySelector('.theme-toggle-anchor') ||
+      document.querySelector('header .actions') ||
+      document.querySelector('header .navIcons') ||
+      document.querySelector('header');
+    if (anchor) {
+      button.classList.add('theme-toggle--inline');
+      anchor.appendChild(button);
+    } else {
+      document.body.appendChild(button);
+    }
+    applyTheme(currentTheme);
+  };
+
+  if (systemMedia && typeof systemMedia.addEventListener === 'function') {
+    systemMedia.addEventListener('change', (event) => {
+      if (!userLocked) {
+        applyTheme(event.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>🔢 Unit Converter</h1>
+  <div class="sub">Button-driven conversions. Tap category, enter value.</div>
+  
+  <div class="categories">
+    <button class="catBtn active" data-cat="temp">🌡️ Temp</button>
+    <button class="catBtn" data-cat="distance">📏 Distance</button>
+    <button class="catBtn" data-cat="weight">⚖️ Weight</button>
+    <button class="catBtn" data-cat="volume">🥤 Volume</button>
+  </div>
+  
+  <div class="conversionPanel">
+    <div class="inputGroup">
+      <div class="label" id="fromLabel">Celsius</div>
+      <input type="number" id="fromValue" value="0" inputmode="decimal" />
+    </div>
+    
+    <div class="swap">
+      <button class="swapBtn" id="swapBtn" title="Swap units (S key)">⇅</button>
+    </div>
+    
+    <div class="inputGroup">
+      <div class="label" id="toLabel">Fahrenheit</div>
+      <div class="result" id="result">32</div>
+    </div>
+  </div>
+  
+  <div class="presets" id="presets">
+    <!-- Populated by JS -->
+  </div>
+</div>
+
+<script>
+const conversions = {
+  temp: {
+    name: 'Temperature',
+    pairs: [
+      { from: 'Celsius', to: 'Fahrenheit', fn: c => c * 9/5 + 32 },
+      { from: 'Celsius', to: 'Kelvin', fn: c => c + 273.15 },
+      { from: 'Fahrenheit', to: 'Celsius', fn: f => (f - 32) * 5/9 }
+    ],
+    presets: [
+      { label: 'Freezing', desc: '0°C → °F', value: 0, fromUnit: 'Celsius', toUnit: 'Fahrenheit' },
+      { label: 'Body Temp', desc: '37°C → °F', value: 37, fromUnit: 'Celsius', toUnit: 'Fahrenheit' },
+      { label: 'Boiling', desc: '100°C → °F', value: 100, fromUnit: 'Celsius', toUnit: 'Fahrenheit' },
+      { label: 'Room Temp', desc: '20°C → °F', value: 20, fromUnit: 'Celsius', toUnit: 'Fahrenheit' }
+    ]
+  },
+  distance: {
+    name: 'Distance',
+    pairs: [
+      { from: 'Miles', to: 'Kilometers', fn: m => m * 1.60934 },
+      { from: 'Kilometers', to: 'Miles', fn: k => k / 1.60934 },
+      { from: 'Feet', to: 'Meters', fn: f => f * 0.3048 },
+      { from: 'Meters', to: 'Feet', fn: m => m / 0.3048 }
+    ],
+    presets: [
+      { label: '5K Run', desc: '5 km → mi', value: 5, fromUnit: 'Kilometers', toUnit: 'Miles' },
+      { label: 'Marathon', desc: '42.2 km → mi', value: 42.195, fromUnit: 'Kilometers', toUnit: 'Miles' },
+      { label: '6 Feet', desc: '6 ft → m', value: 6, fromUnit: 'Feet', toUnit: 'Meters' },
+      { label: '100m Sprint', desc: '100 m → ft', value: 100, fromUnit: 'Meters', toUnit: 'Feet' }
+    ]
+  },
+  weight: {
+    name: 'Weight',
+    pairs: [
+      { from: 'Pounds', to: 'Kilograms', fn: lb => lb * 0.453592 },
+      { from: 'Kilograms', to: 'Pounds', fn: kg => kg / 0.453592 },
+      { from: 'Ounces', to: 'Grams', fn: oz => oz * 28.3495 },
+      { from: 'Grams', to: 'Ounces', fn: g => g / 28.3495 }
+    ],
+    presets: [
+      { label: 'Body Weight', desc: '70 kg → lb', value: 70, fromUnit: 'Kilograms', toUnit: 'Pounds' },
+      { label: '100 lbs', desc: '100 lb → kg', value: 100, fromUnit: 'Pounds', toUnit: 'Kilograms' },
+      { label: '1 lb', desc: '16 oz → g', value: 16, fromUnit: 'Ounces', toUnit: 'Grams' },
+      { label: '500 grams', desc: '500 g → oz', value: 500, fromUnit: 'Grams', toUnit: 'Ounces' }
+    ]
+  },
+  volume: {
+    name: 'Volume',
+    pairs: [
+      { from: 'Gallons', to: 'Liters', fn: g => g * 3.78541 },
+      { from: 'Liters', to: 'Gallons', fn: l => l / 3.78541 },
+      { from: 'Cups', to: 'Milliliters', fn: c => c * 236.588 },
+      { from: 'Milliliters', to: 'Cups', fn: ml => ml / 236.588 }
+    ],
+    presets: [
+      { label: 'Water Bottle', desc: '500 ml → cups', value: 500, fromUnit: 'Milliliters', toUnit: 'Cups' },
+      { label: '1 Gallon', desc: '1 gal → L', value: 1, fromUnit: 'Gallons', toUnit: 'Liters' },
+      { label: '2 Liters', desc: '2 L → gal', value: 2, fromUnit: 'Liters', toUnit: 'Gallons' },
+      { label: '1 Cup', desc: '1 cup → ml', value: 1, fromUnit: 'Cups', toUnit: 'Milliliters' }
+    ]
+  }
+};
+
+let currentCat = 'temp';
+let currentFrom = 'Celsius';
+let currentTo = 'Fahrenheit';
+
+const $ = (id) => document.getElementById(id);
+
+function render() {
+  const cat = conversions[currentCat];
+  $('fromLabel').textContent = currentFrom;
+  $('toLabel').textContent = currentTo;
+  convert();
+  
+  // Render presets
+  $('presets').innerHTML = cat.presets.map(p => `
+    <button class="presetBtn" data-preset='${JSON.stringify(p)}'>
+      <div class="presetTitle">${p.label}</div>
+      <div class="presetDesc">${p.desc}</div>
+    </button>
+  `).join('');
+}
+
+function convert() {
+  const val = parseFloat($('fromValue').value) || 0;
+  const cat = conversions[currentCat];
+  const pair = cat.pairs.find(p => p.from === currentFrom && p.to === currentTo);
+  
+  if (pair) {
+    const result = pair.fn(val);
+    $('result').textContent = result.toFixed(2);
+  } else {
+    $('result').textContent = '—';
+  }
+}
+
+function swap() {
+  [currentFrom, currentTo] = [currentTo, currentFrom];
+  render();
+}
+
+// Category buttons
+document.querySelectorAll('.catBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.catBtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    
+    // Set default units for category
+    const cat = conversions[currentCat];
+    currentFrom = cat.pairs[0].from;
+    currentTo = cat.pairs[0].to;
+    
+    render();
+  });
+});
+
+// Input change
+$('fromValue').addEventListener('input', convert);
+
+// Swap button
+$('swapBtn').addEventListener('click', swap);
+
+// Preset buttons
+document.body.addEventListener('click', e => {
+  const btn = e.target.closest('.presetBtn');
+  if (btn) {
+    const preset = JSON.parse(btn.dataset.preset);
+    currentFrom = preset.fromUnit;
+    currentTo = preset.toUnit;
+    $('fromValue').value = preset.value;
+    render();
+  }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  // S key to swap
+  if (e.key === 's' && document.activeElement !== $('fromValue')) {
+    e.preventDefault();
+    swap();
+  }
+  
+  // 1-4 for categories
+  if (e.key >= '1' && e.key <= '4') {
+    const cats = ['temp', 'distance', 'weight', 'volume'];
+    const cat = cats[parseInt(e.key) - 1];
+    if (cat) {
+      document.querySelector(`[data-cat="${cat}"]`).click();
+    }
+  }
+  
+  // F to focus input
+  if (e.key === 'f' && document.activeElement !== $('fromValue')) {
+    e.preventDefault();
+    $('fromValue').focus();
+    $('fromValue').select();
+  }
+});
+
+// Initialize
+render();
+$('fromValue').focus();
+</script>
+
+  <!-- DrumDrums Offline Module -->
+  <style>
+    .drumdrum-offline-shelf{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:min(320px,calc(100% - 48px));background:var(--panel,rgba(255,255,255,0.96));color:var(--text,#0f172a);box-shadow:0 20px 50px rgba(15,23,42,0.2);border-radius:24px;border:1px solid rgba(15,23,42,0.1);padding:20px;font-family:inherit;z-index:9999;line-height:1.4}
+    [data-theme="dark"] .drumdrum-offline-shelf{background:rgba(2,6,23,0.92);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35);box-shadow:0 25px 60px rgba(2,6,23,0.75)}
+    .drumdrum-offline-shelf[data-offline-hidden="true"]{display:none}
+    .drumdrum-offline-label{text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.12em;opacity:.75;margin-bottom:4px}
+    .drumdrum-offline-head h2{font-size:17px;margin:0 0 6px;font-weight:900}
+    .drumdrum-offline-head p{margin:0;font-size:13px;opacity:.9}
+    .drumdrum-offline-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+    .drumdrum-offline-actions button{border:none;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s ease,opacity .15s ease;background:var(--accent,#2563eb);color:#fff;box-shadow:0 10px 25px rgba(37,99,235,0.25)}
+    .drumdrum-offline-actions button.secondary{background:rgba(15,23,42,0.08);color:inherit;box-shadow:none;border:1px solid rgba(15,23,42,0.12)}
+    [data-theme="dark"] .drumdrum-offline-actions button.secondary{background:rgba(148,163,184,0.15);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35)}
+    .drumdrum-offline-actions button:disabled{opacity:.7;cursor:default}
+    .drumdrum-offline-actions button:active{transform:scale(0.98)}
+    .drumdrum-offline-guide{margin-top:14px;border-radius:14px;padding:12px;font-size:13px;background:rgba(15,23,42,0.05);border:1px dashed rgba(15,23,42,0.25)}
+    .drumdrum-offline-guide p{margin:8px 0 0}
+    .drumdrum-offline-guide ol{margin:8px 0 0;padding-left:18px}
+    [data-theme="dark"] .drumdrum-offline-guide{background:rgba(15,23,42,0.4);border-color:rgba(148,163,184,0.3)}
+    .drumdrum-offline-dismiss{position:absolute;top:6px;right:8px;border:none;background:rgba(15,23,42,0.08);color:inherit;font-size:22px;line-height:1;cursor:pointer;width:48px;height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0;border:2px solid rgba(15,23,42,0.15);box-shadow:0 6px 14px rgba(15,23,42,0.18);touch-action:manipulation}
+    [data-theme="dark"] .drumdrum-offline-dismiss{background:rgba(148,163,184,0.25);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.4);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
+    .drumdrum-offline-dismiss:focus-visible,.drumdrum-offline-actions button:focus-visible{outline:3px solid rgba(59,130,246,0.7);outline-offset:2px}
+    .drumdrum-mention{cursor:pointer}
+    .drumdrum-mention:not(.btn){background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline}
+    .drumdrum-mention.btn{cursor:pointer}
+    .drumdrum-offline-toggle{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:56px;height:56px;border-radius:999px;border:none;background:var(--accent,#2563eb);color:#fff;box-shadow:0 18px 35px rgba(15,23,42,0.18);cursor:pointer;font-size:20px;font-weight:700;z-index:9998;display:flex;align-items:center;justify-content:center;transition:transform .2s ease,box-shadow .2s ease}
+    [data-theme="dark"] .drumdrum-offline-toggle{background:rgba(37,99,235,0.92);box-shadow:0 20px 45px rgba(2,6,23,0.75)}
+    .drumdrum-offline-toggle:focus-visible{outline:3px solid rgba(59,130,246,0.6);outline-offset:2px}
+    .drumdrum-offline-toggle:active{transform:scale(0.95)}
+    @media (max-width:640px){.drumdrum-offline-shelf{left:16px;right:16px;width:auto;bottom:calc(16px + env(safe-area-inset-bottom, 0px));padding:16px}.drumdrum-offline-toggle{bottom:calc(16px + env(safe-area-inset-bottom, 0px));right:calc(16px + env(safe-area-inset-right, 0px));width:52px;height:52px}}
+  </style>
+  <section class="drumdrum-offline-shelf" data-drumdrum-offline>
+    <button type="button" class="drumdrum-offline-dismiss" data-offline-dismiss aria-label="Hide offline helper">×</button>
+    <div class="drumdrum-offline-head">
+      <p class="drumdrum-offline-label">DrumDrums Offline</p>
+      <h2>Save this DrumDrum</h2>
+      <p>Download once. Launch anywhere — even without internet.</p>
+    </div>
+    <div class="drumdrum-offline-actions">
+      <button type="button" data-offline-download>Save offline (.html)</button>
+      <button type="button" class="secondary" data-offline-guide>Home screen tips</button>
+    </div>
+    <div class="drumdrum-offline-guide" data-offline-guide-panel hidden>
+      <strong>Install on your phone</strong>
+      <ol>
+        <li>Tap your browser's share/menu button.</li>
+        <li>Choose “Add to Home Screen” / “Add shortcut”.</li>
+        <li>Launch it later. No signal required.</li>
+      </ol>
+      <p>Offline copies remove DrumDrums library links automatically.</p>
+    </div>
+  </section>
+  <button type="button" class="drumdrum-offline-toggle" data-offline-toggle hidden aria-label="Show DrumDrums Offline helper">⬇️</button>
+  <script>
+    (() => {
+      const ready = (fn) => (document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', fn) : fn();
+      ready(() => {
+        const shelf = document.querySelector('[data-drumdrum-offline]');
+        if (!shelf) return;
+        const downloadButton = shelf.querySelector('[data-offline-download]');
+        const guideButton = shelf.querySelector('[data-offline-guide]');
+        const guidePanel = shelf.querySelector('[data-offline-guide-panel]');
+        const dismissButton = shelf.querySelector('[data-offline-dismiss]');
+        const toggleButton = document.querySelector('[data-offline-toggle]');
+        const baseGuide = guidePanel ? guidePanel.innerHTML : '';
+        const guideDefaultLabel = guideButton ? guideButton.textContent.trim() : '';
+        const isLibraryHome = document.body && document.body.dataset.libraryHome === 'true';
+
+        const collapseShelf = ({ focusToggle = false } = {}) => {
+          shelf.setAttribute('data-offline-hidden', 'true');
+          if (toggleButton) {
+            toggleButton.hidden = false;
+            if (focusToggle) {
+              try {
+                toggleButton.focus({ preventScroll: true });
+              } catch (err) {
+                toggleButton.focus();
+              }
+            }
+          }
+        };
+
+        const revealShelf = () => {
+          shelf.removeAttribute('data-offline-hidden');
+          if (toggleButton) {
+            toggleButton.hidden = true;
+          }
+        };
+
+        if (downloadButton) {
+          const defaultText = downloadButton.textContent.trim();
+          downloadButton.addEventListener('click', () => {
+            const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const slug = (document.title || 'drumdrum-app')
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '') || 'drumdrum-app';
+            link.href = url;
+            link.download = slug + '.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+            downloadButton.textContent = 'Saved ✅';
+            downloadButton.disabled = true;
+            setTimeout(() => {
+              downloadButton.disabled = false;
+              downloadButton.textContent = defaultText;
+            }, 2200);
+          });
+        }
+
+        if (guideButton && guidePanel) {
+          guidePanel.hidden = true;
+          guideButton.addEventListener('click', () => {
+            if (guidePanel.hidden) {
+              guidePanel.innerHTML = baseGuide;
+              guidePanel.hidden = false;
+              guideButton.textContent = 'Hide tips';
+            } else {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        if (guidePanel) {
+          guidePanel.setAttribute('tabindex', '-1');
+        }
+
+        if (dismissButton) {
+          dismissButton.addEventListener('click', () => collapseShelf({ focusToggle: true }));
+        }
+
+        if (toggleButton) {
+          toggleButton.addEventListener('click', () => {
+            revealShelf();
+            if (guidePanel && guideButton) {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        const showMentionNote = (slug, label) => {
+          revealShelf();
+          if (!guidePanel) return;
+          guidePanel.hidden = false;
+          guidePanel.innerHTML = `<strong>${label || 'DrumDrum app'}</strong><p>This reference opens another DrumDrum app (${slug}). Download it separately when you're back online.</p>`;
+          if (guideButton) {
+            guideButton.textContent = 'Hide tips';
+          }
+          try {
+            guidePanel.focus({ preventScroll: false });
+          } catch (err) {
+            guidePanel.focus();
+          }
+        };
+
+        if (location.protocol === 'file:') {
+          document.querySelectorAll('a[href^="../"], a[href^="./"], a[href^="/"]').forEach((anchor) => {
+            const href = anchor.getAttribute('href');
+            if (!href || href.startsWith('#')) return;
+            const slug = href
+              .replace(/^\.\.\//, '')
+              .replace(/^\.\//, '')
+              .replace(/^\//, '')
+              .replace(/\/$/, '') || 'drumdrums-app';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.innerHTML = anchor.innerHTML;
+            const anchorClass = anchor.getAttribute('class');
+            button.className = anchorClass ? anchorClass + ' drumdrum-mention' : 'drumdrum-mention';
+            Array.from(anchor.attributes).forEach((attr) => {
+              if (['href', 'class', 'target', 'rel'].includes(attr.name)) return;
+              button.setAttribute(attr.name, attr.value);
+            });
+            button.addEventListener('click', () => showMentionNote(slug, anchor.textContent.trim()));
+            button.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showMentionNote(slug, anchor.textContent.trim());
+              }
+            });
+            anchor.replaceWith(button);
+          });
+        }
+
+        if (isLibraryHome) {
+          collapseShelf();
+        }
+      });
+    })();
+  </script>
+
+
+</body>
+</html>

@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DrumDrums — Smart Grocery List</title>
+  <style>
+:root{
+      --r: 4px;
+      --accent:#0077ff;
+      --accent2:#ff9a1f;
+      --ok:#16a34a;
+      --danger:#e11d48;
+
+      --bg:#0b0f14;
+      --bg2:#05070a;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.03);
+      --text:#eaf2ff;
+      --muted: rgba(234,242,255,.64);
+      --line: rgba(255,255,255,.10);
+      --shadow: 0 0 30px rgba(0,119,255,0.12);
+    }
+
+    [data-theme="light"]{
+      --bg:#f6f8fb;
+      --bg2:#eef3f9;
+      --panel: rgba(255,255,255,.92);
+      --panel2: rgba(255,255,255,.72);
+      --text:#0b1220;
+      --muted: rgba(11,18,32,.62);
+      --line: rgba(15,23,42,.12);
+      --shadow: 0 18px 44px rgba(15,23,42,.08);
+    }
+
+    *{box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, Segoe UI, Roboto, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(1100px 700px at 18% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 58%),
+        radial-gradient(900px 540px at 85% 10%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+
+    header{
+      position:sticky; top:0; z-index:5;
+      background: color-mix(in srgb, var(--bg) 86%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom:1px solid var(--line);
+      padding: 12px 14px;
+    }
+
+    .top{max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap}
+    .brand{display:flex; gap:12px; align-items:flex-start}
+    .mark{width:40px;height:40px;border-radius:var(--r);border:1px solid var(--line);
+      background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 16%, transparent), color-mix(in srgb,var(--accent2) 12%, transparent));
+      box-shadow: var(--shadow);
+    }
+    h1{margin:0;font-size:15px; font-weight:950; letter-spacing:.2px}
+    .sub{color:var(--muted); font-size:12px; margin-top:3px}
+
+    .actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
+
+    .btn{
+      cursor:pointer;
+      border-radius: var(--r);
+      padding: 9px 11px;
+      border:1px solid var(--line);
+      background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 14%, transparent), color-mix(in srgb,var(--accent2) 10%, transparent));
+      color: var(--text);
+      font-weight:900;
+      text-decoration:none;
+    }
+    .btn.ghost{background: color-mix(in srgb, var(--panel) 85%, transparent)}
+    .btn.danger{border-color: color-mix(in srgb, var(--danger) 45%, transparent)}
+    .btn:focus{outline:2px solid color-mix(in srgb, var(--accent) 35%, transparent); outline-offset:2px}
+
+    .toggle{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);border:1px solid var(--line);background:color-mix(in srgb, var(--panel) 78%, transparent);color:var(--muted);font-size:12px;font-weight:900;user-select:none}
+    .toggle input{width:15px;height:15px}
+
+    main{max-width:1100px;margin:14px auto 28px;padding:0 14px}
+
+    .grid{display:grid;grid-template-columns: 1fr 1fr;gap:12px}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+    .card{background: color-mix(in srgb, var(--panel) 96%, transparent); border:1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); overflow:hidden}
+    .cardHead{padding:12px 14px; border-bottom:1px solid color-mix(in srgb, var(--line) 78%, transparent); display:flex; justify-content:space-between; align-items:baseline; gap:10px}
+    .cardHead b{font-size:12px; letter-spacing:1px; text-transform:uppercase; font-family: Space Grotesk, ui-monospace, Menlo, monospace; color: color-mix(in srgb, var(--text) 70%, transparent)}
+    .cardBody{padding:12px 14px}
+
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+    input[type="text"], input[type="search"], select{
+      padding: 10px 12px;
+      border-radius: var(--r);
+      border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 88%, transparent);
+      color: var(--text);
+      font: inherit;
+    }
+    input[type="text"]{flex:1; min-width:240px}
+
+    .hint{color:var(--muted); font-size:12px; margin-top:10px}
+
+    .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .chip{cursor:pointer; padding:7px 9px; border-radius: var(--r); border:1px solid var(--line); background: color-mix(in srgb, var(--panel2) 86%, transparent); color: color-mix(in srgb, var(--text) 88%, transparent); font-size:12px; font-weight:900}
+    .chip:hover{border-color: color-mix(in srgb, var(--accent) 24%, transparent)}
+
+    .metaRow{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px; color:var(--muted); font-size:12px}
+    .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 9px; border-radius: var(--r); border:1px solid var(--line); background: color-mix(in srgb, var(--panel2) 86%, transparent)}
+
+    .groups{display:grid; gap:10px}
+    details{border:1px solid color-mix(in srgb, var(--line) 80%, transparent); border-radius: var(--r); background: color-mix(in srgb, var(--panel2) 92%, transparent); overflow:hidden}
+    summary{list-style:none; cursor:pointer; padding:10px 12px; display:flex; justify-content:space-between; gap:10px; align-items:center; user-select:none}
+    summary::-webkit-details-marker{display:none}
+    .sumLeft{display:flex; gap:10px; align-items:center; font-weight:950}
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--accent)}
+    .count{font-variant-numeric: tabular-nums; color:var(--muted); font-weight:900}
+
+    .item{display:grid; grid-template-columns: 22px 1fr auto; gap:10px; align-items:center; padding:10px 12px; border-top:1px solid color-mix(in srgb, var(--line) 70%, transparent)}
+    .name{font-weight:900}
+    .name.done{opacity:.55; text-decoration:line-through}
+    .subcat{color:var(--muted); font-size:12px; margin-top:2px}
+    .mini{padding:6px 9px; border-radius: var(--r); border:1px solid var(--line); background: color-mix(in srgb, var(--panel) 86%, transparent); font-size:12px; font-weight:900; cursor:pointer}
+    .mini:focus{outline:2px solid color-mix(in srgb, var(--accent) 35%, transparent); outline-offset:2px}
+
+    dialog{border:none; padding:0; background:transparent}
+    dialog::backdrop{background: rgba(0,0,0,.55)}
+    .dlg{width:min(820px, calc(100vw - 28px)); border-radius: var(--r); border:1px solid var(--line); background: color-mix(in srgb, var(--bg) 80%, var(--panel)); color: var(--text); overflow:hidden; box-shadow: var(--shadow)}
+    .dlgHead{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid color-mix(in srgb, var(--line) 70%, transparent)}
+    .dlgBody{padding:12px 14px}
+    textarea{width:100%; min-height:220px; padding:10px 12px; border-radius: var(--r); border:1px solid var(--line); background: color-mix(in srgb, var(--panel) 86%, transparent); color: var(--text); font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace}
+
+    .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:14px; z-index:10;
+      background: color-mix(in srgb, var(--bg) 72%, var(--panel));
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      padding:10px 12px;
+      box-shadow: var(--shadow);
+      display:none; gap:10px; align-items:center; max-width: min(720px, calc(100vw - 28px));
+      color: color-mix(in srgb, var(--text) 92%, transparent);
+      font-size: 12px;
+      backdrop-filter: blur(10px);
+    }
+    .toast.show{display:flex}
+
+    @media(prefers-reduced-motion: reduce){ body{transition:none} }
+  </style>
+<style data-inline-theme>
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: calc(env(safe-area-inset-right, 0px) + 16px);
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 85%, transparent);
+  color: var(--text, #0f172a);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  z-index: 999;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.5);
+  outline-offset: 3px;
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+:root[data-theme="dark"] .theme-toggle {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.55);
+}
+
+.theme-toggle__icon {
+  pointer-events: none;
+  display: inline-flex;
+}
+
+.theme-toggle__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.theme-toggle--inline {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 90%, transparent);
+  color: inherit;
+  box-shadow: none;
+  margin-left: 8px;
+}
+
+:root[data-theme="dark"] .theme-toggle--inline {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+}
+
+.theme-toggle--inline .theme-toggle__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.drumdrums-banner{
+  margin:12px auto;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px dashed rgba(15,23,42,0.16);
+  background:color-mix(in srgb, var(--panel, #ffffff) 86%, transparent);
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  max-width:460px;
+}
+:root[data-theme="dark"] .drumdrums-banner{
+  border-color:rgba(148,163,184,0.35);
+  background:rgba(10,15,25,0.6);
+}
+.drumdrums-banner strong{
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:11px;
+  display:block;
+  margin-bottom:4px;
+}
+.drumdrums-note{
+  font-weight:500;
+  font-size:12px;
+  color:var(--muted, #475569);
+}
+
+</style>
+<script data-inline-theme>
+(function () {
+  const STORAGE_KEY = 'drumdrums-theme';
+  const root = document.documentElement;
+  const systemMedia = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  const icons = {
+    moon: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 8.5 8.5 0 1 0 21 14.5Z" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+    sun: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-linecap="round" /></svg>'
+  };
+
+  const readStoredTheme = () => {
+    try {
+      return localStorage.getItem(STORAGE_KEY);
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const persistTheme = (value) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, value);
+    } catch (err) {
+      /* no-op */
+    }
+  };
+
+  const systemPrefersDark = () => systemMedia ? systemMedia.matches : false;
+
+  const initialStored = readStoredTheme();
+  let currentTheme = initialStored === 'light' || initialStored === 'dark'
+    ? initialStored
+    : (root.dataset.theme === 'light' || root.dataset.theme === 'dark')
+      ? root.dataset.theme
+      : (systemPrefersDark() ? 'dark' : 'light');
+  root.dataset.theme = currentTheme;
+  if (document.body) {
+    document.body.setAttribute('data-theme', currentTheme);
+  }
+
+  let userLocked = initialStored === 'light' || initialStored === 'dark';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'theme-toggle';
+  const srLabel = document.createElement('span');
+  srLabel.className = 'sr-only';
+  srLabel.textContent = 'Toggle color theme';
+  const iconSlot = document.createElement('span');
+  iconSlot.className = 'theme-toggle__icon';
+  button.append(srLabel, iconSlot);
+
+  const syncButton = () => {
+    button.setAttribute('aria-pressed', currentTheme === 'dark');
+    iconSlot.innerHTML = currentTheme === 'dark' ? icons.sun : icons.moon;
+    button.title = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  };
+
+  const applyTheme = (nextTheme, { persist } = { persist: false }) => {
+    currentTheme = nextTheme;
+    root.dataset.theme = nextTheme;
+    if (document.body) {
+      document.body.setAttribute('data-theme', nextTheme);
+    }
+    syncButton();
+    if (persist) {
+      persistTheme(nextTheme);
+      userLocked = true;
+    }
+  };
+
+  const toggleTheme = () => {
+    const next = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(next, { persist: true });
+  };
+
+  const init = () => {
+    if (document.querySelector('.theme-toggle')) return;
+    button.addEventListener('click', toggleTheme);
+    const anchor = document.querySelector('[data-theme-anchor]') ||
+      document.querySelector('.theme-toggle-anchor') ||
+      document.querySelector('header .actions') ||
+      document.querySelector('header .navIcons') ||
+      document.querySelector('header');
+    if (anchor) {
+      button.classList.add('theme-toggle--inline');
+      anchor.appendChild(button);
+    } else {
+      document.body.appendChild(button);
+    }
+    applyTheme(currentTheme);
+  };
+
+  if (systemMedia && typeof systemMedia.addEventListener === 'function') {
+    systemMedia.addEventListener('change', (event) => {
+      if (!userLocked) {
+        applyTheme(event.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+</script>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <h1>Smart Grocery List</h1>
+        <div class="sub">Fast add • aisle grouping • offline • keyboard-friendly</div>
+      </div>
+    </div>
+    <div class="actions">
+      <label class="toggle" title="Show checked items">
+        <input id="showDone" type="checkbox" />
+        <span>Show checked</span>
+      </label>
+      <button class="btn ghost" id="export">Export</button>
+<button class="btn danger" id="clear">Clear checked</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <section class="card">
+      <div class="cardHead"><b>Add</b><span class="count" id="status">—</span></div>
+      <div class="cardBody">
+        <div class="row">
+          <input id="in" type="text" placeholder="milk, bananas, chicken…" autocomplete="off" />
+          <select id="cat" aria-label="Category">
+            <option value="auto" selected>Auto</option>
+            <option value="produce">Produce</option>
+            <option value="dairy">Dairy</option>
+            <option value="meat">Meat</option>
+            <option value="bakery">Bakery</option>
+            <option value="pantry">Pantry</option>
+            <option value="snacks">Snacks</option>
+            <option value="other">Other</option>
+          </select>
+          <button class="btn" id="add">Add</button>
+        </div>
+        <div class="hint">Enter adds. Commas add multiple. Shortcut: <b>Ctrl/Cmd+K</b> focuses add.</div>
+
+        <div class="metaRow">
+          <span class="pill">Detected: <b id="det">—</b></span>
+          <span class="pill">Tip: press <b>/</b> to focus add</span>
+        </div>
+
+        <div class="hint" style="margin-top:12px">Quick adds</div>
+        <div class="chips" id="quick"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="cardHead"><b>List</b><span class="count" id="count">—</span></div>
+      <div class="cardBody">
+        <div class="groups" id="groups"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span id="toastText">—</span>
+  <button class="mini" id="undo">Undo</button>
+  <button class="mini" id="dismiss">Dismiss</button>
+</div>
+
+<dialog id="dlg">
+  <div class="dlg">
+    <div class="dlgHead">
+      <div style="font-weight:950">Export</div>
+      <button class="mini" id="closeDlg">Close</button>
+    </div>
+    <div class="dlgBody">
+      <div class="row" style="margin-bottom:10px">
+        <button class="mini" id="copyMd">Copy Markdown</button>
+        <button class="mini" id="copyJson">Copy JSON</button>
+      </div>
+      <textarea id="out" spellcheck="false"></textarea>
+      <div class="hint">This export stays local — it just copies to clipboard.</div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(() => {
+  const $ = (id)=>document.getElementById(id);
+
+  const KEY = 'grocery-v2';
+
+  const CATS = [
+    {k:'produce', label:'Produce', re:/(banana|apple|orange|tomato|onion|garlic|salad|lettuce|cucumber|carrot|potato|berries|avocado)/i},
+    {k:'dairy', label:'Dairy', re:/(milk|yogurt|cheese|butter|cream|kefir)/i},
+    {k:'meat', label:'Meat', re:/(chicken|beef|pork|turkey|fish|salmon|tuna|shrimp)/i},
+    {k:'bakery', label:'Bakery', re:/(bread|bun|bagel|croissant|wrap|tortilla)/i},
+    {k:'pantry', label:'Pantry', re:/(rice|pasta|beans|lentil|sauce|oil|salt|pepper|flour|sugar|oats|coffee|tea)/i},
+    {k:'snacks', label:'Snacks', re:/(chips|chocolate|cookies|nuts|crackers|popcorn)/i},
+  ];
+
+  const ORDER = ['produce','dairy','meat','bakery','pantry','snacks','other'];
+
+  function blank(){ return { items:[], stats:{counts:{}}, settings:{ showDone:false } }; }
+
+  function load(){
+    try{
+      const d = JSON.parse(localStorage.getItem(KEY) || '');
+      if(!d || typeof d !== 'object') return blank();
+      d.items = Array.isArray(d.items) ? d.items : [];
+      d.stats = (d.stats && typeof d.stats === 'object') ? d.stats : {counts:{}};
+      d.stats.counts = (d.stats.counts && typeof d.stats.counts === 'object') ? d.stats.counts : {};
+      d.settings = (d.settings && typeof d.settings === 'object') ? d.settings : {showDone:false};
+      d.settings.showDone = !!d.settings.showDone;
+      return d;
+    }catch{
+      return blank();
+    }
+  }
+
+  function save(d){ localStorage.setItem(KEY, JSON.stringify(d)); }
+
+  function normName(s){
+    return String(s||'').trim().replace(/\s+/g,' ').slice(0,80);
+  }
+
+  function guessCat(name){
+    const hit = CATS.find(c => c.re.test(name));
+    return hit ? hit.k : 'other';
+  }
+
+  function catLabel(k){
+    return (CATS.find(c=>c.k===k)?.label) || (k==='other' ? 'Other' : k);
+  }
+
+  function uid(){
+    try{ return crypto.randomUUID(); }catch{ return 'i_'+Math.random().toString(16).slice(2); }
+  }
+
+  function group(items){
+    const m = new Map();
+    for(const k of ORDER) m.set(k, []);
+    for(const it of items){
+      const k = ORDER.includes(it.cat) ? it.cat : 'other';
+      m.get(k).push(it);
+    }
+    return m;
+  }
+
+  // Undo system
+  let undoAction = null;
+  let undoTimer = null;
+  function showToast(text, action){
+    undoAction = action || null;
+    $('toastText').textContent = text;
+    $('toast').classList.add('show');
+    if(undoTimer) clearTimeout(undoTimer);
+    undoTimer = setTimeout(()=>$('toast').classList.remove('show'), 6500);
+  }
+  $('dismiss').onclick = ()=> $('toast').classList.remove('show');
+  $('undo').onclick = ()=>{
+    if(!undoAction) return;
+    const d = load();
+    undoAction(d);
+    save(d);
+    render();
+    $('toast').classList.remove('show');
+  };
+
+  function setShowDone(v){
+    const d = load();
+    d.settings.showDone = !!v;
+    save(d);
+    render();
+  }
+
+  function buildQuickAdds(d){
+    const base = ['milk','eggs','bananas','bread','chicken','rice','coffee','yogurt','tomatoes','cheese'];
+
+    const counts = d.stats.counts || {};
+    const top = Object.entries(counts)
+      .sort((a,b)=>b[1]-a[1])
+      .map(([k])=>k)
+      .filter(Boolean);
+
+    const out = [];
+    for(const x of top){ if(!out.includes(x)) out.push(x); if(out.length>=6) break; }
+    for(const x of base){ if(!out.includes(x)) out.push(x); if(out.length>=10) break; }
+    return out;
+  }
+
+  function computeDetected(){
+    const txt = $('in').value.trim();
+    if(!txt) return '—';
+    const first = txt.split(',')[0].trim();
+    const forced = $('cat').value;
+    const k = (forced && forced !== 'auto') ? forced : guessCat(first);
+    return catLabel(k);
+  }
+
+  function addItems(text){
+    const forced = $('cat').value;
+    const names = String(text||'').split(',').map(normName).filter(Boolean);
+    if(!names.length) return;
+
+    const d = load();
+    const existing = new Set(d.items.map(i=>String(i.name||'').toLowerCase()));
+
+    let added = 0;
+    for(const n of names){
+      if(existing.has(n.toLowerCase())) continue;
+      const cat = (forced && forced !== 'auto') ? forced : guessCat(n);
+      d.items.unshift({ id: uid(), name: n, cat, done:false, createdAt: Date.now() });
+      d.stats.counts[n.toLowerCase()] = (d.stats.counts[n.toLowerCase()] || 0) + 1;
+      added++;
+    }
+    save(d);
+    render();
+    if(added) showToast(`Added ${added} item(s).`, null);
+  }
+
+  function exportMarkdown(d){
+    const lines = [];
+    lines.push('# Grocery list');
+    lines.push('');
+    const visible = d.settings.showDone ? d.items : d.items.filter(i=>!i.done);
+    const g = group(visible);
+    for(const k of ORDER){
+      const list = g.get(k);
+      if(!list || !list.length) continue;
+      lines.push('## ' + catLabel(k));
+      for(const it of list){
+        lines.push(`- [${it.done?'x':' '}] ${it.name}`);
+      }
+      lines.push('');
+    }
+    return lines.join('\n');
+  }
+
+  async function copyText(t){
+    try{ await navigator.clipboard.writeText(t); return true; }
+    catch{
+      const ta=document.createElement('textarea');
+      ta.value=t; document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand('copy'); }catch{}
+      ta.remove();
+      return false;
+    }
+  }
+
+  function openExport(){
+    const d = load();
+    $('out').value = exportMarkdown(d);
+    if($('dlg').showModal) $('dlg').showModal(); else $('dlg').setAttribute('open','');
+  }
+  function closeExport(){
+    if($('dlg').close) $('dlg').close(); else $('dlg').removeAttribute('open');
+  }
+
+  $('export').onclick = openExport;
+  $('closeDlg').onclick = closeExport;
+
+  $('copyMd').onclick = async ()=>{
+    const d = load();
+    $('out').value = exportMarkdown(d);
+    await copyText($('out').value);
+    showToast('Copied Markdown.', null);
+  };
+
+  $('copyJson').onclick = async ()=>{
+    const d = load();
+    const json = JSON.stringify(d, null, 2);
+    $('out').value = json;
+    await copyText(json);
+    showToast('Copied JSON.', null);
+  };
+
+  $('add').onclick = ()=>{
+    addItems($('in').value);
+    $('in').value='';
+    $('in').focus();
+    $('det').textContent = computeDetected();
+  };
+
+  $('in').addEventListener('input', ()=> $('det').textContent = computeDetected());
+  $('cat').addEventListener('change', ()=> $('det').textContent = computeDetected());
+
+  $('in').addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      $('add').click();
+    }
+  });
+
+  $('clear').onclick = ()=>{
+    const d = load();
+    const before = d.items.slice();
+    d.items = d.items.filter(i=>!i.done);
+    save(d);
+    render();
+    showToast('Cleared checked items.', (dd)=>{ dd.items = before; });
+  };
+
+  $('showDone').addEventListener('change', (e)=> setShowDone(e.target.checked));
+
+  // Keyboard shortcuts
+  window.addEventListener('keydown', (e)=>{
+    const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+    const typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+
+    if(e.key === '/' && !typing){
+      e.preventDefault();
+      $('in').focus();
+      return;
+    }
+
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){
+      e.preventDefault();
+      $('in').focus();
+      return;
+    }
+
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'e'){
+      e.preventDefault();
+      openExport();
+      return;
+    }
+
+    if(e.key === 'Escape'){
+      // close dialog if open
+      try{ closeExport(); }catch{}
+    }
+  });
+
+  function render(){
+    const d = load();
+
+    $('showDone').checked = !!d.settings.showDone;
+
+    const visible = d.settings.showDone ? d.items : d.items.filter(i=>!i.done);
+
+    $('count').textContent = `${visible.length} visible`;
+    $('status').textContent = `${d.items.filter(i=>!i.done).length} to buy`;
+
+    const quick = buildQuickAdds(d);
+    $('quick').innerHTML = quick.map(n => `<button class="chip" data-quick="${n}">${n}</button>`).join('');
+
+    const g = group(visible);
+    const html = [];
+
+    for(const k of ORDER){
+      const list = g.get(k);
+      if(!list || !list.length) continue;
+
+      const doneCount = list.filter(x=>x.done).length;
+      html.push(`
+        <details open>
+          <summary>
+            <div class="sumLeft"><span class="dot"></span><span>${catLabel(k)}</span></div>
+            <div class="count">${doneCount}/${list.length}</div>
+          </summary>
+          ${list.map(it => {
+            const safe = String(it.name||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            return `
+              <div class="item">
+                <input type="checkbox" data-id="${it.id}" ${it.done?'checked':''} aria-label="Toggle ${safe}" />
+                <div>
+                  <div class="name ${it.done?'done':''}">${safe}</div>
+                  <div class="subcat">${catLabel(it.cat)}</div>
+                </div>
+                <div class="row" style="justify-content:flex-end">
+                  <button class="mini" data-cycl="${it.id}" title="Change category">Cat</button>
+                  <button class="mini" data-rm="${it.id}" title="Remove">Remove</button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </details>
+      `);
+    }
+
+    $('groups').innerHTML = html.join('') || '<div class="hint">Empty. Add something.</div>';
+
+    $('det').textContent = computeDetected();
+  }
+
+  document.body.addEventListener('click', (e)=>{
+    const q = e.target.getAttribute && e.target.getAttribute('data-quick');
+    if(q){
+      addItems(q);
+      return;
+    }
+
+    const rm = e.target.getAttribute && e.target.getAttribute('data-rm');
+    if(rm){
+      const d = load();
+      const before = d.items.slice();
+      d.items = d.items.filter(x=>x.id!==rm);
+      save(d);
+      render();
+      showToast('Removed item.', (dd)=>{ dd.items = before; });
+      return;
+    }
+
+    const cycl = e.target.getAttribute && e.target.getAttribute('data-cycl');
+    if(cycl){
+      const d = load();
+      const it = d.items.find(x=>x.id===cycl);
+      if(!it) return;
+      const idx = ORDER.indexOf(it.cat);
+      it.cat = ORDER[(idx + 1 + ORDER.length) % ORDER.length];
+      save(d);
+      render();
+      showToast('Category changed.', null);
+    }
+  });
+
+  document.body.addEventListener('change', (e)=>{
+    const id = e.target.getAttribute && e.target.getAttribute('data-id');
+    if(!id) return;
+    const d = load();
+    const it = d.items.find(x=>x.id===id);
+    if(!it) return;
+    it.done = !!e.target.checked;
+    save(d);
+    render();
+  });
+
+  render();
+})();
+</script>
+
+  <!-- DrumDrums Offline Module -->
+  <style>
+    .drumdrum-offline-shelf{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:min(320px,calc(100% - 48px));background:var(--panel,rgba(255,255,255,0.96));color:var(--text,#0f172a);box-shadow:0 20px 50px rgba(15,23,42,0.2);border-radius:24px;border:1px solid rgba(15,23,42,0.1);padding:20px;font-family:inherit;z-index:9999;line-height:1.4}
+    [data-theme="dark"] .drumdrum-offline-shelf{background:rgba(2,6,23,0.92);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35);box-shadow:0 25px 60px rgba(2,6,23,0.75)}
+    .drumdrum-offline-shelf[data-offline-hidden="true"]{display:none}
+    .drumdrum-offline-label{text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.12em;opacity:.75;margin-bottom:4px}
+    .drumdrum-offline-head h2{font-size:17px;margin:0 0 6px;font-weight:900}
+    .drumdrum-offline-head p{margin:0;font-size:13px;opacity:.9}
+    .drumdrum-offline-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+    .drumdrum-offline-actions button{border:none;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s ease,opacity .15s ease;background:var(--accent,#2563eb);color:#fff;box-shadow:0 10px 25px rgba(37,99,235,0.25)}
+    .drumdrum-offline-actions button.secondary{background:rgba(15,23,42,0.08);color:inherit;box-shadow:none;border:1px solid rgba(15,23,42,0.12)}
+    [data-theme="dark"] .drumdrum-offline-actions button.secondary{background:rgba(148,163,184,0.15);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35)}
+    .drumdrum-offline-actions button:disabled{opacity:.7;cursor:default}
+    .drumdrum-offline-actions button:active{transform:scale(0.98)}
+    .drumdrum-offline-guide{margin-top:14px;border-radius:14px;padding:12px;font-size:13px;background:rgba(15,23,42,0.05);border:1px dashed rgba(15,23,42,0.25)}
+    .drumdrum-offline-guide p{margin:8px 0 0}
+    .drumdrum-offline-guide ol{margin:8px 0 0;padding-left:18px}
+    [data-theme="dark"] .drumdrum-offline-guide{background:rgba(15,23,42,0.4);border-color:rgba(148,163,184,0.3)}
+    .drumdrum-offline-dismiss{position:absolute;top:6px;right:8px;border:none;background:rgba(15,23,42,0.08);color:inherit;font-size:22px;line-height:1;cursor:pointer;width:48px;height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0;border:2px solid rgba(15,23,42,0.15);box-shadow:0 6px 14px rgba(15,23,42,0.18);touch-action:manipulation}
+    [data-theme="dark"] .drumdrum-offline-dismiss{background:rgba(148,163,184,0.25);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.4);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
+    .drumdrum-offline-dismiss:focus-visible,.drumdrum-offline-actions button:focus-visible{outline:3px solid rgba(59,130,246,0.7);outline-offset:2px}
+    .drumdrum-mention{cursor:pointer}
+    .drumdrum-mention:not(.btn){background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline}
+    .drumdrum-mention.btn{cursor:pointer}
+    .drumdrum-offline-toggle{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:56px;height:56px;border-radius:999px;border:none;background:var(--accent,#2563eb);color:#fff;box-shadow:0 18px 35px rgba(15,23,42,0.18);cursor:pointer;font-size:20px;font-weight:700;z-index:9998;display:flex;align-items:center;justify-content:center;transition:transform .2s ease,box-shadow .2s ease}
+    [data-theme="dark"] .drumdrum-offline-toggle{background:rgba(37,99,235,0.92);box-shadow:0 20px 45px rgba(2,6,23,0.75)}
+    .drumdrum-offline-toggle:focus-visible{outline:3px solid rgba(59,130,246,0.6);outline-offset:2px}
+    .drumdrum-offline-toggle:active{transform:scale(0.95)}
+    @media (max-width:640px){.drumdrum-offline-shelf{left:16px;right:16px;width:auto;bottom:calc(16px + env(safe-area-inset-bottom, 0px));padding:16px}.drumdrum-offline-toggle{bottom:calc(16px + env(safe-area-inset-bottom, 0px));right:calc(16px + env(safe-area-inset-right, 0px));width:52px;height:52px}}
+  </style>
+  <section class="drumdrum-offline-shelf" data-drumdrum-offline>
+    <button type="button" class="drumdrum-offline-dismiss" data-offline-dismiss aria-label="Hide offline helper">×</button>
+    <div class="drumdrum-offline-head">
+      <p class="drumdrum-offline-label">DrumDrums Offline</p>
+      <h2>Save this DrumDrum</h2>
+      <p>Download once. Launch anywhere — even without internet.</p>
+    </div>
+    <div class="drumdrum-offline-actions">
+      <button type="button" data-offline-download>Save offline (.html)</button>
+      <button type="button" class="secondary" data-offline-guide>Home screen tips</button>
+    </div>
+    <div class="drumdrum-offline-guide" data-offline-guide-panel hidden>
+      <strong>Install on your phone</strong>
+      <ol>
+        <li>Tap your browser's share/menu button.</li>
+        <li>Choose “Add to Home Screen” / “Add shortcut”.</li>
+        <li>Launch it later. No signal required.</li>
+      </ol>
+      <p>Offline copies remove DrumDrums library links automatically.</p>
+    </div>
+  </section>
+  <button type="button" class="drumdrum-offline-toggle" data-offline-toggle hidden aria-label="Show DrumDrums Offline helper">⬇️</button>
+  <script>
+    (() => {
+      const ready = (fn) => (document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', fn) : fn();
+      ready(() => {
+        const shelf = document.querySelector('[data-drumdrum-offline]');
+        if (!shelf) return;
+        const downloadButton = shelf.querySelector('[data-offline-download]');
+        const guideButton = shelf.querySelector('[data-offline-guide]');
+        const guidePanel = shelf.querySelector('[data-offline-guide-panel]');
+        const dismissButton = shelf.querySelector('[data-offline-dismiss]');
+        const toggleButton = document.querySelector('[data-offline-toggle]');
+        const baseGuide = guidePanel ? guidePanel.innerHTML : '';
+        const guideDefaultLabel = guideButton ? guideButton.textContent.trim() : '';
+        const isLibraryHome = document.body && document.body.dataset.libraryHome === 'true';
+
+        const collapseShelf = ({ focusToggle = false } = {}) => {
+          shelf.setAttribute('data-offline-hidden', 'true');
+          if (toggleButton) {
+            toggleButton.hidden = false;
+            if (focusToggle) {
+              try {
+                toggleButton.focus({ preventScroll: true });
+              } catch (err) {
+                toggleButton.focus();
+              }
+            }
+          }
+        };
+
+        const revealShelf = () => {
+          shelf.removeAttribute('data-offline-hidden');
+          if (toggleButton) {
+            toggleButton.hidden = true;
+          }
+        };
+
+        if (downloadButton) {
+          const defaultText = downloadButton.textContent.trim();
+          downloadButton.addEventListener('click', () => {
+            const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const slug = (document.title || 'drumdrum-app')
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '') || 'drumdrum-app';
+            link.href = url;
+            link.download = slug + '.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+            downloadButton.textContent = 'Saved ✅';
+            downloadButton.disabled = true;
+            setTimeout(() => {
+              downloadButton.disabled = false;
+              downloadButton.textContent = defaultText;
+            }, 2200);
+          });
+        }
+
+        if (guideButton && guidePanel) {
+          guidePanel.hidden = true;
+          guideButton.addEventListener('click', () => {
+            if (guidePanel.hidden) {
+              guidePanel.innerHTML = baseGuide;
+              guidePanel.hidden = false;
+              guideButton.textContent = 'Hide tips';
+            } else {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        if (guidePanel) {
+          guidePanel.setAttribute('tabindex', '-1');
+        }
+
+        if (dismissButton) {
+          dismissButton.addEventListener('click', () => collapseShelf({ focusToggle: true }));
+        }
+
+        if (toggleButton) {
+          toggleButton.addEventListener('click', () => {
+            revealShelf();
+            if (guidePanel && guideButton) {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        const showMentionNote = (slug, label) => {
+          revealShelf();
+          if (!guidePanel) return;
+          guidePanel.hidden = false;
+          guidePanel.innerHTML = `<strong>${label || 'DrumDrum app'}</strong><p>This reference opens another DrumDrum app (${slug}). Download it separately when you're back online.</p>`;
+          if (guideButton) {
+            guideButton.textContent = 'Hide tips';
+          }
+          try {
+            guidePanel.focus({ preventScroll: false });
+          } catch (err) {
+            guidePanel.focus();
+          }
+        };
+
+        if (location.protocol === 'file:') {
+          document.querySelectorAll('a[href^="../"], a[href^="./"], a[href^="/"]').forEach((anchor) => {
+            const href = anchor.getAttribute('href');
+            if (!href || href.startsWith('#')) return;
+            const slug = href
+              .replace(/^\.\.\//, '')
+              .replace(/^\.\//, '')
+              .replace(/^\//, '')
+              .replace(/\/$/, '') || 'drumdrums-app';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.innerHTML = anchor.innerHTML;
+            const anchorClass = anchor.getAttribute('class');
+            button.className = anchorClass ? anchorClass + ' drumdrum-mention' : 'drumdrum-mention';
+            Array.from(anchor.attributes).forEach((attr) => {
+              if (['href', 'class', 'target', 'rel'].includes(attr.name)) return;
+              button.setAttribute(attr.name, attr.value);
+            });
+            button.addEventListener('click', () => showMentionNote(slug, anchor.textContent.trim()));
+            button.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showMentionNote(slug, anchor.textContent.trim());
+              }
+            });
+            anchor.replaceWith(button);
+          });
+        }
+
+        if (isLibraryHome) {
+          collapseShelf();
+        }
+      });
+    })();
+  </script>
+
+
+</body>
+</html>

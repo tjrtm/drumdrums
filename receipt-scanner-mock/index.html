@@ -1,0 +1,1152 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DrumDrums — Receipt Scanner (mock)</title>
+  <style>
+:root{
+      --r: 4px;
+      --accent:#33d1ff;
+      --accent2:#ffb020;
+      --ok:#16a34a;
+      --danger:#e11d48;
+
+      --bg:#0b0f14;
+      --bg2:#05070a;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.03);
+      --text:#eaf2ff;
+      --muted: rgba(234,242,255,.62);
+      --line: rgba(255,255,255,.10);
+      --shadow: 0 0 30px rgba(51,209,255,0.12);
+    }
+
+    [data-theme="light"]{
+      --accent:#0077ff;
+      --accent2:#ff9a1f;
+
+      --bg:#f6f8fb;
+      --bg2:#eef3f9;
+      --panel: rgba(255,255,255,.92);
+      --panel2: rgba(255,255,255,.72);
+      --text:#0b1220;
+      --muted: rgba(11,18,32,.62);
+      --line: rgba(15,23,42,.12);
+      --shadow: 0 18px 44px rgba(15,23,42,.08);
+    }
+
+    *{box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, Segoe UI, Roboto, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(1000px 640px at 20% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 55%),
+        radial-gradient(900px 540px at 85% 10%, color-mix(in srgb, var(--accent2) 14%, transparent), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      min-height:100vh;
+    }
+
+    header{
+      position:sticky; top:0; z-index:5;
+      background: color-mix(in srgb, var(--bg) 86%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom:1px solid var(--line);
+      padding: 12px 14px;
+    }
+
+    .top{max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap}
+    .brand{display:flex; gap:12px; align-items:flex-start}
+    .mark{width:40px;height:40px;border-radius:var(--r);border:1px solid var(--line);
+      background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 16%, transparent), color-mix(in srgb,var(--accent2) 12%, transparent));
+      box-shadow: var(--shadow);
+    }
+    h1{margin:0;font-size:15px; font-weight:950; letter-spacing:.2px}
+    .sub{color:var(--muted); font-size:12px; margin-top:3px}
+
+    .actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
+
+    .btn{
+      cursor:pointer;
+      border-radius: var(--r);
+      padding: 9px 11px;
+      border:1px solid var(--line);
+      background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 14%, transparent), color-mix(in srgb,var(--accent2) 10%, transparent));
+      color: var(--text);
+      font-weight:900;
+      text-decoration:none;
+    }
+    .btn.ghost{background: color-mix(in srgb, var(--panel) 85%, transparent)}
+    .btn.danger{border-color: color-mix(in srgb, var(--danger) 45%, transparent)}
+    .btn:focus{outline:2px solid color-mix(in srgb, var(--accent) 35%, transparent); outline-offset:2px}
+
+    .toggle{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);border:1px solid var(--line);background:color-mix(in srgb, var(--panel) 78%, transparent);color:var(--muted);font-size:12px;font-weight:900;user-select:none}
+    .toggle input{width:15px;height:15px}
+
+    main{max-width:1200px;margin:14px auto 28px;padding:0 14px}
+    .grid{display:grid;grid-template-columns: 1fr 460px;gap:12px;align-items:start}
+    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+
+    .card{background: color-mix(in srgb, var(--panel) 96%, transparent); border:1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); overflow:hidden}
+    .cardHead{padding:12px 14px; border-bottom:1px solid color-mix(in srgb, var(--line) 78%, transparent); display:flex; justify-content:space-between; align-items:baseline; gap:10px}
+    .cardHead b{font-size:12px; letter-spacing:1px; text-transform:uppercase; font-family: Space Grotesk, ui-monospace, Menlo, monospace; color: color-mix(in srgb, var(--text) 70%, transparent)}
+    .cardBody{padding:12px 14px}
+
+    .hint{color:var(--muted);font-size:12px;margin-top:10px;line-height:1.35}
+
+    textarea{
+      width:100%;
+      min-height: 320px;
+      resize: vertical;
+      padding: 10px 12px;
+      border-radius: var(--r);
+      border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel2) 88%, transparent);
+      color: var(--text);
+      font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+      outline:none;
+    }
+
+    .drop{
+      border:1px dashed color-mix(in srgb, var(--line) 85%, transparent);
+      border-radius: var(--r);
+      padding: 12px;
+      background: color-mix(in srgb, var(--panel2) 92%, transparent);
+    }
+    .drop.drag{border-color: color-mix(in srgb, var(--accent) 45%, transparent); background: color-mix(in srgb, var(--accent) 10%, transparent)}
+
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+    input[type="text"], input[type="number"], select{
+      padding: 9px 11px;
+      border-radius: var(--r);
+      border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 88%, transparent);
+      color: var(--text);
+      font: inherit;
+    }
+
+    table{width:100%; border-collapse:collapse; font-size:12px}
+    th,td{padding:10px 8px; border-bottom:1px solid color-mix(in srgb, var(--line) 72%, transparent); vertical-align:top}
+    th{color:color-mix(in srgb, var(--text) 70%, transparent); text-align:left; font-weight:900}
+
+    .name{font-weight:900}
+    .name.done{opacity:.55; text-decoration:line-through}
+
+    .mini{padding:6px 9px;border-radius:var(--r);border:1px solid var(--line);background:color-mix(in srgb, var(--panel) 86%, transparent);font-size:12px;font-weight:900;cursor:pointer}
+
+    .totals{display:grid;grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px}
+    .box{border:1px solid color-mix(in srgb, var(--line) 78%, transparent); background: color-mix(in srgb, var(--panel2) 90%, transparent); border-radius: var(--r); padding:10px 12px}
+    .box .cap{color:var(--muted); font-size:12px}
+    .box .num{font-weight:950; font-size:18px; margin-top:4px; font-variant-numeric: tabular-nums}
+
+    dialog{border:none; padding:0; background:transparent}
+    dialog::backdrop{background: rgba(0,0,0,.55)}
+    .dlg{width:min(860px, calc(100vw - 28px)); border-radius: var(--r); border:1px solid var(--line); background: color-mix(in srgb, var(--bg) 78%, var(--panel)); color: var(--text); overflow:hidden; box-shadow: var(--shadow)}
+    .dlgHead{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid color-mix(in srgb, var(--line) 70%, transparent)}
+    .dlgBody{padding:12px 14px}
+    .out{width:100%; min-height:240px; padding:10px 12px; border-radius: var(--r); border:1px solid var(--line); background: color-mix(in srgb, var(--panel) 86%, transparent); color: var(--text); font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace}
+
+    .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:14px; z-index:10;
+      background: color-mix(in srgb, var(--bg) 72%, var(--panel));
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      padding:10px 12px;
+      box-shadow: var(--shadow);
+      display:none; gap:10px; align-items:center; max-width: min(760px, calc(100vw - 28px));
+      color: color-mix(in srgb, var(--text) 92%, transparent);
+      font-size: 12px;
+      backdrop-filter: blur(10px);
+    }
+    .toast.show{display:flex}
+
+    @media(prefers-reduced-motion: reduce){ body{transition:none} }
+  </style>
+<style data-inline-theme>
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: calc(env(safe-area-inset-right, 0px) + 16px);
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 85%, transparent);
+  color: var(--text, #0f172a);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  z-index: 999;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.5);
+  outline-offset: 3px;
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+:root[data-theme="dark"] .theme-toggle {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.55);
+}
+
+.theme-toggle__icon {
+  pointer-events: none;
+  display: inline-flex;
+}
+
+.theme-toggle__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.theme-toggle--inline {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 90%, transparent);
+  color: inherit;
+  box-shadow: none;
+  margin-left: 8px;
+}
+
+:root[data-theme="dark"] .theme-toggle--inline {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+}
+
+.theme-toggle--inline .theme-toggle__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.drumdrums-banner{
+  margin:12px auto;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px dashed rgba(15,23,42,0.16);
+  background:color-mix(in srgb, var(--panel, #ffffff) 86%, transparent);
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  max-width:460px;
+}
+:root[data-theme="dark"] .drumdrums-banner{
+  border-color:rgba(148,163,184,0.35);
+  background:rgba(10,15,25,0.6);
+}
+.drumdrums-banner strong{
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:11px;
+  display:block;
+  margin-bottom:4px;
+}
+.drumdrums-note{
+  font-weight:500;
+  font-size:12px;
+  color:var(--muted, #475569);
+}
+
+</style>
+<script data-inline-theme>
+(function () {
+  const STORAGE_KEY = 'drumdrums-theme';
+  const root = document.documentElement;
+  const systemMedia = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  const icons = {
+    moon: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 8.5 8.5 0 1 0 21 14.5Z" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+    sun: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-linecap="round" /></svg>'
+  };
+
+  const readStoredTheme = () => {
+    try {
+      return localStorage.getItem(STORAGE_KEY);
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const persistTheme = (value) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, value);
+    } catch (err) {
+      /* no-op */
+    }
+  };
+
+  const systemPrefersDark = () => systemMedia ? systemMedia.matches : false;
+
+  const initialStored = readStoredTheme();
+  let currentTheme = initialStored === 'light' || initialStored === 'dark'
+    ? initialStored
+    : (root.dataset.theme === 'light' || root.dataset.theme === 'dark')
+      ? root.dataset.theme
+      : (systemPrefersDark() ? 'dark' : 'light');
+  root.dataset.theme = currentTheme;
+  if (document.body) {
+    document.body.setAttribute('data-theme', currentTheme);
+  }
+
+  let userLocked = initialStored === 'light' || initialStored === 'dark';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'theme-toggle';
+  const srLabel = document.createElement('span');
+  srLabel.className = 'sr-only';
+  srLabel.textContent = 'Toggle color theme';
+  const iconSlot = document.createElement('span');
+  iconSlot.className = 'theme-toggle__icon';
+  button.append(srLabel, iconSlot);
+
+  const syncButton = () => {
+    button.setAttribute('aria-pressed', currentTheme === 'dark');
+    iconSlot.innerHTML = currentTheme === 'dark' ? icons.sun : icons.moon;
+    button.title = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  };
+
+  const applyTheme = (nextTheme, { persist } = { persist: false }) => {
+    currentTheme = nextTheme;
+    root.dataset.theme = nextTheme;
+    if (document.body) {
+      document.body.setAttribute('data-theme', nextTheme);
+    }
+    syncButton();
+    if (persist) {
+      persistTheme(nextTheme);
+      userLocked = true;
+    }
+  };
+
+  const toggleTheme = () => {
+    const next = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(next, { persist: true });
+  };
+
+  const init = () => {
+    if (document.querySelector('.theme-toggle')) return;
+    button.addEventListener('click', toggleTheme);
+    const anchor = document.querySelector('[data-theme-anchor]') ||
+      document.querySelector('.theme-toggle-anchor') ||
+      document.querySelector('header .actions') ||
+      document.querySelector('header .navIcons') ||
+      document.querySelector('header');
+    if (anchor) {
+      button.classList.add('theme-toggle--inline');
+      anchor.appendChild(button);
+    } else {
+      document.body.appendChild(button);
+    }
+    applyTheme(currentTheme);
+  };
+
+  if (systemMedia && typeof systemMedia.addEventListener === 'function') {
+    systemMedia.addEventListener('change', (event) => {
+      if (!userLocked) {
+        applyTheme(event.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+</script>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <h1>Receipt Scanner</h1>
+        <div class="sub">Paste text or drop a .txt file → parse items → edit + export.</div>
+      </div>
+    </div>
+    <div class="actions">
+      <label class="toggle" title="Auto-parse while typing">
+        <input id="auto" type="checkbox" />
+        <span>Auto</span>
+      </label>
+      <button class="btn ghost" id="export">Export</button>
+<button class="btn danger" id="reset">Reset</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <section class="card">
+      <div class="cardHead">
+        <b>Input</b>
+        <span class="sub" id="inMeta">—</span>
+      </div>
+      <div class="cardBody">
+        <div class="drop" id="drop">
+          <div class="row" style="justify-content:space-between">
+            <div class="hint" style="margin:0">
+              Drop <b>.txt</b> (OCR later) • Keyboard: <b>Ctrl/Cmd+K</b> focus • <b>Ctrl/Cmd+Enter</b> parse
+            </div>
+            <div class="row">
+              <button class="mini" id="sample">Sample</button>
+              <button class="mini" id="parse">Parse</button>
+            </div>
+          </div>
+          <div style="height:10px"></div>
+          <textarea id="raw" spellcheck="false" placeholder="Milk 1.79\nBread 1.29\n…"></textarea>
+        </div>
+        <div class="hint">Parser expects lines like: <b>ItemName 12.34</b>. You can use commas (12,34) too.</div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="cardHead">
+        <b>Items</b>
+        <span class="sub" id="itemsMeta">—</span>
+      </div>
+      <div class="cardBody">
+        <div class="row" style="margin-bottom:10px">
+          <button class="mini" id="addRow">Add row</button>
+          <button class="mini" id="removeDone">Remove checked</button>
+          <label class="toggle" title="Show checked rows">
+            <input id="showDone" type="checkbox" />
+            <span>Show checked</span>
+          </label>
+        </div>
+
+        <div style="overflow:auto; max-height: 520px; border:1px solid color-mix(in srgb, var(--line) 70%, transparent); border-radius: var(--r)">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:30px">✓</th>
+                <th>Item</th>
+                <th style="width:140px">Category</th>
+                <th style="width:110px">Price</th>
+                <th style="width:70px"></th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <div style="flex:1">
+            <div class="hint" style="margin:0 0 6px">Tax / tip (optional)</div>
+            <input id="tax" type="number" step="0.01" placeholder="0.00" />
+          </div>
+          <div style="flex:1">
+            <div class="hint" style="margin:0 0 6px">Currency</div>
+            <select id="cur">
+              <option value="EUR" selected>EUR</option>
+              <option value="USD">USD</option>
+              <option value="GBP">GBP</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="totals">
+          <div class="box"><div class="cap">Subtotal</div><div class="num" id="sub">0.00</div></div>
+          <div class="box"><div class="cap">Total</div><div class="num" id="total">0.00</div></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span id="toastText">—</span>
+  <button class="mini" id="undo">Undo</button>
+  <button class="mini" id="dismiss">Dismiss</button>
+</div>
+
+<dialog id="dlg">
+  <div class="dlg">
+    <div class="dlgHead">
+      <div style="font-weight:950">Export</div>
+      <button class="mini" id="closeDlg">Close</button>
+    </div>
+    <div class="dlgBody">
+      <div class="row" style="margin-bottom:10px">
+        <button class="mini" id="copyCsv">Copy CSV</button>
+        <button class="mini" id="copyJson">Copy JSON</button>
+        <button class="mini" id="copyMd">Copy Markdown</button>
+      </div>
+      <textarea class="out" id="out" spellcheck="false"></textarea>
+      <div class="hint">Export just copies to clipboard (offline). OCR is not implemented — yet.</div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(() => {
+  const $ = (id)=>document.getElementById(id);
+
+  const KEY = 'receipt-scanner-v2';
+
+  const CATS = [
+    ['food','Food'],
+    ['house','Household'],
+    ['health','Health'],
+    ['transport','Transport'],
+    ['other','Other']
+  ];
+
+  function uid(){
+    try{ return crypto.randomUUID(); }catch{ return 'i_'+Math.random().toString(16).slice(2); }
+  }
+
+  function blank(){
+    return {
+      raw: '',
+      items: [],
+      tax: 0,
+      cur: 'EUR',
+      auto: false,
+      showDone: true
+    };
+  }
+
+  function load(){
+    try{
+      const d = JSON.parse(localStorage.getItem(KEY) || '');
+      if(!d || typeof d !== 'object') return blank();
+      d.raw = String(d.raw || '');
+      d.items = Array.isArray(d.items) ? d.items : [];
+      d.tax = Number(d.tax || 0);
+      d.cur = String(d.cur || 'EUR');
+      d.auto = !!d.auto;
+      d.showDone = (d.showDone !== false);
+      return d;
+    }catch{ return blank(); }
+  }
+
+  function save(d){ localStorage.setItem(KEY, JSON.stringify(d)); }
+
+  // Undo system
+  let undoAction = null;
+  let undoTimer = null;
+  function showToast(text, action){
+    undoAction = action || null;
+    $('toastText').textContent = text;
+    $('toast').classList.add('show');
+    if(undoTimer) clearTimeout(undoTimer);
+    undoTimer = setTimeout(()=>$('toast').classList.remove('show'), 6500);
+  }
+  $('dismiss').onclick = ()=> $('toast').classList.remove('show');
+  $('undo').onclick = ()=>{
+    if(!undoAction) return;
+    const d = load();
+    undoAction(d);
+    save(d);
+    render();
+    $('toast').classList.remove('show');
+  };
+
+  function sanitizeName(s){
+    return String(s||'').trim().replace(/\s+/g,' ').slice(0,90);
+  }
+
+  function parseFromRaw(raw){
+    const lines = String(raw||'').split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+    const out = [];
+    for(const l of lines){
+      const m = l.match(/^(.*?)([-+]?\d+(?:[\.,]\d{1,2})?)\s*$/);
+      if(!m) continue;
+      const name = sanitizeName(m[1]);
+      const price = parseFloat(String(m[2]).replace(',','.'));
+      if(!name || !Number.isFinite(price)) continue;
+      out.push({ id: uid(), name, cat:'other', price, done:false });
+    }
+    return out;
+  }
+
+  function fmtMoney(n){
+    const x = Number(n||0);
+    if(!Number.isFinite(x)) return '0.00';
+    return x.toFixed(2);
+  }
+
+  function computeTotals(d){
+    const visible = d.items.filter(i=>!i.done);
+    const subtotal = visible.reduce((s,x)=>s+(Number(x.price)||0), 0);
+    const total = subtotal + (Number(d.tax)||0);
+    return { subtotal, total, countAll: d.items.length, countActive: visible.length };
+  }
+
+  function setMeta(d){
+    const t = computeTotals(d);
+    $('inMeta').textContent = d.raw ? `${d.raw.split(/\r?\n/).filter(Boolean).length} line(s)` : '—';
+    $('itemsMeta').textContent = `${t.countActive} active • ${t.countAll} total`;
+  }
+
+  function renderRows(d){
+    const showDone = !!d.showDone;
+    const list = showDone ? d.items : d.items.filter(i=>!i.done);
+
+    $('rows').innerHTML = list.map((it) => {
+      const safe = (s)=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;');
+      const opts = CATS.map(([k,label]) => `<option value="${k}" ${it.cat===k?'selected':''}>${label}</option>`).join('');
+
+      return `
+        <tr data-row="${it.id}">
+          <td><input type="checkbox" data-done="${it.id}" ${it.done?'checked':''} aria-label="Mark done" /></td>
+          <td>
+            <div class="name ${it.done?'done':''}">
+              <input type="text" data-name="${it.id}" value="${safe(it.name)}" />
+            </div>
+          </td>
+          <td><select data-cat="${it.id}">${opts}</select></td>
+          <td><input type="number" step="0.01" data-price="${it.id}" value="${fmtMoney(it.price)}" /></td>
+          <td style="text-align:right"><button class="mini" data-rm="${it.id}">Remove</button></td>
+        </tr>
+      `;
+    }).join('') || '<tr><td colspan="5" style="padding:10px 8px" class="hint">No items yet. Paste text and parse.</td></tr>';
+  }
+
+  function render(){
+    const d = load();
+
+    $('raw').value = d.raw;
+    $('tax').value = fmtMoney(d.tax);
+    $('cur').value = d.cur || 'EUR';
+    $('auto').checked = !!d.auto;
+    $('showDone').checked = !!d.showDone;
+
+    const t = computeTotals(d);
+    $('sub').textContent = fmtMoney(t.subtotal) + ' ' + (d.cur || '');
+    $('total').textContent = fmtMoney(t.total) + ' ' + (d.cur || '');
+
+    setMeta(d);
+    renderRows(d);
+  }
+
+  function parseNow(){
+    const d = load();
+    const before = d.items.slice();
+    d.raw = $('raw').value;
+    d.items = parseFromRaw(d.raw);
+    save(d);
+    render();
+    showToast('Parsed receipt.', (dd)=>{ dd.items = before; });
+  }
+
+  function addRow(){
+    const d = load();
+    d.items.unshift({ id: uid(), name:'', cat:'other', price:0, done:false });
+    save(d);
+    render();
+  }
+
+  // Dropzone
+  const drop = $('drop');
+  drop.addEventListener('dragover', (e)=>{ e.preventDefault(); drop.classList.add('drag'); });
+  drop.addEventListener('dragleave', ()=> drop.classList.remove('drag'));
+  drop.addEventListener('drop', async (e)=>{
+    e.preventDefault();
+    drop.classList.remove('drag');
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if(!f) return;
+    if(!f.name.toLowerCase().endsWith('.txt')){
+      showToast('Only .txt drop supported (OCR later).', null);
+      return;
+    }
+    const text = await f.text();
+    const d = load();
+    d.raw = text;
+    save(d);
+    render();
+    showToast('Loaded .txt — press Parse.', null);
+  });
+
+  // UI wiring
+  $('parse').onclick = parseNow;
+  $('sample').onclick = ()=>{
+    const d = load();
+    d.raw = 'Milk 1.79\nBread 1.29\nBananas 2.15\nChicken 6.40\n';
+    save(d);
+    render();
+  };
+
+  $('raw').addEventListener('input', ()=>{
+    const d = load();
+    d.raw = $('raw').value;
+    save(d);
+    setMeta(d);
+
+    if(d.auto){
+      // cheap debounce
+      clearTimeout(window.__rdeb);
+      window.__rdeb = setTimeout(parseNow, 350);
+    }
+  });
+
+  $('auto').addEventListener('change', (e)=>{
+    const d = load();
+    d.auto = !!e.target.checked;
+    d.raw = $('raw').value;
+    save(d);
+    showToast(d.auto ? 'Auto-parse enabled.' : 'Auto-parse disabled.', null);
+  });
+
+  $('showDone').addEventListener('change', (e)=>{
+    const d = load();
+    d.showDone = !!e.target.checked;
+    save(d);
+    render();
+  });
+
+  $('tax').addEventListener('input', (e)=>{
+    const d = load();
+    d.tax = parseFloat(String(e.target.value).replace(',','.')) || 0;
+    save(d);
+    render();
+  });
+
+  $('cur').addEventListener('change', (e)=>{
+    const d = load();
+    d.cur = e.target.value;
+    save(d);
+    render();
+  });
+
+  $('addRow').onclick = addRow;
+
+  $('removeDone').onclick = ()=>{
+    const d = load();
+    const before = d.items.slice();
+    d.items = d.items.filter(i=>!i.done);
+    save(d);
+    render();
+    showToast('Removed checked rows.', (dd)=>{ dd.items = before; });
+  };
+
+  $('reset').onclick = ()=>{
+    if(!confirm('Reset receipt scanner data?')) return;
+    localStorage.removeItem(KEY);
+    render();
+    showToast('Reset.', null);
+  };
+
+  // Event delegation for rows
+  document.body.addEventListener('click', (e)=>{
+    const rm = e.target.getAttribute && e.target.getAttribute('data-rm');
+    if(!rm) return;
+    const d = load();
+    const before = d.items.slice();
+    d.items = d.items.filter(x=>x.id!==rm);
+    save(d);
+    render();
+    showToast('Removed item.', (dd)=>{ dd.items = before; });
+  });
+
+  document.body.addEventListener('change', (e)=>{
+    const done = e.target.getAttribute && e.target.getAttribute('data-done');
+    const cat = e.target.getAttribute && e.target.getAttribute('data-cat');
+    if(done){
+      const d = load();
+      const it = d.items.find(x=>x.id===done);
+      if(it) it.done = !!e.target.checked;
+      save(d);
+      render();
+      return;
+    }
+    if(cat){
+      const d = load();
+      const it = d.items.find(x=>x.id===cat);
+      if(it) it.cat = e.target.value;
+      save(d);
+      render();
+      return;
+    }
+  });
+
+  document.body.addEventListener('input', (e)=>{
+    const name = e.target.getAttribute && e.target.getAttribute('data-name');
+    const price = e.target.getAttribute && e.target.getAttribute('data-price');
+    if(name){
+      const d = load();
+      const it = d.items.find(x=>x.id===name);
+      if(it) it.name = sanitizeName(e.target.value);
+      save(d);
+      // don’t full render; just totals/meta
+      const t = computeTotals(d);
+      $('sub').textContent = fmtMoney(t.subtotal) + ' ' + (d.cur || '');
+      $('total').textContent = fmtMoney(t.total) + ' ' + (d.cur || '');
+      setMeta(d);
+      return;
+    }
+    if(price){
+      const d = load();
+      const it = d.items.find(x=>x.id===price);
+      if(it) it.price = parseFloat(String(e.target.value).replace(',','.')) || 0;
+      save(d);
+      const t = computeTotals(d);
+      $('sub').textContent = fmtMoney(t.subtotal) + ' ' + (d.cur || '');
+      $('total').textContent = fmtMoney(t.total) + ' ' + (d.cur || '');
+      setMeta(d);
+    }
+  });
+
+  // Export dialog
+  function openDlg(){
+    const d = load();
+    $('out').value = exportCsv(d);
+    if($('dlg').showModal) $('dlg').showModal(); else $('dlg').setAttribute('open','');
+  }
+  function closeDlg(){
+    if($('dlg').close) $('dlg').close(); else $('dlg').removeAttribute('open');
+  }
+
+  async function copyText(t){
+    try{ await navigator.clipboard.writeText(t); return true; }
+    catch{
+      const ta=document.createElement('textarea');
+      ta.value=t; document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand('copy'); }catch{}
+      ta.remove();
+      return false;
+    }
+  }
+
+  function exportCsv(d){
+    const rows = [['item','category','price','done','currency','tax'],
+      ...d.items.map(it => [it.name, it.cat, fmtMoney(it.price), it.done?'1':'0', d.cur, fmtMoney(d.tax)])
+    ];
+    return rows.map(r => r.map(v => '"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  }
+
+  function exportMd(d){
+    const lines=[];
+    lines.push('# Receipt');
+    lines.push('');
+    d.items.forEach(it => {
+      lines.push(`- ${it.done ? '[x]' : '[ ]'} ${it.name || '—'} — ${fmtMoney(it.price)} ${d.cur} (${it.cat})`);
+    });
+    const t=computeTotals(d);
+    lines.push('');
+    lines.push(`Subtotal: **${fmtMoney(t.subtotal)} ${d.cur}**`);
+    lines.push(`Tax/tip: **${fmtMoney(d.tax)} ${d.cur}**`);
+    lines.push(`Total: **${fmtMoney(t.total)} ${d.cur}**`);
+    return lines.join('\n');
+  }
+
+  $('export').onclick = openDlg;
+  $('closeDlg').onclick = closeDlg;
+
+  $('copyCsv').onclick = async ()=>{
+    const d=load();
+    const txt=exportCsv(d);
+    $('out').value = txt;
+    await copyText(txt);
+    showToast('Copied CSV.', null);
+  };
+  $('copyJson').onclick = async ()=>{
+    const d=load();
+    const txt=JSON.stringify(d, null, 2);
+    $('out').value = txt;
+    await copyText(txt);
+    showToast('Copied JSON.', null);
+  };
+  $('copyMd').onclick = async ()=>{
+    const d=load();
+    const txt=exportMd(d);
+    $('out').value = txt;
+    await copyText(txt);
+    showToast('Copied Markdown.', null);
+  };
+
+  // Shortcuts
+  window.addEventListener('keydown', (e)=>{
+    const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+    const typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){
+      e.preventDefault();
+      $('raw').focus();
+      return;
+    }
+
+    if((e.ctrlKey || e.metaKey) && e.key === 'Enter'){
+      e.preventDefault();
+      parseNow();
+      return;
+    }
+
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'e'){
+      e.preventDefault();
+      openDlg();
+      return;
+    }
+
+    if(e.key === 'Escape'){
+      try{ closeDlg(); }catch{}
+      $('toast').classList.remove('show');
+    }
+
+    if(e.key === '/' && !typing){
+      e.preventDefault();
+      $('raw').focus();
+    }
+  });
+
+  // Init
+  const d = load();
+  $('raw').value = d.raw;
+  $('auto').checked = !!d.auto;
+  $('showDone').checked = !!d.showDone;
+  $('tax').value = fmtMoney(d.tax);
+  $('cur').value = d.cur || 'EUR';
+
+  if(!d.raw && !d.items.length){
+    // gentle default
+    d.raw = 'Milk 1.79\nBread 1.29\nBananas 2.15\nChicken 6.40\n';
+    save(d);
+  }
+
+  render();
+})();
+</script>
+
+  <!-- DrumDrums Offline Module -->
+  <style>
+    .drumdrum-offline-shelf{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:min(320px,calc(100% - 48px));background:var(--panel,rgba(255,255,255,0.96));color:var(--text,#0f172a);box-shadow:0 20px 50px rgba(15,23,42,0.2);border-radius:24px;border:1px solid rgba(15,23,42,0.1);padding:20px;font-family:inherit;z-index:9999;line-height:1.4}
+    [data-theme="dark"] .drumdrum-offline-shelf{background:rgba(2,6,23,0.92);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35);box-shadow:0 25px 60px rgba(2,6,23,0.75)}
+    .drumdrum-offline-shelf[data-offline-hidden="true"]{display:none}
+    .drumdrum-offline-label{text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.12em;opacity:.75;margin-bottom:4px}
+    .drumdrum-offline-head h2{font-size:17px;margin:0 0 6px;font-weight:900}
+    .drumdrum-offline-head p{margin:0;font-size:13px;opacity:.9}
+    .drumdrum-offline-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+    .drumdrum-offline-actions button{border:none;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s ease,opacity .15s ease;background:var(--accent,#2563eb);color:#fff;box-shadow:0 10px 25px rgba(37,99,235,0.25)}
+    .drumdrum-offline-actions button.secondary{background:rgba(15,23,42,0.08);color:inherit;box-shadow:none;border:1px solid rgba(15,23,42,0.12)}
+    [data-theme="dark"] .drumdrum-offline-actions button.secondary{background:rgba(148,163,184,0.15);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35)}
+    .drumdrum-offline-actions button:disabled{opacity:.7;cursor:default}
+    .drumdrum-offline-actions button:active{transform:scale(0.98)}
+    .drumdrum-offline-guide{margin-top:14px;border-radius:14px;padding:12px;font-size:13px;background:rgba(15,23,42,0.05);border:1px dashed rgba(15,23,42,0.25)}
+    .drumdrum-offline-guide p{margin:8px 0 0}
+    .drumdrum-offline-guide ol{margin:8px 0 0;padding-left:18px}
+    [data-theme="dark"] .drumdrum-offline-guide{background:rgba(15,23,42,0.4);border-color:rgba(148,163,184,0.3)}
+    .drumdrum-offline-dismiss{position:absolute;top:6px;right:8px;border:none;background:rgba(15,23,42,0.08);color:inherit;font-size:22px;line-height:1;cursor:pointer;width:48px;height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0;border:2px solid rgba(15,23,42,0.15);box-shadow:0 6px 14px rgba(15,23,42,0.18);touch-action:manipulation}
+    [data-theme="dark"] .drumdrum-offline-dismiss{background:rgba(148,163,184,0.25);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.4);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
+    .drumdrum-offline-dismiss:focus-visible,.drumdrum-offline-actions button:focus-visible{outline:3px solid rgba(59,130,246,0.7);outline-offset:2px}
+    .drumdrum-mention{cursor:pointer}
+    .drumdrum-mention:not(.btn){background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline}
+    .drumdrum-mention.btn{cursor:pointer}
+    .drumdrum-offline-toggle{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:56px;height:56px;border-radius:999px;border:none;background:var(--accent,#2563eb);color:#fff;box-shadow:0 18px 35px rgba(15,23,42,0.18);cursor:pointer;font-size:20px;font-weight:700;z-index:9998;display:flex;align-items:center;justify-content:center;transition:transform .2s ease,box-shadow .2s ease}
+    [data-theme="dark"] .drumdrum-offline-toggle{background:rgba(37,99,235,0.92);box-shadow:0 20px 45px rgba(2,6,23,0.75)}
+    .drumdrum-offline-toggle:focus-visible{outline:3px solid rgba(59,130,246,0.6);outline-offset:2px}
+    .drumdrum-offline-toggle:active{transform:scale(0.95)}
+    @media (max-width:640px){.drumdrum-offline-shelf{left:16px;right:16px;width:auto;bottom:calc(16px + env(safe-area-inset-bottom, 0px));padding:16px}.drumdrum-offline-toggle{bottom:calc(16px + env(safe-area-inset-bottom, 0px));right:calc(16px + env(safe-area-inset-right, 0px));width:52px;height:52px}}
+  </style>
+  <section class="drumdrum-offline-shelf" data-drumdrum-offline>
+    <button type="button" class="drumdrum-offline-dismiss" data-offline-dismiss aria-label="Hide offline helper">×</button>
+    <div class="drumdrum-offline-head">
+      <p class="drumdrum-offline-label">DrumDrums Offline</p>
+      <h2>Save this DrumDrum</h2>
+      <p>Download once. Launch anywhere — even without internet.</p>
+    </div>
+    <div class="drumdrum-offline-actions">
+      <button type="button" data-offline-download>Save offline (.html)</button>
+      <button type="button" class="secondary" data-offline-guide>Home screen tips</button>
+    </div>
+    <div class="drumdrum-offline-guide" data-offline-guide-panel hidden>
+      <strong>Install on your phone</strong>
+      <ol>
+        <li>Tap your browser's share/menu button.</li>
+        <li>Choose “Add to Home Screen” / “Add shortcut”.</li>
+        <li>Launch it later. No signal required.</li>
+      </ol>
+      <p>Offline copies remove DrumDrums library links automatically.</p>
+    </div>
+  </section>
+  <button type="button" class="drumdrum-offline-toggle" data-offline-toggle hidden aria-label="Show DrumDrums Offline helper">⬇️</button>
+  <script>
+    (() => {
+      const ready = (fn) => (document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', fn) : fn();
+      ready(() => {
+        const shelf = document.querySelector('[data-drumdrum-offline]');
+        if (!shelf) return;
+        const downloadButton = shelf.querySelector('[data-offline-download]');
+        const guideButton = shelf.querySelector('[data-offline-guide]');
+        const guidePanel = shelf.querySelector('[data-offline-guide-panel]');
+        const dismissButton = shelf.querySelector('[data-offline-dismiss]');
+        const toggleButton = document.querySelector('[data-offline-toggle]');
+        const baseGuide = guidePanel ? guidePanel.innerHTML : '';
+        const guideDefaultLabel = guideButton ? guideButton.textContent.trim() : '';
+        const isLibraryHome = document.body && document.body.dataset.libraryHome === 'true';
+
+        const collapseShelf = ({ focusToggle = false } = {}) => {
+          shelf.setAttribute('data-offline-hidden', 'true');
+          if (toggleButton) {
+            toggleButton.hidden = false;
+            if (focusToggle) {
+              try {
+                toggleButton.focus({ preventScroll: true });
+              } catch (err) {
+                toggleButton.focus();
+              }
+            }
+          }
+        };
+
+        const revealShelf = () => {
+          shelf.removeAttribute('data-offline-hidden');
+          if (toggleButton) {
+            toggleButton.hidden = true;
+          }
+        };
+
+        if (downloadButton) {
+          const defaultText = downloadButton.textContent.trim();
+          downloadButton.addEventListener('click', () => {
+            const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const slug = (document.title || 'drumdrum-app')
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '') || 'drumdrum-app';
+            link.href = url;
+            link.download = slug + '.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+            downloadButton.textContent = 'Saved ✅';
+            downloadButton.disabled = true;
+            setTimeout(() => {
+              downloadButton.disabled = false;
+              downloadButton.textContent = defaultText;
+            }, 2200);
+          });
+        }
+
+        if (guideButton && guidePanel) {
+          guidePanel.hidden = true;
+          guideButton.addEventListener('click', () => {
+            if (guidePanel.hidden) {
+              guidePanel.innerHTML = baseGuide;
+              guidePanel.hidden = false;
+              guideButton.textContent = 'Hide tips';
+            } else {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        if (guidePanel) {
+          guidePanel.setAttribute('tabindex', '-1');
+        }
+
+        if (dismissButton) {
+          dismissButton.addEventListener('click', () => collapseShelf({ focusToggle: true }));
+        }
+
+        if (toggleButton) {
+          toggleButton.addEventListener('click', () => {
+            revealShelf();
+            if (guidePanel && guideButton) {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        const showMentionNote = (slug, label) => {
+          revealShelf();
+          if (!guidePanel) return;
+          guidePanel.hidden = false;
+          guidePanel.innerHTML = `<strong>${label || 'DrumDrum app'}</strong><p>This reference opens another DrumDrum app (${slug}). Download it separately when you're back online.</p>`;
+          if (guideButton) {
+            guideButton.textContent = 'Hide tips';
+          }
+          try {
+            guidePanel.focus({ preventScroll: false });
+          } catch (err) {
+            guidePanel.focus();
+          }
+        };
+
+        if (location.protocol === 'file:') {
+          document.querySelectorAll('a[href^="../"], a[href^="./"], a[href^="/"]').forEach((anchor) => {
+            const href = anchor.getAttribute('href');
+            if (!href || href.startsWith('#')) return;
+            const slug = href
+              .replace(/^\.\.\//, '')
+              .replace(/^\.\//, '')
+              .replace(/^\//, '')
+              .replace(/\/$/, '') || 'drumdrums-app';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.innerHTML = anchor.innerHTML;
+            const anchorClass = anchor.getAttribute('class');
+            button.className = anchorClass ? anchorClass + ' drumdrum-mention' : 'drumdrum-mention';
+            Array.from(anchor.attributes).forEach((attr) => {
+              if (['href', 'class', 'target', 'rel'].includes(attr.name)) return;
+              button.setAttribute(attr.name, attr.value);
+            });
+            button.addEventListener('click', () => showMentionNote(slug, anchor.textContent.trim()));
+            button.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showMentionNote(slug, anchor.textContent.trim());
+              }
+            });
+            anchor.replaceWith(button);
+          });
+        }
+
+        if (isLibraryHome) {
+          collapseShelf();
+        }
+      });
+    })();
+  </script>
+
+
+</body>
+</html>

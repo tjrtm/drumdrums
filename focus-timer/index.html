@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DrumDrums — Focus Timer (mock)</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --bg-secondary:#eef3f9;
+      --glow-a:rgba(99,102,241,0.18);
+      --glow-b:rgba(255,176,32,0.12);
+      --panel:rgba(255,255,255,0.92);
+      --text:#0b1220;
+      --muted:#51657f;
+      --a:#3b82f6;
+      --b:#ff9a1f;
+      --line:rgba(15,23,42,0.14);
+      --ring-track:rgba(59,130,246,0.12);
+      --ring-inner:rgba(255,255,255,0.9);
+      --input-bg:rgba(255,255,255,0.85);
+    }
+    :root[data-theme="dark"]{
+      --bg:#0b1220;
+      --bg-secondary:#05070a;
+      --glow-a:rgba(51,209,255,0.2);
+      --glow-b:rgba(255,176,32,0.16);
+      --panel:rgba(255,255,255,0.06);
+      --text:#eaf2ff;
+      --muted:#9bb0cf;
+      --a:#33d1ff;
+      --b:#ffb020;
+      --line:rgba(255,255,255,0.14);
+      --ring-track:rgba(255,255,255,0.06);
+      --ring-inner:rgba(0,0,0,0.3);
+      --input-bg:rgba(255,255,255,0.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,Segoe UI,Roboto,Arial;
+      background:
+        radial-gradient(900px 600px at 18% 0%, var(--glow-a), transparent 58%),
+        radial-gradient(800px 520px at 85% 12%, var(--glow-b), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg-secondary));
+      background-attachment: fixed, fixed, fixed;
+      color:var(--text);
+      display:grid;
+      place-items:center;
+      min-height:100vh;
+      padding:20px;
+      padding-bottom:calc(220px + env(safe-area-inset-bottom, 0px));
+    }
+    .app{width:min(920px,100%); display:grid; grid-template-columns:1.2fr .8fr; gap:14px}
+    .card{background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:16px; backdrop-filter: blur(18px)}
+    h1{margin:0 0 6px; font-size:18px}
+    .muted{color:var(--muted); font-size:13px}
+    .ringWrap{display:grid; place-items:center; padding:8px}
+    .ring{
+      width:340px;height:340px;border-radius:999px;
+      background: conic-gradient(var(--a) 0deg, var(--ring-track) 0deg);
+      display:grid; place-items:center; border:1px solid var(--line);
+    }
+    .inner{
+      width:280px;height:280px;border-radius:999px;
+      background:var(--ring-inner);
+      border:1px solid var(--line);
+      display:grid; place-items:center; text-align:center; padding:10px
+    }
+    .time{font-size:54px; font-weight:900; letter-spacing:1px}
+    .label{margin-top:6px; color:var(--muted)}
+    .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; align-items:center}
+    button{
+      cursor:pointer;
+      border-radius:14px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      background:var(--panel);
+      color:var(--text);
+      font-weight:800;
+    }
+    button.primary{
+      background:linear-gradient(135deg, var(--a), var(--b));
+      border-color:transparent;
+      color:#0b1220;
+    }
+    button.danger{border-color:var(--b)}
+    input, select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--input-bg);
+      color:var(--text);
+    }
+    .kpi{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
+    .k{padding:12px;border-radius:16px;border:1px solid var(--line); background:var(--ring-track)}
+    .k b{font-size:18px}
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:var(--panel);
+      color:var(--text);
+      font-size:12px;
+      font-weight:800
+    }
+    .sep{height:1px;background:var(--line);margin:12px 0}
+    .toast{min-height:18px}
+
+    @media(max-width:860px){.app{grid-template-columns:1fr}.ring{width:300px;height:300px}.inner{width:244px;height:244px}}
+  </style>
+<style data-inline-theme>
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: calc(env(safe-area-inset-right, 0px) + 16px);
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 85%, transparent);
+  color: var(--text, #0f172a);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  z-index: 999;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.5);
+  outline-offset: 3px;
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+:root[data-theme="dark"] .theme-toggle {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.55);
+}
+
+.theme-toggle__icon {
+  pointer-events: none;
+  display: inline-flex;
+}
+
+.theme-toggle__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.theme-toggle--inline {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 90%, transparent);
+  color: inherit;
+  box-shadow: none;
+  margin-left: 8px;
+}
+
+:root[data-theme="dark"] .theme-toggle--inline {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+}
+
+.theme-toggle--inline .theme-toggle__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.drumdrums-banner{
+  margin:12px auto;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px dashed rgba(15,23,42,0.16);
+  background:color-mix(in srgb, var(--panel, #ffffff) 86%, transparent);
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  max-width:460px;
+}
+:root[data-theme="dark"] .drumdrums-banner{
+  border-color:rgba(148,163,184,0.35);
+  background:rgba(10,15,25,0.6);
+}
+.drumdrums-banner strong{
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:11px;
+  display:block;
+  margin-bottom:4px;
+}
+.drumdrums-note{
+  font-weight:500;
+  font-size:12px;
+  color:var(--muted, #475569);
+}
+
+</style>
+<script data-inline-theme>
+(function () {
+  const STORAGE_KEY = 'drumdrums-theme';
+  const root = document.documentElement;
+  const systemMedia = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  const icons = {
+    moon: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 8.5 8.5 0 1 0 21 14.5Z" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+    sun: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-linecap="round" /></svg>'
+  };
+
+  const readStoredTheme = () => {
+    try {
+      return localStorage.getItem(STORAGE_KEY);
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const persistTheme = (value) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, value);
+    } catch (err) {
+      /* no-op */
+    }
+  };
+
+  const systemPrefersDark = () => systemMedia ? systemMedia.matches : false;
+
+  const initialStored = readStoredTheme();
+  let currentTheme = initialStored === 'light' || initialStored === 'dark'
+    ? initialStored
+    : (root.dataset.theme === 'light' || root.dataset.theme === 'dark')
+      ? root.dataset.theme
+      : (systemPrefersDark() ? 'dark' : 'light');
+  root.dataset.theme = currentTheme;
+  if (document.body) {
+    document.body.setAttribute('data-theme', currentTheme);
+  }
+
+  let userLocked = initialStored === 'light' || initialStored === 'dark';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'theme-toggle';
+  const srLabel = document.createElement('span');
+  srLabel.className = 'sr-only';
+  srLabel.textContent = 'Toggle color theme';
+  const iconSlot = document.createElement('span');
+  iconSlot.className = 'theme-toggle__icon';
+  button.append(srLabel, iconSlot);
+
+  const syncButton = () => {
+    button.setAttribute('aria-pressed', currentTheme === 'dark');
+    iconSlot.innerHTML = currentTheme === 'dark' ? icons.sun : icons.moon;
+    button.title = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  };
+
+  const applyTheme = (nextTheme, { persist } = { persist: false }) => {
+    currentTheme = nextTheme;
+    root.dataset.theme = nextTheme;
+    if (document.body) {
+      document.body.setAttribute('data-theme', nextTheme);
+    }
+    syncButton();
+    if (persist) {
+      persistTheme(nextTheme);
+      userLocked = true;
+    }
+  };
+
+  const toggleTheme = () => {
+    const next = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(next, { persist: true });
+  };
+
+  const init = () => {
+    if (document.querySelector('.theme-toggle')) return;
+    button.addEventListener('click', toggleTheme);
+    const anchor = document.querySelector('[data-theme-anchor]') ||
+      document.querySelector('.theme-toggle-anchor') ||
+      document.querySelector('header .actions') ||
+      document.querySelector('header .navIcons') ||
+      document.querySelector('header');
+    if (anchor) {
+      button.classList.add('theme-toggle--inline');
+      anchor.appendChild(button);
+    } else {
+      document.body.appendChild(button);
+    }
+    applyTheme(currentTheme);
+  };
+
+  if (systemMedia && typeof systemMedia.addEventListener === 'function') {
+    systemMedia.addEventListener('change', (event) => {
+      if (!userLocked) {
+        applyTheme(event.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+</script>
+</head>
+<body>
+  <div class="app">
+    <div class="card">
+      <h1>Focus Timer</h1>
+      <div class="muted">Keyboard: <b>Space</b> start/pause • <b>R</b> reset • <b>N</b> next phase</div>
+
+      <div class="ringWrap">
+        <div class="ring" id="ring" aria-hidden="true">
+          <div class="inner">
+            <div>
+              <div class="time" id="time" aria-live="polite">25:00</div>
+              <div class="label" id="phase">Focus</div>
+              <div class="row" style="justify-content:center">
+                <span class="pill" id="statePill">Ready</span>
+                <span class="pill" id="endPill" style="display:none">Ends —</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="primary" id="start" aria-label="Start">Start</button>
+        <button id="pause" aria-label="Pause">Pause</button>
+        <button class="danger" id="reset" aria-label="Reset">Reset</button>
+        <button id="next" aria-label="Skip to next phase">Next</button>
+      </div>
+      <div class="muted toast" id="toast"></div>
+      <div style="margin-top:10px" class="muted">Tip: open <b>/drumdrums</b> to browse all prototypes.</div>
+    </div>
+
+    <div class="card">
+      <h1>Settings</h1>
+      <div class="muted">Persisted locally. Includes real stats + optional desktop notifications.</div>
+
+      <div class="row" style="margin-top:12px">
+        <button id="p25" title="25/5">25 / 5</button>
+        <button id="p50" title="50/10">50 / 10</button>
+        <button id="p90" title="90/15">90 / 15</button>
+      </div>
+
+      <div class="sep"></div>
+
+      <div>
+        <div class="muted">Focus minutes</div>
+        <input id="focusM" type="number" min="1" value="25" inputmode="numeric" />
+      </div>
+      <div style="margin-top:10px">
+        <div class="muted">Break minutes</div>
+        <input id="breakM" type="number" min="1" value="5" inputmode="numeric" />
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <label class="pill" style="cursor:pointer">
+          <input id="autoNext" type="checkbox" style="width:auto" />
+          Auto-start next
+        </label>
+        <label class="pill" style="cursor:pointer">
+          <input id="soundOn" type="checkbox" style="width:auto" />
+          Sound
+        </label>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <div style="flex:1; min-width:160px">
+          <div class="muted">Sound</div>
+          <select id="soundKind">
+            <option value="beep">Beep</option>
+            <option value="chime">Chime</option>
+          </select>
+        </div>
+        <div style="flex:1; min-width:160px">
+          <div class="muted">Volume</div>
+          <input id="vol" type="range" min="0" max="1" step="0.05" value="0.35" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button id="enableNotif">Enable desktop notifications</button>
+        <button id="testNotif" title="Test immediately">Test</button>
+      </div>
+
+      <div class="kpi">
+        <div class="k"><div class="muted">Today</div><b id="today">0</b><div class="muted">focus sessions</div></div>
+        <div class="k"><div class="muted">Streak</div><b id="streak">0</b><div class="muted">days</div></div>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <button id="exportMd">Export .md (copy)</button>
+        <button id="clearStats">Clear stats</button>
+      </div>
+
+      <div class="muted" style="margin-top:10px">This is still a mock, but the timer + persistence are real.</div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const $ = (id)=>document.getElementById(id);
+  const ring = $('ring');
+  const timeEl = $('time');
+  const phaseEl = $('phase');
+  const focusM = $('focusM');
+  const breakM = $('breakM');
+
+  const statePill = $('statePill');
+  const endPill = $('endPill');
+  const toast = $('toast');
+
+  const KEY_SETTINGS = 'focus-timer-settings-v2';
+  const KEY_STATE    = 'focus-timer-state-v2';
+  const KEY_STATS    = 'focus-timer-stats-v1'; // {days:{"YYYY-MM-DD":count}}
+
+  const defaultSettings = {
+    focusMin: 25,
+    breakMin: 5,
+    autoNext: true,
+    soundOn: true,
+    soundKind: 'beep',
+    vol: 0.35,
+    notifEnabled: false
+  };
+
+  const state = {
+    running: false,
+    phase: 'focus',
+    endAt: null,       // ms timestamp when phase ends
+    totalSec: 25*60,   // total for current phase
+    remainingSec: 25*60
+  };
+
+  function todayKey(){
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${dd}`;
+  }
+
+  function loadJson(key, fallback){
+    try{ return JSON.parse(localStorage.getItem(key) || ''); }catch{ return fallback; }
+  }
+  function saveJson(key, obj){
+    localStorage.setItem(key, JSON.stringify(obj));
+  }
+
+  function getSettings(){
+    const s = loadJson(KEY_SETTINGS, null) || {};
+    return { ...defaultSettings, ...s };
+  }
+  function setSettings(patch){
+    const s = getSettings();
+    const next = { ...s, ...patch };
+    saveJson(KEY_SETTINGS, next);
+    return next;
+  }
+
+  function getStats(){
+    const s = loadJson(KEY_STATS, null);
+    if(!s || typeof s !== 'object') return { days: {} };
+    if(!s.days || typeof s.days !== 'object') s.days = {};
+    return s;
+  }
+  function saveStats(s){ saveJson(KEY_STATS, s); }
+
+  function incToday(){
+    const s = getStats();
+    const k = todayKey();
+    s.days[k] = (s.days[k] || 0) + 1;
+    saveStats(s);
+    repaintStats();
+  }
+
+  function computeStreak(){
+    const s = getStats();
+    let streak = 0;
+    let d = new Date();
+    for(let i=0;i<365;i++){
+      const k = todayKeyFrom(d);
+      if((s.days[k]||0) > 0){
+        streak++;
+        d = new Date(d.getTime() - 24*60*60*1000);
+      } else {
+        break;
+      }
+    }
+    return streak;
+  }
+  function todayKeyFrom(d){
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${dd}`;
+  }
+
+  function fmt(sec){
+    sec = Math.max(0, Math.floor(sec));
+    const m = Math.floor(sec/60).toString().padStart(2,'0');
+    const ss = Math.floor(sec%60).toString().padStart(2,'0');
+    return `${m}:${ss}`;
+  }
+
+  function setToast(msg){
+    toast.textContent = msg || '';
+  }
+
+  function scheduleNotif(title, body){
+    const s = getSettings();
+    if(!s.notifEnabled) return;
+    if(!('Notification' in window)) return;
+    if(Notification.permission !== 'granted') return;
+    try{ new Notification(title, { body }); }catch{}
+  }
+
+  function beep(){
+    const s = getSettings();
+    if(!s.soundOn) return;
+    try{
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const gain = ctx.createGain();
+      gain.gain.value = Number(s.vol || 0.35);
+      gain.connect(ctx.destination);
+
+      const osc = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+
+      const now = ctx.currentTime;
+      if(s.soundKind === 'chime'){
+        osc.type = 'sine'; osc.frequency.setValueAtTime(880, now);
+        osc2.type = 'sine'; osc2.frequency.setValueAtTime(660, now);
+        osc.connect(gain); osc2.connect(gain);
+        osc.start(now); osc2.start(now);
+        osc.stop(now + 0.10);
+        osc2.stop(now + 0.16);
+      } else {
+        osc.type = 'square'; osc.frequency.setValueAtTime(740, now);
+        osc.connect(gain);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      }
+      setTimeout(()=>ctx.close().catch(()=>{}), 250);
+    }catch{}
+  }
+
+  function setRingProgress(){
+    const p = 1 - (state.remainingSec / Math.max(1,state.totalSec));
+    const deg = Math.max(0, Math.min(1,p)) * 360;
+    const a = getComputedStyle(document.documentElement).getPropertyValue('--a') || '#33d1ff';
+    ring.style.background = `conic-gradient(${a} ${deg}deg, rgba(255,255,255,.06) 0deg)`;
+  }
+
+  function repaint(){
+    timeEl.textContent = fmt(state.remainingSec);
+    phaseEl.textContent = state.phase === 'focus' ? 'Focus' : 'Break';
+    setRingProgress();
+
+    if(state.running){
+      statePill.textContent = 'Running';
+      endPill.style.display = '';
+      endPill.textContent = 'Ends ' + new Date(state.endAt).toLocaleTimeString(undefined,{hour12:false});
+      document.title = `${fmt(state.remainingSec)} · ${phaseEl.textContent} — Focus Timer`;
+    } else {
+      statePill.textContent = 'Paused';
+      endPill.style.display = 'none';
+      document.title = 'Focus Timer (mock)';
+    }
+  }
+
+  function applyInputsToSettings(){
+    const fm = Math.max(1, Number(focusM.value || 25));
+    const bm = Math.max(1, Number(breakM.value || 5));
+    setSettings({ focusMin: fm, breakMin: bm });
+  }
+
+  function setPhase(phase){
+    const s = getSettings();
+    state.phase = phase;
+    const min = phase === 'focus' ? s.focusMin : s.breakMin;
+    state.totalSec = min * 60;
+    state.remainingSec = state.totalSec;
+    state.endAt = state.running ? (Date.now() + state.remainingSec*1000) : null;
+    persistState();
+    repaint();
+  }
+
+  function persistState(){
+    saveJson(KEY_STATE, {
+      running: state.running,
+      phase: state.phase,
+      endAt: state.endAt,
+      totalSec: state.totalSec,
+      remainingSec: state.remainingSec
+    });
+  }
+
+  function restoreState(){
+    const saved = loadJson(KEY_STATE, null);
+    const s = getSettings();
+
+    // settings → UI
+    focusM.value = String(s.focusMin);
+    breakM.value = String(s.breakMin);
+    $('autoNext').checked = !!s.autoNext;
+    $('soundOn').checked = !!s.soundOn;
+    $('soundKind').value = s.soundKind || 'beep';
+    $('vol').value = String(s.vol ?? 0.35);
+
+    if(saved && typeof saved === 'object'){
+      state.phase = saved.phase === 'break' ? 'break' : 'focus';
+      state.running = !!saved.running;
+      state.totalSec = Number(saved.totalSec || (state.phase==='focus' ? s.focusMin*60 : s.breakMin*60));
+      state.remainingSec = Number(saved.remainingSec || state.totalSec);
+      state.endAt = saved.endAt ? Number(saved.endAt) : null;
+
+      if(state.running && state.endAt){
+        const delta = Math.ceil((state.endAt - Date.now())/1000);
+        if(delta <= 0){
+          // phase expired while we were away — advance once
+          state.running = false;
+          advancePhase(true);
+          setToast('Phase completed while away.');
+        } else {
+          state.remainingSec = delta;
+        }
+      }
+    } else {
+      setPhase('focus');
+      state.running = false;
+    }
+
+    repaintStats();
+    repaint();
+  }
+
+  function repaintStats(){
+    const s = getStats();
+    $('today').textContent = String(s.days[todayKey()] || 0);
+    $('streak').textContent = String(computeStreak());
+  }
+
+  let raf = null;
+  function loop(){
+    if(!state.running){ raf = null; return; }
+    const sec = Math.ceil((state.endAt - Date.now())/1000);
+    state.remainingSec = Math.max(0, sec);
+    if(state.remainingSec <= 0){
+      advancePhase(false);
+      if(getSettings().autoNext){
+        start();
+      } else {
+        pause();
+      }
+      return;
+    }
+    repaint();
+    persistState();
+    raf = requestAnimationFrame(loop);
+  }
+
+  function start(){
+    if(state.running) return;
+    if(!state.endAt) state.endAt = Date.now() + state.remainingSec*1000;
+    state.running = true;
+    setToast('');
+    persistState();
+    repaint();
+    if(!raf) raf = requestAnimationFrame(loop);
+  }
+
+  function pause(){
+    if(!state.running) return;
+    // freeze remaining
+    state.remainingSec = Math.max(0, Math.ceil((state.endAt - Date.now())/1000));
+    state.endAt = null;
+    state.running = false;
+    persistState();
+    repaint();
+    setToast('Paused.');
+  }
+
+  function reset(){
+    state.running = false;
+    state.phase = 'focus';
+    state.endAt = null;
+    const s = getSettings();
+    state.totalSec = s.focusMin*60;
+    state.remainingSec = state.totalSec;
+    persistState();
+    repaint();
+    setToast('Reset.');
+  }
+
+  function advancePhase(fromRestore){
+    const prev = state.phase;
+    state.phase = (state.phase === 'focus') ? 'break' : 'focus';
+
+    // If a focus phase completed, count a session.
+    if(prev === 'focus'){
+      incToday();
+    }
+
+    // set new phase duration
+    const s = getSettings();
+    const min = state.phase === 'focus' ? s.focusMin : s.breakMin;
+    state.totalSec = min*60;
+    state.remainingSec = state.totalSec;
+    state.endAt = null;
+    persistState();
+
+    if(!fromRestore){
+      beep();
+      scheduleNotif(
+        state.phase === 'focus' ? 'Focus time' : 'Break time',
+        state.phase === 'focus' ? 'Start your next focus session.' : 'Take a short break.'
+      );
+      setToast(state.phase === 'focus' ? 'Break finished → Focus.' : 'Focus finished → Break.');
+    }
+
+    repaint();
+  }
+
+  async function enableNotifications(){
+    if(!('Notification' in window)){
+      setToast('Notifications not supported in this browser.');
+      return;
+    }
+    const perm = await Notification.requestPermission();
+    const ok = perm === 'granted';
+    setSettings({ notifEnabled: ok });
+    setToast(ok ? 'Notifications enabled.' : 'Notifications denied.');
+  }
+
+  async function copyText(t){
+    try{ await navigator.clipboard.writeText(t); return true; }
+    catch{
+      const ta=document.createElement('textarea');
+      ta.value=t; document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand('copy'); }catch{}
+      ta.remove();
+      return false;
+    }
+  }
+
+  function exportMd(){
+    const s = getSettings();
+    const stats = getStats();
+    const days = Object.keys(stats.days).sort().slice(-14);
+    const lines = [
+      '# Focus Timer — stats',
+      '',
+      `- Focus: **${s.focusMin} min**`,
+      `- Break: **${s.breakMin} min**`,
+      `- Today: **${stats.days[todayKey()] || 0}** sessions`,
+      `- Streak: **${computeStreak()}** days`,
+      '',
+      '## Last 14 days',
+      ...days.map(d => `- ${d}: ${stats.days[d]} session(s)`)
+    ].join('\n');
+    copyText(lines);
+    setToast('Copied Markdown export.');
+  }
+
+  // Wire UI
+  $('start').onclick = start;
+  $('pause').onclick = () => state.running ? pause() : start();
+  $('reset').onclick = reset;
+  $('next').onclick = () => { pause(); advancePhase(false); };
+
+  function setPreset(fm,bm){
+    focusM.value = String(fm);
+    breakM.value = String(bm);
+    applyInputsToSettings();
+    // reset current phase duration if not running
+    if(!state.running){
+      const p = state.phase;
+      setPhase(p);
+    }
+    setToast(`Preset: ${fm}/${bm}.`);
+  }
+  $('p25').onclick = () => setPreset(25,5);
+  $('p50').onclick = () => setPreset(50,10);
+  $('p90').onclick = () => setPreset(90,15);
+
+  focusM.oninput = () => { applyInputsToSettings(); if(!state.running) setPhase(state.phase); };
+  breakM.oninput = () => { applyInputsToSettings(); if(!state.running) setPhase(state.phase); };
+
+  $('autoNext').onchange = (e) => setSettings({ autoNext: !!e.target.checked });
+  $('soundOn').onchange = (e) => setSettings({ soundOn: !!e.target.checked });
+  $('soundKind').onchange = (e) => setSettings({ soundKind: e.target.value });
+  $('vol').oninput = (e) => setSettings({ vol: Number(e.target.value) });
+
+  $('enableNotif').onclick = enableNotifications;
+  $('testNotif').onclick = () => {
+    setSettings({ notifEnabled: true });
+    scheduleNotif('Focus Timer', 'Notifications test.');
+    beep();
+    setToast('Test fired (if allowed).');
+  };
+
+  $('exportMd').onclick = exportMd;
+  $('clearStats').onclick = () => {
+    if(confirm('Clear focus timer stats?')){
+      saveStats({ days:{} });
+      repaintStats();
+      setToast('Stats cleared.');
+    }
+  };
+
+  // Keyboard shortcuts
+  window.addEventListener('keydown', (e) => {
+    const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+    const typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+    if(typing) return;
+
+    if(e.key === ' '){
+      e.preventDefault();
+      state.running ? pause() : start();
+      return;
+    }
+    if(e.key.toLowerCase() === 'r'){
+      e.preventDefault();
+      reset();
+      return;
+    }
+    if(e.key.toLowerCase() === 'n'){
+      e.preventDefault();
+      pause();
+      advancePhase(false);
+      return;
+    }
+  });
+
+  // Initialize
+  restoreState();
+
+  // reflect permission
+  if('Notification' in window && Notification.permission === 'granted'){
+    setSettings({ notifEnabled: true });
+  }
+})();
+</script>
+
+  <!-- DrumDrums Offline Module -->
+  <style>
+    .drumdrum-offline-shelf{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:min(320px,calc(100% - 48px));background:var(--panel,rgba(255,255,255,0.96));color:var(--text,#0f172a);box-shadow:0 20px 50px rgba(15,23,42,0.2);border-radius:24px;border:1px solid rgba(15,23,42,0.1);padding:20px;font-family:inherit;z-index:9999;line-height:1.4}
+    [data-theme="dark"] .drumdrum-offline-shelf{background:rgba(2,6,23,0.92);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35);box-shadow:0 25px 60px rgba(2,6,23,0.75)}
+    .drumdrum-offline-shelf[data-offline-hidden="true"]{display:none}
+    .drumdrum-offline-label{text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.12em;opacity:.75;margin-bottom:4px}
+    .drumdrum-offline-head h2{font-size:17px;margin:0 0 6px;font-weight:900}
+    .drumdrum-offline-head p{margin:0;font-size:13px;opacity:.9}
+    .drumdrum-offline-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+    .drumdrum-offline-actions button{border:none;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s ease,opacity .15s ease;background:var(--accent,#2563eb);color:#fff;box-shadow:0 10px 25px rgba(37,99,235,0.25)}
+    .drumdrum-offline-actions button.secondary{background:rgba(15,23,42,0.08);color:inherit;box-shadow:none;border:1px solid rgba(15,23,42,0.12)}
+    [data-theme="dark"] .drumdrum-offline-actions button.secondary{background:rgba(148,163,184,0.15);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35)}
+    .drumdrum-offline-actions button:disabled{opacity:.7;cursor:default}
+    .drumdrum-offline-actions button:active{transform:scale(0.98)}
+    .drumdrum-offline-guide{margin-top:14px;border-radius:14px;padding:12px;font-size:13px;background:rgba(15,23,42,0.05);border:1px dashed rgba(15,23,42,0.25)}
+    .drumdrum-offline-guide p{margin:8px 0 0}
+    .drumdrum-offline-guide ol{margin:8px 0 0;padding-left:18px}
+    [data-theme="dark"] .drumdrum-offline-guide{background:rgba(15,23,42,0.4);border-color:rgba(148,163,184,0.3)}
+    .drumdrum-offline-dismiss{position:absolute;top:6px;right:8px;border:none;background:rgba(15,23,42,0.08);color:inherit;font-size:22px;line-height:1;cursor:pointer;width:48px;height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0;border:2px solid rgba(15,23,42,0.15);box-shadow:0 6px 14px rgba(15,23,42,0.18);touch-action:manipulation}
+    [data-theme="dark"] .drumdrum-offline-dismiss{background:rgba(148,163,184,0.25);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.4);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
+    .drumdrum-offline-dismiss:focus-visible,.drumdrum-offline-actions button:focus-visible{outline:3px solid rgba(59,130,246,0.7);outline-offset:2px}
+    .drumdrum-mention{cursor:pointer}
+    .drumdrum-mention:not(.btn){background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline}
+    .drumdrum-mention.btn{cursor:pointer}
+    .drumdrum-offline-toggle{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:56px;height:56px;border-radius:999px;border:none;background:var(--accent,#2563eb);color:#fff;box-shadow:0 18px 35px rgba(15,23,42,0.18);cursor:pointer;font-size:20px;font-weight:700;z-index:9998;display:flex;align-items:center;justify-content:center;transition:transform .2s ease,box-shadow .2s ease}
+    [data-theme="dark"] .drumdrum-offline-toggle{background:rgba(37,99,235,0.92);box-shadow:0 20px 45px rgba(2,6,23,0.75)}
+    .drumdrum-offline-toggle:focus-visible{outline:3px solid rgba(59,130,246,0.6);outline-offset:2px}
+    .drumdrum-offline-toggle:active{transform:scale(0.95)}
+    @media (max-width:640px){.drumdrum-offline-shelf{left:16px;right:16px;width:auto;bottom:calc(16px + env(safe-area-inset-bottom, 0px));padding:16px}.drumdrum-offline-toggle{bottom:calc(16px + env(safe-area-inset-bottom, 0px));right:calc(16px + env(safe-area-inset-right, 0px));width:52px;height:52px}}
+  </style>
+  <section class="drumdrum-offline-shelf" data-drumdrum-offline>
+    <button type="button" class="drumdrum-offline-dismiss" data-offline-dismiss aria-label="Hide offline helper">×</button>
+    <div class="drumdrum-offline-head">
+      <p class="drumdrum-offline-label">DrumDrums Offline</p>
+      <h2>Save this DrumDrum</h2>
+      <p>Download once. Launch anywhere — even without internet.</p>
+    </div>
+    <div class="drumdrum-offline-actions">
+      <button type="button" data-offline-download>Save offline (.html)</button>
+      <button type="button" class="secondary" data-offline-guide>Home screen tips</button>
+    </div>
+    <div class="drumdrum-offline-guide" data-offline-guide-panel hidden>
+      <strong>Install on your phone</strong>
+      <ol>
+        <li>Tap your browser's share/menu button.</li>
+        <li>Choose “Add to Home Screen” / “Add shortcut”.</li>
+        <li>Launch it later. No signal required.</li>
+      </ol>
+      <p>Offline copies remove DrumDrums library links automatically.</p>
+    </div>
+  </section>
+  <button type="button" class="drumdrum-offline-toggle" data-offline-toggle hidden aria-label="Show DrumDrums Offline helper">⬇️</button>
+  <script>
+    (() => {
+      const ready = (fn) => (document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', fn) : fn();
+      ready(() => {
+        const shelf = document.querySelector('[data-drumdrum-offline]');
+        if (!shelf) return;
+        const downloadButton = shelf.querySelector('[data-offline-download]');
+        const guideButton = shelf.querySelector('[data-offline-guide]');
+        const guidePanel = shelf.querySelector('[data-offline-guide-panel]');
+        const dismissButton = shelf.querySelector('[data-offline-dismiss]');
+        const toggleButton = document.querySelector('[data-offline-toggle]');
+        const baseGuide = guidePanel ? guidePanel.innerHTML : '';
+        const guideDefaultLabel = guideButton ? guideButton.textContent.trim() : '';
+        const isLibraryHome = document.body && document.body.dataset.libraryHome === 'true';
+
+        const collapseShelf = ({ focusToggle = false } = {}) => {
+          shelf.setAttribute('data-offline-hidden', 'true');
+          if (toggleButton) {
+            toggleButton.hidden = false;
+            if (focusToggle) {
+              try {
+                toggleButton.focus({ preventScroll: true });
+              } catch (err) {
+                toggleButton.focus();
+              }
+            }
+          }
+        };
+
+        const revealShelf = () => {
+          shelf.removeAttribute('data-offline-hidden');
+          if (toggleButton) {
+            toggleButton.hidden = true;
+          }
+        };
+
+        if (downloadButton) {
+          const defaultText = downloadButton.textContent.trim();
+          downloadButton.addEventListener('click', () => {
+            const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const slug = (document.title || 'drumdrum-app')
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '') || 'drumdrum-app';
+            link.href = url;
+            link.download = slug + '.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+            downloadButton.textContent = 'Saved ✅';
+            downloadButton.disabled = true;
+            setTimeout(() => {
+              downloadButton.disabled = false;
+              downloadButton.textContent = defaultText;
+            }, 2200);
+          });
+        }
+
+        if (guideButton && guidePanel) {
+          guidePanel.hidden = true;
+          guideButton.addEventListener('click', () => {
+            if (guidePanel.hidden) {
+              guidePanel.innerHTML = baseGuide;
+              guidePanel.hidden = false;
+              guideButton.textContent = 'Hide tips';
+            } else {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        if (guidePanel) {
+          guidePanel.setAttribute('tabindex', '-1');
+        }
+
+        if (dismissButton) {
+          dismissButton.addEventListener('click', () => collapseShelf({ focusToggle: true }));
+        }
+
+        if (toggleButton) {
+          toggleButton.addEventListener('click', () => {
+            revealShelf();
+            if (guidePanel && guideButton) {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        const showMentionNote = (slug, label) => {
+          revealShelf();
+          if (!guidePanel) return;
+          guidePanel.hidden = false;
+          guidePanel.innerHTML = `<strong>${label || 'DrumDrum app'}</strong><p>This reference opens another DrumDrum app (${slug}). Download it separately when you're back online.</p>`;
+          if (guideButton) {
+            guideButton.textContent = 'Hide tips';
+          }
+          try {
+            guidePanel.focus({ preventScroll: false });
+          } catch (err) {
+            guidePanel.focus();
+          }
+        };
+
+        if (location.protocol === 'file:') {
+          document.querySelectorAll('a[href^="../"], a[href^="./"], a[href^="/"]').forEach((anchor) => {
+            const href = anchor.getAttribute('href');
+            if (!href || href.startsWith('#')) return;
+            const slug = href
+              .replace(/^\.\.\//, '')
+              .replace(/^\.\//, '')
+              .replace(/^\//, '')
+              .replace(/\/$/, '') || 'drumdrums-app';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.innerHTML = anchor.innerHTML;
+            const anchorClass = anchor.getAttribute('class');
+            button.className = anchorClass ? anchorClass + ' drumdrum-mention' : 'drumdrum-mention';
+            Array.from(anchor.attributes).forEach((attr) => {
+              if (['href', 'class', 'target', 'rel'].includes(attr.name)) return;
+              button.setAttribute(attr.name, attr.value);
+            });
+            button.addEventListener('click', () => showMentionNote(slug, anchor.textContent.trim()));
+            button.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showMentionNote(slug, anchor.textContent.trim());
+              }
+            });
+            anchor.replaceWith(button);
+          });
+        }
+
+        if (isLibraryHome) {
+          collapseShelf();
+        }
+      });
+    })();
+  </script>
+
+
+</body>
+</html>

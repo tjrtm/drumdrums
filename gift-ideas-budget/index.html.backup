@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gift Ideas + Budget</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
+    :root{
+      --r: 14px;
+      --accent: #33d1ff;
+      --accent2:#ffb020;
+      --danger:#e11d48;
+      --ok:#16a34a;
+      --bg:#0a0e1a;
+      --bg2:#060815;
+      --panel: rgba(255,255,255,.07);
+      --panel2: rgba(255,255,255,.04);
+      --text:#f0f4ff;
+      --muted: rgba(240,244,255,.66);
+      --line: rgba(255,255,255,.12);
+      --shadow: 0 18px 46px rgba(51,209,255,.10);
+    }
+    [data-theme="light"]{
+      --bg:#f6f8fb;
+      --bg2:#eef3f9;
+      --panel: rgba(255,255,255,.94);
+      --panel2: rgba(255,255,255,.70);
+      --text:#0b1220;
+      --muted: rgba(11,18,32,.62);
+      --line: rgba(15,23,42,.12);
+      --shadow: 0 18px 44px rgba(15,23,42,.10);
+    }
+    *{box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+    html,body{min-height:100%}
+    body{margin:0; font-family: Inter, system-ui, Segoe UI, Roboto, Arial; color:var(--text);
+      background-image:
+        radial-gradient(900px 600px at 18% 0%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 60%),
+        radial-gradient(800px 560px at 88% 8%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      background-attachment: fixed, fixed, fixed;
+    }
+    header{position:sticky; top:0; z-index:5; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px);
+      border-bottom:1px solid var(--line); padding: 12px 14px;}
+    .top{max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap}
+    .brand{display:flex; gap:12px; align-items:flex-start}
+    .mark{width:40px;height:40px;border-radius:16px;border:1px solid var(--line);
+      background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 22%, transparent), color-mix(in srgb,var(--accent2) 14%, transparent)); box-shadow: var(--shadow);
+    }
+    h1{margin:0; font-size:15px; font-weight:950; letter-spacing:.2px}
+    .sub{margin-top:3px; font-size:12px; color:var(--muted)}
+    .kbd{font: 12px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding:2px 6px; border-radius: 8px; border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 80%, transparent); color: color-mix(in srgb, var(--text) 80%, transparent)}
+    .actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
+    .btn{cursor:pointer;border-radius:14px;padding:12px 14px;border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 84%, transparent); color:var(--text); font-weight:950; text-decoration:none; user-select:none; font-size:13px}
+    .btn.primary{background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 22%, transparent), color-mix(in srgb,var(--accent2) 14%, transparent))}
+    .btn.danger{border-color: color-mix(in srgb, var(--danger) 44%, transparent)}
+    .btn:focus{outline:2px solid color-mix(in srgb, var(--accent) 34%, transparent); outline-offset:2px}
+    .toggle{display:inline-flex;align-items:center;gap:8px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);
+      background:color-mix(in srgb, var(--panel) 78%, transparent); color:var(--muted); font-size:12px; font-weight:950; user-select:none}
+    .toggle input{width:15px;height:15px}
+
+    main{max-width:1100px; margin: 14px auto 28px; padding: 0 14px}
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:12px; align-items:start}
+    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+    .card{background: color-mix(in srgb, var(--panel) 96%, transparent); border:1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow:hidden}
+    .cardHead{padding:12px 14px; border-bottom:1px solid color-mix(in srgb, var(--line) 78%, transparent); display:flex; justify-content:space-between; gap:10px; align-items:baseline; flex-wrap:wrap}
+    .cardHead b{font-size:12px; letter-spacing:1px; text-transform:uppercase; font-family: Space Grotesk, ui-monospace, Menlo, monospace;
+      color: color-mix(in srgb, var(--text) 74%, transparent)}
+    .cardBody{padding:12px 14px}
+
+    input[type="text"], input[type="number"]{width:100%; padding: 11px 12px; border-radius: 14px; border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 86%, transparent); color: var(--text); font: inherit; font-size:14px}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    label{font-size:12px; font-weight:950; color: color-mix(in srgb, var(--text) 72%, transparent); display:block; margin-bottom:6px}
+    .field{display:flex; flex-direction:column; gap:6px; flex:1; min-width: 200px}
+    .pillRow{display:flex; gap:8px; flex-wrap:wrap; align-items:center; color:var(--muted); font-size:12px}
+    .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 9px; border-radius: 14px; border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel2) 86%, transparent)}
+
+    .giftItem{background: color-mix(in srgb, var(--panel) 92%, transparent); border:1px solid var(--line); border-radius: 14px;
+      padding:12px 14px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:flex-start; gap:12px}
+    .giftInfo{flex:1}
+    .giftInfo .name{font-weight:950; font-size:14px; margin-bottom:4px}
+    .giftInfo .idea{color:var(--text); font-size:13px; margin-bottom:4px}
+    .giftInfo .meta{font-size:12px; color:var(--muted); display:flex; gap:12px; flex-wrap:wrap}
+    .giftInfo .price{color:var(--accent2); font-weight:700}
+    .giftInfo a{color:var(--accent); text-decoration:none}
+    .giftInfo a:hover{text-decoration:underline}
+    .giftActions{display:flex; gap:6px; flex-shrink:0}
+    .smallBtn{cursor:pointer; padding:6px 10px; border-radius:10px; border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 86%, transparent); color:var(--text); font-weight:950; font-size:11px}
+    .smallBtn.danger{color:var(--danger); border-color: color-mix(in srgb, var(--danger) 30%, transparent)}
+
+    .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:14px; z-index:10;
+      background: color-mix(in srgb, var(--bg) 72%, var(--panel)); border:1px solid var(--line); border-radius: 16px; padding: 10px 12px;
+      min-width: min(560px, calc(100vw - 24px)); display:flex; justify-content:space-between; align-items:center; gap:12px;
+      box-shadow: var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease;}
+    .toast.show{opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(-2px)}
+    .toast small{color:var(--muted)}
+    .mini{padding:6px 9px; border-radius: 14px; border:1px solid var(--line); background: color-mix(in srgb, var(--panel) 86%, transparent);
+      font-size:12px; font-weight:950; cursor:pointer}
+
+    .empty{text-align:center; padding:40px 20px; color:var(--muted); font-size:14px}
+    .totalBar{display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background: color-mix(in srgb, var(--panel2) 92%, transparent);
+      border-radius:14px; margin-top:12px; border:1px solid var(--line)}
+    .totalBar b{font-size:16px; color:var(--accent2)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="top">
+      <div class="brand">
+        <div class="mark" aria-hidden="true"></div>
+        <div>
+          <h1>Gift Ideas + Budget</h1>
+          <div class="sub">Collect gift ideas with price links and export a clean list. <span style="color:var(--muted)">Shortcuts:</span> <span class="kbd">Ctrl/⌘+S</span> save, <span class="kbd">Ctrl/⌘+E</span> export.</div>
+        </div>
+      </div>
+      <div class="actions">
+        <label class="toggle" title="Toggle light mode"><input id="themeToggle" type="checkbox" /><span>Light</span></label>
+        <a class="btn" href="/mockups/">Mockups</a>
+        <button class="btn" id="btnClearAll">Clear All</button>
+        <button class="btn primary" id="btnExport">Export .md</button>
+        <button class="btn" id="btnExportJson">Export .json</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card" aria-label="Add Gift Idea">
+        <div class="cardHead">
+          <b>➕ Add Gift Idea</b>
+          <div class="pillRow"><span class="pill">Fill & click Add</span></div>
+        </div>
+        <div class="cardBody">
+          <div class="field" style="margin-bottom:12px">
+            <label for="inputPerson">Person / Recipient</label>
+            <input type="text" id="inputPerson" placeholder="e.g. Mom, John, Sarah…" autocomplete="off" />
+          </div>
+          <div class="field" style="margin-bottom:12px">
+            <label for="inputIdea">Gift Idea</label>
+            <input type="text" id="inputIdea" placeholder="e.g. Bluetooth speaker, Cookbook…" autocomplete="off" />
+          </div>
+          <div class="row" style="margin-bottom:12px">
+            <div class="field">
+              <label for="inputPrice">Price (optional)</label>
+              <input type="text" id="inputPrice" placeholder="e.g. $25, €30…" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="inputLink">Link (optional)</label>
+              <input type="text" id="inputLink" placeholder="https://…" autocomplete="off" />
+            </div>
+          </div>
+          <button class="btn primary" id="btnAdd" style="width:100%">Add Gift Idea</button>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Gift List">
+        <div class="cardHead">
+          <b>🎁 Gift List</b>
+          <div class="pillRow"><span class="pill"><span id="countGifts">0</span> gifts</span></div>
+        </div>
+        <div class="cardBody" id="giftList">
+          <div class="empty">No gifts added yet. Fill the form and click Add.</div>
+        </div>
+        <div id="totalBar" style="display:none" class="totalBar">
+          <span style="font-weight:950; color:var(--muted)">Estimated Total</span>
+          <b id="totalAmount">$0</b>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <div><div style="font-weight:950" id="toastTitle">—</div><small id="toastBody">—</small></div>
+    <div class="row"><button class="mini" id="toastOk">OK</button></div>
+  </div>
+
+<script>
+(() => {
+  const LS_KEY = 'gift_ideas_budget_v1';
+
+  const els = {
+    themeToggle: document.querySelector('#themeToggle'),
+    inputPerson: document.querySelector('#inputPerson'),
+    inputIdea: document.querySelector('#inputIdea'),
+    inputPrice: document.querySelector('#inputPrice'),
+    inputLink: document.querySelector('#inputLink'),
+    btnAdd: document.querySelector('#btnAdd'),
+    giftList: document.querySelector('#giftList'),
+    countGifts: document.querySelector('#countGifts'),
+    totalBar: document.querySelector('#totalBar'),
+    totalAmount: document.querySelector('#totalAmount'),
+    btnClearAll: document.querySelector('#btnClearAll'),
+    btnExport: document.querySelector('#btnExport'),
+    btnExportJson: document.querySelector('#btnExportJson'),
+    toast: document.querySelector('#toast'),
+    toastTitle: document.querySelector('#toastTitle'),
+    toastBody: document.querySelector('#toastBody'),
+    toastOk: document.querySelector('#toastOk'),
+  };
+
+  const state = { theme:'dark', gifts:[] };
+
+  function setTheme(theme){
+    state.theme = theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    els.themeToggle.checked = theme === 'light';
+  }
+
+  function toast(title, body){
+    els.toastTitle.textContent = title;
+    els.toastBody.textContent = body || '';
+    els.toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(hideToast, 3000);
+  }
+  function hideToast(){ els.toast.classList.remove('show'); }
+  els.toastOk.addEventListener('click', hideToast);
+
+  function uid(){
+    return 'gift-' + Math.random().toString(36).slice(2,9) + '-' + Date.now();
+  }
+
+  function parsePrice(str){
+    if (!str || !str.trim()) return 0;
+    const match = str.match(/[\d.,]+/);
+    if (!match) return 0;
+    return parseFloat(match[0].replace(',','')) || 0;
+  }
+
+  function addGift(){
+    const person = els.inputPerson.value.trim();
+    const idea = els.inputIdea.value.trim();
+    const price = els.inputPrice.value.trim();
+    const link = els.inputLink.value.trim();
+
+    if (!person || !idea){
+      toast('Missing Info', 'Please fill Person and Gift Idea.');
+      return;
+    }
+
+    state.gifts.push({ id:uid(), person, idea, price, link, added:Date.now() });
+    els.inputPerson.value = '';
+    els.inputIdea.value = '';
+    els.inputPrice.value = '';
+    els.inputLink.value = '';
+    els.inputPerson.focus();
+    save();
+    render();
+    toast('Added', `${idea} for ${person}`);
+  }
+
+  function removeGift(id){
+    const idx = state.gifts.findIndex(g => g.id === id);
+    if (idx === -1) return;
+    const gift = state.gifts[idx];
+    if (!confirm(`Remove "${gift.idea}" for ${gift.person}?`)) return;
+    state.gifts.splice(idx, 1);
+    save();
+    render();
+    toast('Removed', 'Gift idea removed.');
+  }
+
+  function render(){
+    els.countGifts.textContent = state.gifts.length;
+
+    if (state.gifts.length === 0){
+      els.giftList.innerHTML = '<div class="empty">No gifts added yet. Fill the form and click Add.</div>';
+      els.totalBar.style.display = 'none';
+      return;
+    }
+
+    let total = 0;
+    const html = state.gifts.map(g => {
+      const priceVal = parsePrice(g.price);
+      if (priceVal > 0) total += priceVal;
+
+      return `<div class="giftItem">
+        <div class="giftInfo">
+          <div class="name">${escapeHtml(g.person)}</div>
+          <div class="idea">${escapeHtml(g.idea)}</div>
+          <div class="meta">
+            ${g.price ? `<span class="price">${escapeHtml(g.price)}</span>` : ''}
+            ${g.link ? `<a href="${escapeHtml(g.link)}" target="_blank" rel="noopener">Link ↗</a>` : ''}
+          </div>
+        </div>
+        <div class="giftActions">
+          <button class="smallBtn danger" data-remove="${escapeHtml(g.id)}">✕</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    els.giftList.innerHTML = html;
+
+    // attach remove handlers
+    els.giftList.querySelectorAll('[data-remove]').forEach(btn => {
+      btn.addEventListener('click', () => removeGift(btn.getAttribute('data-remove')));
+    });
+
+    // show total if any prices
+    if (total > 0){
+      els.totalBar.style.display = 'flex';
+      els.totalAmount.textContent = '$' + total.toFixed(2);
+    } else {
+      els.totalBar.style.display = 'none';
+    }
+  }
+
+  function escapeHtml(s){
+    return (s ?? '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function serialize(){
+    return { theme: state.theme, gifts: state.gifts };
+  }
+
+  function save(){
+    localStorage.setItem(LS_KEY, JSON.stringify(serialize()));
+  }
+
+  function load(){
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw){ setTheme('dark'); render(); return; }
+    try{
+      const obj = JSON.parse(raw);
+      setTheme(obj.theme || 'dark');
+      state.gifts = obj.gifts || [];
+      render();
+    }catch{
+      localStorage.removeItem(LS_KEY);
+      setTheme('dark');
+      toast('Reset', 'Saved data was corrupted — starting fresh.');
+      render();
+    }
+  }
+
+  function toMarkdown(){
+    const lines = [];
+    lines.push('# Gift Ideas + Budget');
+    lines.push('', '_Collected gift ideas with prices and links._', '');
+
+    if (state.gifts.length === 0){
+      lines.push('_(No gifts added yet)_');
+      return lines.join('\n');
+    }
+
+    // group by person
+    const byPerson = {};
+    state.gifts.forEach(g => {
+      if (!byPerson[g.person]) byPerson[g.person] = [];
+      byPerson[g.person].push(g);
+    });
+
+    Object.keys(byPerson).forEach(person => {
+      lines.push(`## ${person}`, '');
+      byPerson[person].forEach(g => {
+        let line = `- **${g.idea}**`;
+        if (g.price) line += ` — ${g.price}`;
+        if (g.link) line += ` ([link](${g.link}))`;
+        lines.push(line);
+      });
+      lines.push('');
+    });
+
+    // total
+    let total = 0;
+    state.gifts.forEach(g => { total += parsePrice(g.price); });
+    if (total > 0){
+      lines.push('---', `**Estimated Total:** $${total.toFixed(2)}`);
+    }
+
+    return lines.join('\n');
+  }
+
+  function download(filename, content, type){
+    const blob = new Blob([content], {type});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+  }
+
+  // events
+  els.themeToggle.addEventListener('change', () => { setTheme(els.themeToggle.checked ? 'light' : 'dark'); save(); });
+  els.btnAdd.addEventListener('click', addGift);
+  els.inputIdea.addEventListener('keydown', (ev) => { if (ev.key==='Enter'){ ev.preventDefault(); addGift(); } });
+
+  els.btnClearAll.addEventListener('click', () => {
+    if (state.gifts.length === 0) return toast('Nothing to clear', '');
+    if (!confirm('Clear all gifts?')) return;
+    state.gifts = [];
+    save();
+    render();
+    toast('Cleared', 'All gifts removed.');
+  });
+
+  els.btnExport.addEventListener('click', () => {
+    save();
+    download('gift-ideas.md', toMarkdown(), 'text/markdown;charset=utf-8');
+    toast('Exported', 'Downloaded .md');
+  });
+
+  els.btnExportJson.addEventListener('click', () => {
+    save();
+    download('gift-ideas.json', JSON.stringify(serialize(),null,2), 'application/json');
+    toast('Exported', 'Downloaded .json');
+  });
+
+  window.addEventListener('keydown', (ev) => {
+    const mod = ev.ctrlKey || ev.metaKey;
+    if (!mod) return;
+    if (ev.key.toLowerCase()==='s'){ ev.preventDefault(); save(); toast('Saved','State saved.'); }
+    if (ev.key.toLowerCase()==='e' && !ev.shiftKey){ ev.preventDefault(); save(); download('gift-ideas.md', toMarkdown(), 'text/markdown;charset=utf-8'); toast('Exported','Downloaded .md'); }
+    if (ev.key.toLowerCase()==='e' && ev.shiftKey){ ev.preventDefault(); save(); download('gift-ideas.json', JSON.stringify(serialize(),null,2), 'application/json'); toast('Exported','Downloaded .json'); }
+  });
+
+  load();
+})();
+</script>
+<script src="/mockups/tracking.js"></script>
+</body>
+</html>

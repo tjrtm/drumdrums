@@ -1,0 +1,733 @@
+{
+  "updatedAt": "2026-02-10T03:05:23.426Z",
+  "ideas": [
+    {
+      "id": "idea-password-gen",
+      "title": "Password Generator",
+      "tagline": "Secure passwords with presets - Basic (12), Strong (16), Paranoid (24).",
+      "features": [
+        "Quick presets (Basic/Strong/Paranoid)",
+        "Length slider (6-32)",
+        "Character type toggles",
+        "Password strength meter",
+        "Click-to-copy",
+        "Export history",
+        "Keyboard shortcuts (1-3 for presets, Space to generate)"
+      ],
+      "slug": "password-gen",
+      "mockupUrl": "/drumdrums/password-gen/",
+      "status": "ready",
+      "categories": [
+        "Security",
+        "Utilities"
+      ],
+      "scenario": "Need a secure password? Tap preset or customize length + complexity. Generate, copy, done. No password manager needed for quick cases.",
+      "ready": true
+    },
+    {
+      "id": "idea-tip-calc",
+      "title": "Tip Calculator",
+      "tagline": "Quick tip math with preset buttons - no calculator needed.",
+      "features": [
+        "Preset tip buttons (15/18/20/25%)",
+        "Custom tip %",
+        "Live calculation",
+        "Copy breakdown",
+        "Export JSON",
+        "Keyboard shortcuts (1-4 for presets)"
+      ],
+      "slug": "tip-calc",
+      "mockupUrl": "/drumdrums/tip-calc/",
+      "status": "ready",
+      "categories": [
+        "Money",
+        "Utilities"
+      ],
+      "scenario": "At restaurant, enter bill, tap tip %, see total instantly. Copy or export for expense tracking.",
+      "ready": true
+    },
+    {
+      "id": "idea-random-decision",
+      "title": "Random Decision Maker",
+      "tagline": "Can't decide? Add options with weights, tap to let fate choose.",
+      "features": [
+        "Add unlimited options",
+        "Weighted selection (1-10)",
+        "Animated result reveal",
+        "Persistence",
+        "Keyboard shortcuts (Cmd+N, Cmd+Enter)"
+      ],
+      "slug": "random-decision",
+      "mockupUrl": "/drumdrums/random-decision/",
+      "status": "ready",
+      "categories": [
+        "Utilities",
+        "Life"
+      ],
+      "scenario": "Stuck choosing between pizza, tacos, or sushi? Add them, set weights if you secretly prefer one, tap decide. Done.",
+      "ready": true
+    },
+    {
+      "id": "idea-url-slug-generator",
+      "title": "URL Slug Generator",
+      "tagline": "Convert titles to URL-friendly slugs with options (lowercase, stop words, max length).",
+      "features": [
+        "Live slug generation",
+        "Lowercase/special chars/stop words options",
+        "Max length limiter",
+        "Click-to-copy",
+        "Copy full URL",
+        "Keyboard shortcuts"
+      ],
+      "slug": "url-slug-generator",
+      "mockupUrl": "/drumdrums/url-slug-generator/",
+      "status": "ready",
+      "categories": [
+        "Utilities",
+        "Writing"
+      ],
+      "scenario": "Writing a blog post? Paste your title, get a clean URL slug instantly. Customize with options, copy, done.",
+      "ready": true
+    },
+    {
+      "id": "idea-wifi-qr",
+      "title": "WiFi QR Code Generator",
+      "tagline": "Generate scannable WiFi QR codes - guests connect without typing passwords.",
+      "features": [
+        "Network name + password input",
+        "Security type buttons (WPA/WEP/None)",
+        "Live QR generation",
+        "Download PNG",
+        "Print-friendly",
+        "Keyboard shortcuts"
+      ],
+      "slug": "wifi-qr",
+      "mockupUrl": "/drumdrums/wifi-qr/",
+      "status": "ready",
+      "categories": [
+        "Utilities",
+        "Life"
+      ],
+      "scenario": "Hosting guests? Generate a WiFi QR code, print it, stick it on your fridge. They scan and connect - no password typing.",
+      "ready": true
+    },
+    {
+      "id": "idea-text-case-converter",
+      "title": "Text Case Converter",
+      "tagline": "One-tap conversion: UPPERCASE, lowercase, camelCase, snake_case, and 5 more.",
+      "features": [
+        "9 case styles",
+        "Click-to-copy each result",
+        "Word/char count",
+        "Persistence",
+        "Keyboard shortcuts (1-9 to copy)"
+      ],
+      "slug": "text-case-converter",
+      "mockupUrl": "/drumdrums/text-case-converter/",
+      "status": "ready",
+      "categories": [
+        "Utilities",
+        "Writing"
+      ],
+      "scenario": "Paste text, instantly see it in 9 different cases. Click any to copy. Perfect for variable naming, formatting, or quick text transforms.",
+      "ready": true
+    },
+    {
+      "id": "idea-cost-in",
+      "title": "What Would This Cost In...",
+      "tagline": "Absurd real-world equivalents for any dollar amount (lattes, avocados, Teslas).",
+      "features": [
+        "Dollar input with presets",
+        "Real-world item calculations",
+        "15+ absurd comparisons",
+        "Copy results",
+        "Export JSON",
+        "Keyboard shortcuts (1-6 for presets)"
+      ],
+      "slug": "cost-in",
+      "mockupUrl": "/drumdrums/cost-in/",
+      "status": "ready",
+      "categories": [
+        "Money",
+        "Utilities"
+      ],
+      "scenario": "Enter any dollar amount and see how many coffees, avocados, iPhones, or Teslas it could buy. Great for perspective on big purchases.",
+      "ready": true
+    },
+    {
+      "id": "idea-parking-timer",
+      "title": "Parking Timer",
+      "tagline": "Tap duration, never forget your meter - with notifications.",
+      "features": [
+        "Preset buttons (15/30/60/120/180 min)",
+        "Custom hours+minutes",
+        "Browser notifications",
+        "Visual warnings (5min/10min)",
+        "Persists across refreshes",
+        "Keyboard shortcuts"
+      ],
+      "slug": "parking-timer",
+      "mockupUrl": "/drumdrums/parking-timer/",
+      "status": "ready",
+      "categories": [
+        "Utilities",
+        "Life"
+      ],
+      "scenario": "Parked at a meter? Tap the duration, get notified before it expires.",
+      "ready": true
+    },
+    {
+      "id": "idea-quick-expense-split",
+      "title": "Quick Expense Split",
+      "tagline": "Button-first bill splitting - tap tip presets, equal/custom splits, no math.",
+      "features": [
+        "Preset tip buttons (10%, 15%, 18%, 20%, custom)",
+        "Equal split with tap",
+        "People count buttons (2-8, custom)",
+        "Tax toggle (8.5%)",
+        "Real-time calculation",
+        "Export JSON",
+        "Copy breakdown",
+        "Keyboard shortcuts"
+      ],
+      "slug": "quick-expense-split",
+      "mockupUrl": "/drumdrums/quick-expense-split/",
+      "status": "ready",
+      "categories": [
+        "Money",
+        "Utilities"
+      ],
+      "scenario": "After dinner, quickly split the bill by tapping tip %, number of people, and copying the breakdown to share.",
+      "ready": true
+    },
+    {
+      "id": "idea-creative-roulette",
+      "title": "Idea Roulette",
+      "tagline": "Random constraints for creative builds. Spin the wheel, embrace chaos.",
+      "features": [
+        "random generation",
+        "creative constraints",
+        "copy challenge"
+      ],
+      "slug": "idea-roulette",
+      "mockupUrl": "/drumdrums/idea-roulette/",
+      "status": "ready",
+      "categories": [
+        "Meta",
+        "Creativity"
+      ],
+      "scenario": "You are stuck in a creative rut. Spin the wheel and build whatever absurd constraint combo you get.",
+      "ready": true
+    },
+    {
+      "id": "idea-meta-buildlog",
+      "title": "Live Build Log",
+      "tagline": "Track what you are building in real-time. Meta productivity for makers.",
+      "features": [
+        "live tracking",
+        "build history",
+        "export log",
+        "stats"
+      ],
+      "slug": "live-build-log",
+      "mockupUrl": "/drumdrums/live-build-log/",
+      "status": "ready",
+      "categories": [
+        "Meta",
+        "Productivity"
+      ],
+      "scenario": "You build stuff but forget what you built. Log it as you go, export your build history.",
+      "ready": true
+    },
+    {
+      "id": "idea-proc-speedrun",
+      "title": "Procrastination Speedrun",
+      "tagline": "How long can you resist checking back? Gamified self-control timer.",
+      "features": [
+        "gamification",
+        "personal records",
+        "sarcastic feedback"
+      ],
+      "slug": "procrastination-speedrun",
+      "mockupUrl": "/drumdrums/procrastination-speedrun/",
+      "status": "ready",
+      "categories": [
+        "Productivity",
+        "Games"
+      ],
+      "scenario": "You know you will check back in 3 minutes. Might as well track your failure.",
+      "ready": true
+    },
+    {
+      "id": "idea-meeting-cost",
+      "title": "Meeting Cost Calculator",
+      "tagline": "Watch money burn in real-time during meetings. Brutal honesty.",
+      "features": [
+        "real-time calculation",
+        "cost per minute",
+        "attendee tracking"
+      ],
+      "slug": "meeting-cost-calculator",
+      "mockupUrl": "/drumdrums/meeting-cost-calculator/",
+      "status": "ready",
+      "categories": [
+        "Productivity",
+        "Money"
+      ],
+      "scenario": "That 2-hour planning meeting just cost dollar 2,400. Want to see the damage live?",
+      "ready": true
+    },
+    {
+      "id": "idea-excuse-gen",
+      "title": "Corporate Excuse Generator",
+      "tagline": "Sliders for urgency, plausibility, and jargon. Meeting-ready excuses on demand.",
+      "features": [
+        "slider controls",
+        "excuse generation",
+        "copy to clipboard",
+        "share"
+      ],
+      "slug": "corporate-excuse-generator",
+      "mockupUrl": "/drumdrums/corporate-excuse-generator/",
+      "status": "ready",
+      "categories": [
+        "Utilities",
+        "Writing"
+      ],
+      "scenario": "You need to sound busy without saying anything. Adjust sliders, generate excuse, done.",
+      "ready": true
+    },
+    {
+      "id": "idea-d59f47-19c405742d3",
+      "title": "One-Page Travel Checklist Generator",
+      "tagline": "Pick trip type + duration and generate a checklist you can export.",
+      "features": [
+        "templates",
+        "editable list",
+        "export",
+        "persistence"
+      ],
+      "slug": "one-page-travel-checklist-generator",
+      "mockupUrl": "/drumdrums/one-page-travel-checklist-generator/",
+      "status": "ready",
+      "categories": [
+        "Life",
+        "Utilities"
+      ],
+      "scenario": "You need a fast packing list without overthinking.",
+      "featured": true,
+      "ready": true
+    },
+    {
+      "id": "idea-2c4a9f-19c3fe96558",
+      "title": "Gift Ideas + Budget",
+      "tagline": "Collect gift ideas with price links and export a clean list.",
+      "features": [
+        "person",
+        "idea",
+        "price",
+        "export"
+      ],
+      "slug": "gift-ideas-budget",
+      "mockupUrl": "/drumdrums/gift-ideas-budget/",
+      "status": "ready",
+      "categories": [
+        "Life",
+        "Money"
+      ],
+      "scenario": "You're planning gifts and want a quick organized list.",
+      "featured": true,
+      "ready": true
+    },
+    {
+      "id": "idea-5c4deb-19c3e69d533",
+      "title": "Clipboard → CSV Mapper",
+      "tagline": "Paste messy lines, split into columns, export CSV.",
+      "features": [
+        "split rules",
+        "preview table",
+        "export csv",
+        "copy"
+      ],
+      "slug": "clipboard-csv-mapper",
+      "mockupUrl": "/drumdrums/clipboard-csv-mapper/",
+      "status": "ready",
+      "categories": [
+        "Utilities"
+      ],
+      "scenario": "You have messy text from chat/email and need a quick CSV export.",
+      "ready": true
+    },
+    {
+      "id": "idea-d03b84-19c3de41226",
+      "title": "Quick Habit Contract",
+      "tagline": "Define one habit, rules, and a 7-day commitment you can print/export.",
+      "features": [
+        "habit definition",
+        "rules",
+        "weekly checklist",
+        "export"
+      ],
+      "slug": "quick-habit-contract",
+      "mockupUrl": "/drumdrums/quick-habit-contract/",
+      "status": "ready",
+      "categories": [
+        "Health",
+        "Productivity"
+      ],
+      "scenario": "You want a lightweight commitment sheet without a full tracker.",
+      "ready": true
+    },
+    {
+      "id": "idea-ff10f8-19c3dad2522",
+      "title": "Meeting Agenda Builder",
+      "tagline": "Build a tight agenda (topics + timeboxes) and export it.",
+      "features": [
+        "topics",
+        "timeboxes",
+        "total time",
+        "export"
+      ],
+      "slug": "meeting-agenda-builder",
+      "mockupUrl": "/drumdrums/meeting-agenda-builder/",
+      "status": "ready",
+      "categories": [
+        "Productivity"
+      ],
+      "scenario": "Before a call, draft an agenda quickly and paste it into chat/email.",
+      "ready": true
+    },
+    {
+      "id": "idea-10e848-19c3d7631a9",
+      "title": "Decision Log (One-pager)",
+      "tagline": "Capture decisions with date/context and export a clean log.",
+      "features": [
+        "decision list",
+        "tags",
+        "export md/json",
+        "search"
+      ],
+      "slug": "decision-log-one-pager",
+      "mockupUrl": "/drumdrums/decision-log-one-pager/",
+      "status": "ready",
+      "categories": [
+        "Productivity",
+        "Writing"
+      ],
+      "scenario": "After a meeting, record decisions with short rationale and share/export.",
+      "featured": true,
+      "ready": true
+    },
+    {
+      "id": "idea-73312c-19c3d3eb011",
+      "title": "Daily Priorities (3×3)",
+      "tagline": "Pick 3 priorities + 3 tiny next actions, then export/copy.",
+      "features": [
+        "3 priorities",
+        "3 next actions each",
+        "export md",
+        "keyboard-first"
+      ],
+      "slug": "daily-priorities-3-3",
+      "mockupUrl": "/drumdrums/daily-priorities-3-3/",
+      "status": "ready",
+      "categories": [
+        "Productivity"
+      ],
+      "scenario": "In the morning you quickly decide what matters today and export it to send/share.",
+      "featured": true,
+      "ready": true
+    },
+    {
+      "id": "idea-010",
+      "title": "Home Inventory (mock)",
+      "tagline": "Track stuff + warranty dates + reminders.",
+      "features": [
+        "items list",
+        "categories",
+        "upload receipt later",
+        "reminder dates"
+      ],
+      "slug": "home-inventory-mock",
+      "mockupUrl": "/drumdrums/home-inventory-mock/",
+      "status": "ready",
+      "categories": [
+        "Life",
+        "Utilities"
+      ],
+      "scenario": "quick prototype",
+      "complexity": 3,
+      "ready": true
+    },
+    {
+      "id": "idea-008",
+      "title": "One-Tap Workout Planner (mock)",
+      "tagline": "Pick goal → auto 20-min routine you can actually do.",
+      "features": [
+        "goal picker",
+        "timer blocks",
+        "history",
+        "share routine"
+      ],
+      "slug": "one-tap-workout-planner-mock",
+      "mockupUrl": "/drumdrums/one-tap-workout-planner-mock/",
+      "status": "ready",
+      "categories": [
+        "Health"
+      ],
+      "scenario": "quick prototype",
+      "complexity": 3,
+      "ready": true
+    },
+    {
+      "id": "idea-007",
+      "title": "Receipt Scanner (mock)",
+      "tagline": "Drop a photo, it extracts items + totals (later OCR).",
+      "features": [
+        "upload UI",
+        "manual correction",
+        "export CSV",
+        "category tags"
+      ],
+      "slug": "receipt-scanner-mock",
+      "mockupUrl": "/drumdrums/receipt-scanner-mock/",
+      "status": "ready",
+      "categories": [
+        "Life",
+        "Utilities"
+      ],
+      "scenario": "quick prototype",
+      "complexity": 3,
+      "ready": true
+    },
+    {
+      "id": "idea-002",
+      "title": "Smart Grocery List (2-min mode)",
+      "tagline": "Ultra-fast add + store-aisle grouping + 'forgot again' reminders (mock)",
+      "features": [
+        "one-tap add",
+        "aisle groups",
+        "shared list",
+        "offline-first"
+      ],
+      "slug": "smart-grocery-list",
+      "mockupUrl": "/drumdrums/smart-grocery-list/",
+      "status": "ready",
+      "categories": [
+        "Life",
+        "Utilities"
+      ],
+      "scenario": "quick prototype",
+      "complexity": 3,
+      "ready": true
+    },
+    {
+      "id": "idea-003",
+      "title": "Daily 'What should I build?' Spinner",
+      "tagline": "A living idea generator that rotates prompts + constraints (mock)",
+      "features": [
+        "random prompt",
+        "difficulty slider",
+        "time-box mode",
+        "export checklist"
+      ],
+      "slug": "build-spinner",
+      "mockupUrl": "/drumdrums/build-spinner/",
+      "status": "ready",
+      "categories": [
+        "Meta",
+        "Productivity"
+      ],
+      "scenario": "quick prototype",
+      "complexity": 1,
+      "ready": true
+    },
+    {
+      "id": "idea-004",
+      "title": "Micro Habit Tracker (no guilt)",
+      "tagline": "Track 3 tiny habits with streaks that forgive misses (mock)",
+      "features": [
+        "3 habits max",
+        "gentle streak",
+        "weekly recap",
+        "motivational microcopy"
+      ],
+      "slug": "micro-habit",
+      "mockupUrl": "/drumdrums/micro-habit/",
+      "status": "ready",
+      "categories": [
+        "Health"
+      ],
+      "scenario": "quick prototype",
+      "complexity": 2,
+      "ready": true
+    },
+    {
+      "id": "idea-005",
+      "title": "Trip/Packing Assistant",
+      "tagline": "Packing checklist + weather + last-minute tasks (mock)",
+      "features": [
+        "templates",
+        "weather hook (later)",
+        "shareable list",
+        "calendar reminders"
+      ],
+      "slug": "trip-packing",
+      "mockupUrl": "/drumdrums/trip-packing/",
+      "status": "ready",
+      "categories": [
+        "Utilities"
+      ],
+      "scenario": "quick prototype",
+      "complexity": 3,
+      "ready": true
+    },
+    {
+      "id": "idea-focus-timer",
+      "title": "Focus Timer",
+      "tagline": "Minimal focus timer with gentle UX (mock)",
+      "features": [
+        "timer",
+        "sound toggle",
+        "localStorage"
+      ],
+      "slug": "focus-timer",
+      "mockupUrl": "/drumdrums/focus-timer/",
+      "status": "ready",
+      "categories": [
+        "Health",
+        "Productivity"
+      ],
+      "scenario": "Start a short focus session with one click; pause/reset fast.",
+      "complexity": 1,
+      "ready": true
+    },
+    {
+      "id": "idea-f6bd9c-19c41a3c02f",
+      "title": "Quick Mood Tracker",
+      "tagline": "Log your mood with emoji buttons + energy/stress sliders - no typing required.",
+      "features": [
+        "Emoji mood buttons (Happy, Sad, Angry, Anxious, Calm, Tired, Excited, Neutral)",
+        "Energy slider (0-10)",
+        "Stress slider (0-10)",
+        "Tag buttons (Work, Sleep, Exercise, Social, etc.)",
+        "Entry history with timestamps",
+        "Export JSON",
+        "Full persistence",
+        "Keyboard shortcuts"
+      ],
+      "slug": "quick-mood-tracker",
+      "mockupUrl": "/drumdrums/quick-mood-tracker/",
+      "status": "ready",
+      "categories": [
+        "Health",
+        "Life"
+      ],
+      "scenario": "Throughout the day, quickly log how you feel by tapping emoji buttons, adjusting sliders for energy and stress, and optionally picking context tags. Review patterns over time and export your data.",
+      "featured": true,
+      "ready": true
+    },
+    {
+      "id": "idea-breath-timer",
+      "title": "Breath Timer",
+      "tagline": "Button-driven breathing exercises — 4-7-8, Box, 5-5 patterns.",
+      "features": [
+        "Preset patterns (4-7-8, Box, 5-5, Custom)",
+        "Visual breathing circle",
+        "Round counter",
+        "Space to start/stop",
+        "1-4 keys for presets"
+      ],
+      "slug": "breath-timer",
+      "mockupUrl": "/drumdrums/breath-timer/",
+      "status": "ready",
+      "categories": [
+        "Health",
+        "Productivity"
+      ],
+      "scenario": "Need to calm down or focus? Pick a breathing pattern, tap start, follow the circle. Perfect for meditation, anxiety, or pre-sleep.",
+      "ready": true
+    },
+    {
+      "id": "idea-unit-converter",
+      "title": "Unit Converter",
+      "tagline": "Button-driven unit conversions — Temp, Distance, Weight, Volume.",
+      "features": [
+        "4 categories with preset buttons",
+        "Swap units (S key)",
+        "Common conversions (°C→°F, mi→km, lb→kg)",
+        "Auto-calculate on input",
+        "1-4 keys for categories"
+      ],
+      "slug": "unit-converter",
+      "mockupUrl": "/drumdrums/unit-converter/",
+      "status": "ready",
+      "categories": [
+        "Productivity"
+      ],
+      "scenario": "Need to convert units quickly? Pick category, tap preset or enter value, get instant results. Perfect for cooking, travel, or science.",
+      "ready": true
+    },
+    {
+      "id": "idea-color-palette-generator",
+      "title": "Color Palette Generator",
+      "tagline": "Button-driven color schemes — Complementary, Analogous, Triadic, Monochromatic.",
+      "features": [
+        "4 color scheme types",
+        "5 colors per palette",
+        "Tap to copy hex codes",
+        "G to generate, C to copy all",
+        "1-4 keys for schemes"
+      ],
+      "slug": "color-palette-generator",
+      "mockupUrl": "/drumdrums/color-palette-generator/",
+      "status": "ready",
+      "categories": [
+        "Creativity",
+        "Utilities"
+      ],
+      "scenario": "Need a color scheme for design? Pick scheme type, generate palette, tap any color to copy hex. Perfect for quick color inspiration.",
+      "ready": true
+    },
+    {
+      "id": "idea-timezone-converter",
+      "title": "Time Zone Converter",
+      "tagline": "Button-driven timezone conversion — 6 major cities, live updates.",
+      "features": [
+        "6 major city presets",
+        "Live time updates (1s)",
+        "Tap to switch timezone",
+        "Copy formatted time",
+        "1-6 keys for cities"
+      ],
+      "slug": "timezone-converter",
+      "mockupUrl": "/drumdrums/timezone-converter/",
+      "status": "ready",
+      "categories": [
+        "Utilities"
+      ],
+      "scenario": "Need to check time in another city? Tap city preset, see live time. Perfect for scheduling calls across timezones.",
+      "ready": true
+    },
+    {
+      "id": "idea-qr-code-generator",
+      "title": "QR Code Generator",
+      "tagline": "Generate QR codes from text/URLs — WiFi, vCard, SMS, Email presets.",
+      "features": [
+        "Text or URL input",
+        "4 quick presets (WiFi, vCard, SMS, Email)",
+        "Download as PNG",
+        "G to generate, D to download",
+        "Ctrl+Enter to generate"
+      ],
+      "slug": "qr-code-generator",
+      "mockupUrl": "/drumdrums/qr-code-generator/",
+      "status": "ready",
+      "categories": [
+        "Utilities"
+      ],
+      "scenario": "Need a QR code? Enter text or URL, or use preset templates for WiFi/contact sharing. Generate and download instantly.",
+      "ready": true
+    }
+  ]
+}

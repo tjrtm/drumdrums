@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DrumDrums — Quick Habit Contract</title>
+  <style>
+:root{
+      --r: 14px;
+      --accent: #33d1ff;
+      --accent2:#ffb020;
+      --danger:#e11d48;
+      --ok:#16a34a;
+      --bg:#0a0e1a;
+      --bg2:#060815;
+      --panel: rgba(255,255,255,.07);
+      --panel2: rgba(255,255,255,.04);
+      --text:#f0f4ff;
+      --muted: rgba(240,244,255,.66);
+      --line: rgba(255,255,255,.12);
+      --shadow: 0 18px 46px rgba(51,209,255,.10);
+    }
+    [data-theme="light"]{
+      --bg:#f6f8fb;
+      --bg2:#eef3f9;
+      --panel: rgba(255,255,255,.94);
+      --panel2: rgba(255,255,255,.70);
+      --text:#0b1220;
+      --muted: rgba(11,18,32,.62);
+      --line: rgba(15,23,42,.12);
+      --shadow: 0 18px 44px rgba(15,23,42,.10);
+    }
+    *{box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+    html,body{height:100%}
+    body{margin:0; font-family: Inter, system-ui, Segoe UI, Roboto, Arial; color:var(--text);
+      background:
+        radial-gradient(900px 600px at 18% 0%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 60%),
+        radial-gradient(800px 560px at 88% 8%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+    header{position:sticky; top:0; z-index:5; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px);
+      border-bottom:1px solid var(--line); padding: 12px 14px;}
+    .top{max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap}
+    .brand{display:flex; gap:12px; align-items:flex-start}
+    .mark{width:40px;height:40px;border-radius:16px;border:1px solid var(--line);
+      background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 22%, transparent), color-mix(in srgb,var(--accent2) 14%, transparent)); box-shadow: var(--shadow);
+    }
+    h1{margin:0; font-size:15px; font-weight:950; letter-spacing:.2px}
+    .sub{margin-top:3px; font-size:12px; color:var(--muted)}
+    .kbd{font: 12px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding:2px 6px; border-radius: 8px; border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 80%, transparent); color: color-mix(in srgb, var(--text) 80%, transparent)}
+    .actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
+    .btn{cursor:pointer;border-radius:14px;padding:9px 11px;border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 84%, transparent); color:var(--text); font-weight:950; text-decoration:none; user-select:none;}
+    .btn.primary{background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 22%, transparent), color-mix(in srgb,var(--accent2) 14%, transparent))}
+    .btn.danger{border-color: color-mix(in srgb, var(--danger) 44%, transparent)}
+    .btn:focus{outline:2px solid color-mix(in srgb, var(--accent) 34%, transparent); outline-offset:2px}
+    .toggle{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:14px;border:1px solid var(--line);
+      background:color-mix(in srgb, var(--panel) 78%, transparent); color:var(--muted); font-size:12px; font-weight:950; user-select:none}
+    .toggle input{width:15px;height:15px}
+
+    main{max-width:1100px; margin: 14px auto 28px; padding: 0 14px}
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:12px; align-items:start}
+    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+    .card{background: color-mix(in srgb, var(--panel) 96%, transparent); border:1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow:hidden}
+    .cardHead{padding:12px 14px; border-bottom:1px solid color-mix(in srgb, var(--line) 78%, transparent); display:flex; justify-content:space-between; gap:10px; align-items:baseline; flex-wrap:wrap}
+    .cardHead b{font-size:12px; letter-spacing:1px; text-transform:uppercase; font-family: Space Grotesk, ui-monospace, Menlo, monospace;
+      color: color-mix(in srgb, var(--text) 74%, transparent)}
+    .cardBody{padding:12px 14px}
+
+    textarea, input[type="text"], select{width:100%; padding: 10px 12px; border-radius: 14px; border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 86%, transparent); color: var(--text); font: inherit;}
+    textarea{min-height: 340px; resize: vertical; font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; tab-size:2;}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    label{font-size:12px; font-weight:950; color: color-mix(in srgb, var(--text) 72%, transparent)}
+    .field{display:flex; flex-direction:column; gap:6px; flex:1; min-width: 200px}
+    .pillRow{display:flex; gap:8px; flex-wrap:wrap; align-items:center; color:var(--muted); font-size:12px}
+    .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 9px; border-radius: 14px; border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel2) 86%, transparent)}
+
+    .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:14px; z-index:10;
+      background: color-mix(in srgb, var(--bg) 72%, var(--panel)); border:1px solid var(--line); border-radius: 16px; padding: 10px 12px;
+      min-width: min(560px, calc(100vw - 24px)); display:flex; justify-content:space-between; align-items:center; gap:12px;
+      box-shadow: var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease;}
+    .toast.show{opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(-2px)}
+    .toast small{color:var(--muted)}
+    .mini{padding:6px 9px; border-radius: 14px; border:1px solid var(--line); background: color-mix(in srgb, var(--panel) 86%, transparent);
+      font-size:12px; font-weight:950; cursor:pointer}
+  </style>
+<style data-inline-theme>
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: calc(env(safe-area-inset-right, 0px) + 16px);
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 85%, transparent);
+  color: var(--text, #0f172a);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  z-index: 999;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.5);
+  outline-offset: 3px;
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+:root[data-theme="dark"] .theme-toggle {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.55);
+}
+
+.theme-toggle__icon {
+  pointer-events: none;
+  display: inline-flex;
+}
+
+.theme-toggle__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.theme-toggle--inline {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 90%, transparent);
+  color: inherit;
+  box-shadow: none;
+  margin-left: 8px;
+}
+
+:root[data-theme="dark"] .theme-toggle--inline {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+}
+
+.theme-toggle--inline .theme-toggle__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.drumdrums-banner{
+  margin:12px auto;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px dashed rgba(15,23,42,0.16);
+  background:color-mix(in srgb, var(--panel, #ffffff) 86%, transparent);
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  max-width:460px;
+}
+:root[data-theme="dark"] .drumdrums-banner{
+  border-color:rgba(148,163,184,0.35);
+  background:rgba(10,15,25,0.6);
+}
+.drumdrums-banner strong{
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:11px;
+  display:block;
+  margin-bottom:4px;
+}
+.drumdrums-note{
+  font-weight:500;
+  font-size:12px;
+  color:var(--muted, #475569);
+}
+
+</style>
+<script data-inline-theme>
+(function () {
+  const STORAGE_KEY = 'drumdrums-theme';
+  const root = document.documentElement;
+  const systemMedia = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  const icons = {
+    moon: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 8.5 8.5 0 1 0 21 14.5Z" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+    sun: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-linecap="round" /></svg>'
+  };
+
+  const readStoredTheme = () => {
+    try {
+      return localStorage.getItem(STORAGE_KEY);
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const persistTheme = (value) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, value);
+    } catch (err) {
+      /* no-op */
+    }
+  };
+
+  const systemPrefersDark = () => systemMedia ? systemMedia.matches : false;
+
+  const initialStored = readStoredTheme();
+  let currentTheme = initialStored === 'light' || initialStored === 'dark'
+    ? initialStored
+    : (root.dataset.theme === 'light' || root.dataset.theme === 'dark')
+      ? root.dataset.theme
+      : (systemPrefersDark() ? 'dark' : 'light');
+  root.dataset.theme = currentTheme;
+  if (document.body) {
+    document.body.setAttribute('data-theme', currentTheme);
+  }
+
+  let userLocked = initialStored === 'light' || initialStored === 'dark';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'theme-toggle';
+  const srLabel = document.createElement('span');
+  srLabel.className = 'sr-only';
+  srLabel.textContent = 'Toggle color theme';
+  const iconSlot = document.createElement('span');
+  iconSlot.className = 'theme-toggle__icon';
+  button.append(srLabel, iconSlot);
+
+  const syncButton = () => {
+    button.setAttribute('aria-pressed', currentTheme === 'dark');
+    iconSlot.innerHTML = currentTheme === 'dark' ? icons.sun : icons.moon;
+    button.title = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  };
+
+  const applyTheme = (nextTheme, { persist } = { persist: false }) => {
+    currentTheme = nextTheme;
+    root.dataset.theme = nextTheme;
+    if (document.body) {
+      document.body.setAttribute('data-theme', nextTheme);
+    }
+    syncButton();
+    if (persist) {
+      persistTheme(nextTheme);
+      userLocked = true;
+    }
+  };
+
+  const toggleTheme = () => {
+    const next = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(next, { persist: true });
+  };
+
+  const init = () => {
+    if (document.querySelector('.theme-toggle')) return;
+    button.addEventListener('click', toggleTheme);
+    const anchor = document.querySelector('[data-theme-anchor]') ||
+      document.querySelector('.theme-toggle-anchor') ||
+      document.querySelector('header .actions') ||
+      document.querySelector('header .navIcons') ||
+      document.querySelector('header');
+    if (anchor) {
+      button.classList.add('theme-toggle--inline');
+      anchor.appendChild(button);
+    } else {
+      document.body.appendChild(button);
+    }
+    applyTheme(currentTheme);
+  };
+
+  if (systemMedia && typeof systemMedia.addEventListener === 'function') {
+    systemMedia.addEventListener('change', (event) => {
+      if (!userLocked) {
+        applyTheme(event.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+</script>
+</head>
+<body>
+  <header>
+    <div class="top">
+      <div class="brand">
+        <div class="mark" aria-hidden="true"></div>
+        <div>
+          <h1>Quick Habit Contract</h1>
+          <div class="sub">Define one habit, rules, and a 7-day commitment you can print/export. <span style="color:var(--muted)">Shortcuts:</span> <span class="kbd">Ctrl/⌘+S</span> save, <span class="kbd">Ctrl/⌘+E</span> copy, <span class="kbd">Ctrl/⌘+Shift+E</span> export JSON.</div>
+        </div>
+      </div>
+      <div class="actions">
+<button class="btn" id="btnClear">Clear</button>
+        <button class="btn primary" id="btnCopy">Copy</button>
+        <button class="btn" id="btnExport">Export .md</button>
+        <button class="btn" id="btnExportJson">Export .json</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card" aria-label="Work">
+        <div class="cardHead">
+          <b>Work</b>
+          <div class="pillRow" id="stats"></div>
+        </div>
+        <div class="cardBody">
+          <div class="pillRow" style="margin-bottom:10px">
+            <span class="pill"><b>Scenario</b> <span class="muted">You want a lightweight commitment sheet without a full tracker.</span></span>
+          </div>
+          <div class="field">
+            <label for="input">Your notes / inputs</label>
+            <textarea id="input" spellcheck="false" placeholder="Type here…"></textarea>
+          </div>
+          <div class="pillRow" style="margin-top:10px">
+            <span class="pill"><b id="saveState">Saved</b> <span class="muted" id="savedAt">—</span></span>
+            <span class="pill">This page autosaves locally.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-label="Output">
+        <div class="cardHead"><b>Output</b><div class="pillRow"><span class="pill">Copy <span class="kbd">Ctrl/⌘+E</span></span></div></div>
+        <div class="cardBody">
+          <div class="field">
+            <label for="output">Export preview (Markdown)</label>
+            <textarea id="output" spellcheck="false" readonly></textarea>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <div><div style="font-weight:950" id="toastTitle">—</div><small id="toastBody">—</small></div>
+    <div class="row"><button class="mini" id="toastOk">OK</button></div>
+  </div>
+
+<script>
+(() => {
+  const LS_KEY = 'mock_one_page_starter_v1_' + "quick-habit-contract";
+
+  const els = {
+    input: document.querySelector('#input'),
+    output: document.querySelector('#output'),
+    stats: document.querySelector('#stats'),
+    saveState: document.querySelector('#saveState'),
+    savedAt: document.querySelector('#savedAt'),
+    btnClear: document.querySelector('#btnClear'),
+    btnCopy: document.querySelector('#btnCopy'),
+    btnExport: document.querySelector('#btnExport'),
+    btnExportJson: document.querySelector('#btnExportJson'),
+    toast: document.querySelector('#toast'),
+    toastTitle: document.querySelector('#toastTitle'),
+    toastBody: document.querySelector('#toastBody'),
+    toastOk: document.querySelector('#toastOk'),
+  };
+
+  const state = { input:'', lastSavedAt:null, dirty:false };
+
+  function toast(title, body){
+    els.toastTitle.textContent = title;
+    els.toastBody.textContent = body || '';
+    els.toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(hideToast, 3000);
+  }
+  function hideToast(){ els.toast.classList.remove('show'); }
+  els.toastOk.addEventListener('click', hideToast);
+
+  function markDirty(d=true){
+    state.dirty = d;
+    els.saveState.textContent = d ? 'Unsaved changes' : 'Saved';
+  }
+
+  function toMarkdown(){
+    const lines = [];
+    lines.push('# ' + "Quick Habit Contract");
+    if ("Define one habit, rules, and a 7-day commitment you can print/export.".trim()) lines.push('', "Define one habit, rules, and a 7-day commitment you can print/export.");
+    if ("You want a lightweight commitment sheet without a full tracker.".trim()) lines.push('', '## Scenario', "You want a lightweight commitment sheet without a full tracker.");
+    lines.push('', '## Notes', '```', (els.input.value||'').trimEnd(), '```');
+    return lines.join('
+');
+  }
+
+  function render(){
+    const txt = els.input.value || '';
+    els.output.value = toMarkdown();
+    const lines = txt.split(/
+?
+/).filter(l => l.trim()).length;
+    els.stats.innerHTML = '<span class="pill"><b>' + lines + '</b> <span class="muted">lines</span></span>';
+  }
+
+  function serialize(){
+    return { input: els.input.value, lastSavedAt: state.lastSavedAt };
+  }
+
+  function save(){
+    state.lastSavedAt = new Date().toISOString();
+    localStorage.setItem(LS_KEY, JSON.stringify(serialize()));
+    els.savedAt.textContent = new Date(state.lastSavedAt).toLocaleString();
+    markDirty(false);
+  }
+
+  function load(){
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw){ render(); return; }
+    try{
+      const obj = JSON.parse(raw);
+      els.input.value = obj.input || '';
+      if (obj.lastSavedAt){
+        state.lastSavedAt = obj.lastSavedAt;
+        els.savedAt.textContent = new Date(obj.lastSavedAt).toLocaleString();
+        markDirty(false);
+      } else {
+        markDirty(true);
+      }
+      render();
+    }catch{
+      localStorage.removeItem(LS_KEY);
+      toast('Reset', 'Saved data was corrupted — starting fresh.');
+      render();
+    }
+  }
+
+  function download(filename, content, type){
+    const blob = new Blob([content], {type});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+  }
+
+  function copyOut(){
+    const text = els.output.value || '';
+    if (!text.trim()) return toast('Copy', 'Nothing to copy.');
+    navigator.clipboard?.writeText(text)
+      .then(() => toast('Copied', 'Markdown copied to clipboard.'))
+      .catch(() => toast('Copy', 'Clipboard blocked — use Export instead.'));
+  }
+
+  // events
+  els.input.addEventListener('input', () => { markDirty(true); render(); scheduleSave(); });
+
+  els.btnClear.addEventListener('click', () => { els.input.value=''; markDirty(true); render(); toast('Cleared', 'Input cleared.'); });
+  els.btnCopy.addEventListener('click', copyOut);
+  els.btnExport.addEventListener('click', () => { save(); const name="quick-habit-contract"; download((name||'export') + '.md', els.output.value, 'text/markdown;charset=utf-8'); toast('Exported','Downloaded .md'); });
+  els.btnExportJson.addEventListener('click', () => { save(); const name="quick-habit-contract"; download((name||'export') + '.json', JSON.stringify(serialize(),null,2), 'application/json'); toast('Exported','Downloaded .json'); });
+
+  window.addEventListener('keydown', (ev) => {
+    const mod = ev.ctrlKey || ev.metaKey;
+    if (!mod) return;
+    if (ev.key.toLowerCase()==='s'){ ev.preventDefault(); save(); toast('Saved','State saved.'); }
+    if (ev.key.toLowerCase()==='e' && !ev.shiftKey){ ev.preventDefault(); copyOut(); }
+    if (ev.key.toLowerCase()==='e' && ev.shiftKey){ ev.preventDefault(); save(); const name="quick-habit-contract"; download((name||'export') + '.json', JSON.stringify(serialize(),null,2), 'application/json'); toast('Exported','Downloaded .json'); }
+  });
+
+  let t=null;
+  function scheduleSave(){ clearTimeout(t); t=setTimeout(() => { save(); }, 650); }
+
+  load();
+})();
+</script>
+
+  <!-- DrumDrums Offline Module -->
+  <style>
+    .drumdrum-offline-shelf{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:min(320px,calc(100% - 48px));background:var(--panel,rgba(255,255,255,0.96));color:var(--text,#0f172a);box-shadow:0 20px 50px rgba(15,23,42,0.2);border-radius:24px;border:1px solid rgba(15,23,42,0.1);padding:20px;font-family:inherit;z-index:9999;line-height:1.4}
+    [data-theme="dark"] .drumdrum-offline-shelf{background:rgba(2,6,23,0.92);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35);box-shadow:0 25px 60px rgba(2,6,23,0.75)}
+    .drumdrum-offline-shelf[data-offline-hidden="true"]{display:none}
+    .drumdrum-offline-label{text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.12em;opacity:.75;margin-bottom:4px}
+    .drumdrum-offline-head h2{font-size:17px;margin:0 0 6px;font-weight:900}
+    .drumdrum-offline-head p{margin:0;font-size:13px;opacity:.9}
+    .drumdrum-offline-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+    .drumdrum-offline-actions button{border:none;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s ease,opacity .15s ease;background:var(--accent,#2563eb);color:#fff;box-shadow:0 10px 25px rgba(37,99,235,0.25)}
+    .drumdrum-offline-actions button.secondary{background:rgba(15,23,42,0.08);color:inherit;box-shadow:none;border:1px solid rgba(15,23,42,0.12)}
+    [data-theme="dark"] .drumdrum-offline-actions button.secondary{background:rgba(148,163,184,0.15);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35)}
+    .drumdrum-offline-actions button:disabled{opacity:.7;cursor:default}
+    .drumdrum-offline-actions button:active{transform:scale(0.98)}
+    .drumdrum-offline-guide{margin-top:14px;border-radius:14px;padding:12px;font-size:13px;background:rgba(15,23,42,0.05);border:1px dashed rgba(15,23,42,0.25)}
+    .drumdrum-offline-guide p{margin:8px 0 0}
+    .drumdrum-offline-guide ol{margin:8px 0 0;padding-left:18px}
+    [data-theme="dark"] .drumdrum-offline-guide{background:rgba(15,23,42,0.4);border-color:rgba(148,163,184,0.3)}
+    .drumdrum-offline-dismiss{position:absolute;top:6px;right:8px;border:none;background:rgba(15,23,42,0.08);color:inherit;font-size:22px;line-height:1;cursor:pointer;width:48px;height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0;border:2px solid rgba(15,23,42,0.15);box-shadow:0 6px 14px rgba(15,23,42,0.18);touch-action:manipulation}
+    [data-theme="dark"] .drumdrum-offline-dismiss{background:rgba(148,163,184,0.25);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.4);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
+    .drumdrum-offline-dismiss:focus-visible,.drumdrum-offline-actions button:focus-visible{outline:3px solid rgba(59,130,246,0.7);outline-offset:2px}
+    .drumdrum-mention{cursor:pointer}
+    .drumdrum-mention:not(.btn){background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline}
+    .drumdrum-mention.btn{cursor:pointer}
+    .drumdrum-offline-toggle{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:56px;height:56px;border-radius:999px;border:none;background:var(--accent,#2563eb);color:#fff;box-shadow:0 18px 35px rgba(15,23,42,0.18);cursor:pointer;font-size:20px;font-weight:700;z-index:9998;display:flex;align-items:center;justify-content:center;transition:transform .2s ease,box-shadow .2s ease}
+    [data-theme="dark"] .drumdrum-offline-toggle{background:rgba(37,99,235,0.92);box-shadow:0 20px 45px rgba(2,6,23,0.75)}
+    .drumdrum-offline-toggle:focus-visible{outline:3px solid rgba(59,130,246,0.6);outline-offset:2px}
+    .drumdrum-offline-toggle:active{transform:scale(0.95)}
+    @media (max-width:640px){.drumdrum-offline-shelf{left:16px;right:16px;width:auto;bottom:calc(16px + env(safe-area-inset-bottom, 0px));padding:16px}.drumdrum-offline-toggle{bottom:calc(16px + env(safe-area-inset-bottom, 0px));right:calc(16px + env(safe-area-inset-right, 0px));width:52px;height:52px}}
+  </style>
+  <section class="drumdrum-offline-shelf" data-drumdrum-offline>
+    <button type="button" class="drumdrum-offline-dismiss" data-offline-dismiss aria-label="Hide offline helper">×</button>
+    <div class="drumdrum-offline-head">
+      <p class="drumdrum-offline-label">DrumDrums Offline</p>
+      <h2>Save this DrumDrum</h2>
+      <p>Download once. Launch anywhere — even without internet.</p>
+    </div>
+    <div class="drumdrum-offline-actions">
+      <button type="button" data-offline-download>Save offline (.html)</button>
+      <button type="button" class="secondary" data-offline-guide>Home screen tips</button>
+    </div>
+    <div class="drumdrum-offline-guide" data-offline-guide-panel hidden>
+      <strong>Install on your phone</strong>
+      <ol>
+        <li>Tap your browser's share/menu button.</li>
+        <li>Choose “Add to Home Screen” / “Add shortcut”.</li>
+        <li>Launch it later. No signal required.</li>
+      </ol>
+      <p>Offline copies remove DrumDrums library links automatically.</p>
+    </div>
+  </section>
+  <button type="button" class="drumdrum-offline-toggle" data-offline-toggle hidden aria-label="Show DrumDrums Offline helper">⬇️</button>
+  <script>
+    (() => {
+      const ready = (fn) => (document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', fn) : fn();
+      ready(() => {
+        const shelf = document.querySelector('[data-drumdrum-offline]');
+        if (!shelf) return;
+        const downloadButton = shelf.querySelector('[data-offline-download]');
+        const guideButton = shelf.querySelector('[data-offline-guide]');
+        const guidePanel = shelf.querySelector('[data-offline-guide-panel]');
+        const dismissButton = shelf.querySelector('[data-offline-dismiss]');
+        const toggleButton = document.querySelector('[data-offline-toggle]');
+        const baseGuide = guidePanel ? guidePanel.innerHTML : '';
+        const guideDefaultLabel = guideButton ? guideButton.textContent.trim() : '';
+        const isLibraryHome = document.body && document.body.dataset.libraryHome === 'true';
+
+        const collapseShelf = ({ focusToggle = false } = {}) => {
+          shelf.setAttribute('data-offline-hidden', 'true');
+          if (toggleButton) {
+            toggleButton.hidden = false;
+            if (focusToggle) {
+              try {
+                toggleButton.focus({ preventScroll: true });
+              } catch (err) {
+                toggleButton.focus();
+              }
+            }
+          }
+        };
+
+        const revealShelf = () => {
+          shelf.removeAttribute('data-offline-hidden');
+          if (toggleButton) {
+            toggleButton.hidden = true;
+          }
+        };
+
+        if (downloadButton) {
+          const defaultText = downloadButton.textContent.trim();
+          downloadButton.addEventListener('click', () => {
+            const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const slug = (document.title || 'drumdrum-app')
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '') || 'drumdrum-app';
+            link.href = url;
+            link.download = slug + '.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+            downloadButton.textContent = 'Saved ✅';
+            downloadButton.disabled = true;
+            setTimeout(() => {
+              downloadButton.disabled = false;
+              downloadButton.textContent = defaultText;
+            }, 2200);
+          });
+        }
+
+        if (guideButton && guidePanel) {
+          guidePanel.hidden = true;
+          guideButton.addEventListener('click', () => {
+            if (guidePanel.hidden) {
+              guidePanel.innerHTML = baseGuide;
+              guidePanel.hidden = false;
+              guideButton.textContent = 'Hide tips';
+            } else {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        if (guidePanel) {
+          guidePanel.setAttribute('tabindex', '-1');
+        }
+
+        if (dismissButton) {
+          dismissButton.addEventListener('click', () => collapseShelf({ focusToggle: true }));
+        }
+
+        if (toggleButton) {
+          toggleButton.addEventListener('click', () => {
+            revealShelf();
+            if (guidePanel && guideButton) {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        const showMentionNote = (slug, label) => {
+          revealShelf();
+          if (!guidePanel) return;
+          guidePanel.hidden = false;
+          guidePanel.innerHTML = `<strong>${label || 'DrumDrum app'}</strong><p>This reference opens another DrumDrum app (${slug}). Download it separately when you're back online.</p>`;
+          if (guideButton) {
+            guideButton.textContent = 'Hide tips';
+          }
+          try {
+            guidePanel.focus({ preventScroll: false });
+          } catch (err) {
+            guidePanel.focus();
+          }
+        };
+
+        if (location.protocol === 'file:') {
+          document.querySelectorAll('a[href^="../"], a[href^="./"], a[href^="/"]').forEach((anchor) => {
+            const href = anchor.getAttribute('href');
+            if (!href || href.startsWith('#')) return;
+            const slug = href
+              .replace(/^\.\.\//, '')
+              .replace(/^\.\//, '')
+              .replace(/^\//, '')
+              .replace(/\/$/, '') || 'drumdrums-app';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.innerHTML = anchor.innerHTML;
+            const anchorClass = anchor.getAttribute('class');
+            button.className = anchorClass ? anchorClass + ' drumdrum-mention' : 'drumdrum-mention';
+            Array.from(anchor.attributes).forEach((attr) => {
+              if (['href', 'class', 'target', 'rel'].includes(attr.name)) return;
+              button.setAttribute(attr.name, attr.value);
+            });
+            button.addEventListener('click', () => showMentionNote(slug, anchor.textContent.trim()));
+            button.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showMentionNote(slug, anchor.textContent.trim());
+              }
+            });
+            anchor.replaceWith(button);
+          });
+        }
+
+        if (isLibraryHome) {
+          collapseShelf();
+        }
+      });
+    })();
+  </script>
+
+
+</body>
+</html>

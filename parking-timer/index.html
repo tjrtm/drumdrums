@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DrumDrums — Parking Timer</title>
+<style>
+:root{
+    --accent:#0077ff;
+    --accent2:#ff9a1f;
+    --accent3:#16a34a;
+    --bg:#f6f8fb;
+    --panel:#ffffff;
+    --text:#0b1220;
+    --muted:#51657f;
+    --line:rgba(15,23,42,.12);
+    --shadow: 0 8px 24px rgba(15,23,42,.06);
+  }
+
+  [data-theme="dark"]{
+    --bg:#0b0f14;
+    --panel: rgba(255,255,255,.06);
+    --text:#eaf2ff;
+    --muted: rgba(234,242,255,.62);
+    --line: rgba(255,255,255,.10);
+    --shadow: 0 0 20px rgba(0,119,255,0.10);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{
+    font-family: Inter, system-ui, sans-serif;
+    color: var(--text);
+    background: linear-gradient(180deg, var(--bg), var(--bg));
+    min-height:100vh;
+    padding:16px;
+    padding-bottom:calc(220px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .container{max-width:600px; margin:0 auto}
+
+  header{text-align:center; margin-bottom:24px}
+  h1{font-size:24px; font-weight:900; margin-bottom:6px; letter-spacing:-0.5px}
+  .subtitle{color:var(--muted); font-size:14px}
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:20px;
+    box-shadow:var(--shadow);
+    margin-bottom:16px;
+  }
+
+  .label{font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:8px; font-weight:900}
+
+  .presets{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px}
+  .preset{
+    padding:16px 12px;
+    border-radius:8px;
+    border:2px solid var(--line);
+    background:var(--panel);
+    cursor:pointer;
+    text-align:center;
+    transition: all 150ms;
+  }
+  .preset:active{transform:scale(0.98)}
+  .preset.active{
+    border-color:var(--accent);
+    background:color-mix(in srgb, var(--accent) 8%, transparent);
+  }
+  .preset .time{font-weight:900; font-size:20px; margin-bottom:4px}
+  .preset .label{font-size:11px; color:var(--muted)}
+
+  .customTime{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .customTime input{
+    flex:1;
+    padding:12px;
+    border-radius:8px;
+    border:2px solid var(--line);
+    background:var(--panel);
+    font-size:16px;
+    font-weight:700;
+    text-align:center;
+    color:var(--text);
+  }
+  .customTime span{font-weight:700; font-size:14px}
+
+  .timerDisplay{
+    text-align:center;
+    padding:32px;
+    margin:24px 0;
+    border-radius:12px;
+    background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, transparent), color-mix(in srgb, var(--accent2) 8%, transparent));
+    border:2px solid var(--line);
+  }
+  .timerDisplay .time{font-size:56px; font-weight:900; letter-spacing:-2px; margin-bottom:8px}
+  .timerDisplay .status{font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); font-weight:900}
+  .timerDisplay.warning{
+    background:linear-gradient(135deg, color-mix(in srgb, var(--accent2) 16%, transparent), color-mix(in srgb, var(--accent2) 12%, transparent));
+    border-color:var(--accent2);
+  }
+  .timerDisplay.danger{
+    background:linear-gradient(135deg, rgba(239, 68, 68, 0.16), rgba(239, 68, 68, 0.12));
+    border-color:#ef4444;
+    animation:pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes pulse{
+    0%, 100%{transform:scale(1)}
+    50%{transform:scale(1.02)}
+  }
+
+  .actions{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  .btn{
+    padding:16px;
+    border-radius:8px;
+    border:2px solid var(--line);
+    background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, transparent), color-mix(in srgb, var(--accent2) 10%, transparent));
+    color:var(--text);
+    font-weight:900;
+    font-size:16px;
+    cursor:pointer;
+    transition: all 150ms;
+  }
+  .btn:active{transform:scale(0.98)}
+  .btn:disabled{opacity:0.5; cursor:not-allowed}
+  .btn.danger{
+    background:linear-gradient(135deg, rgba(239, 68, 68, 0.14), rgba(239, 68, 68, 0.10));
+    border-color:#ef4444;
+  }
+</style>
+<style data-inline-theme>
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: calc(env(safe-area-inset-right, 0px) + 16px);
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 85%, transparent);
+  color: var(--text, #0f172a);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  z-index: 999;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.5);
+  outline-offset: 3px;
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+:root[data-theme="dark"] .theme-toggle {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.55);
+}
+
+.theme-toggle__icon {
+  pointer-events: none;
+  display: inline-flex;
+}
+
+.theme-toggle__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.theme-toggle--inline {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 90%, transparent);
+  color: inherit;
+  box-shadow: none;
+  margin-left: 8px;
+}
+
+:root[data-theme="dark"] .theme-toggle--inline {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+}
+
+.theme-toggle--inline .theme-toggle__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.drumdrums-banner{
+  margin:12px auto;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px dashed rgba(15,23,42,0.16);
+  background:color-mix(in srgb, var(--panel, #ffffff) 86%, transparent);
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  max-width:460px;
+}
+:root[data-theme="dark"] .drumdrums-banner{
+  border-color:rgba(148,163,184,0.35);
+  background:rgba(10,15,25,0.6);
+}
+.drumdrums-banner strong{
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:11px;
+  display:block;
+  margin-bottom:4px;
+}
+.drumdrums-note{
+  font-weight:500;
+  font-size:12px;
+  color:var(--muted, #475569);
+}
+
+</style>
+<script data-inline-theme>
+(function () {
+  const STORAGE_KEY = 'drumdrums-theme';
+  const root = document.documentElement;
+  const systemMedia = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  const icons = {
+    moon: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 8.5 8.5 0 1 0 21 14.5Z" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+    sun: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-linecap="round" /></svg>'
+  };
+
+  const readStoredTheme = () => {
+    try {
+      return localStorage.getItem(STORAGE_KEY);
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const persistTheme = (value) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, value);
+    } catch (err) {
+      /* no-op */
+    }
+  };
+
+  const systemPrefersDark = () => systemMedia ? systemMedia.matches : false;
+
+  const initialStored = readStoredTheme();
+  let currentTheme = initialStored === 'light' || initialStored === 'dark'
+    ? initialStored
+    : (root.dataset.theme === 'light' || root.dataset.theme === 'dark')
+      ? root.dataset.theme
+      : (systemPrefersDark() ? 'dark' : 'light');
+  root.dataset.theme = currentTheme;
+  if (document.body) {
+    document.body.setAttribute('data-theme', currentTheme);
+  }
+
+  let userLocked = initialStored === 'light' || initialStored === 'dark';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'theme-toggle';
+  const srLabel = document.createElement('span');
+  srLabel.className = 'sr-only';
+  srLabel.textContent = 'Toggle color theme';
+  const iconSlot = document.createElement('span');
+  iconSlot.className = 'theme-toggle__icon';
+  button.append(srLabel, iconSlot);
+
+  const syncButton = () => {
+    button.setAttribute('aria-pressed', currentTheme === 'dark');
+    iconSlot.innerHTML = currentTheme === 'dark' ? icons.sun : icons.moon;
+    button.title = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  };
+
+  const applyTheme = (nextTheme, { persist } = { persist: false }) => {
+    currentTheme = nextTheme;
+    root.dataset.theme = nextTheme;
+    if (document.body) {
+      document.body.setAttribute('data-theme', nextTheme);
+    }
+    syncButton();
+    if (persist) {
+      persistTheme(nextTheme);
+      userLocked = true;
+    }
+  };
+
+  const toggleTheme = () => {
+    const next = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(next, { persist: true });
+  };
+
+  const init = () => {
+    if (document.querySelector('.theme-toggle')) return;
+    button.addEventListener('click', toggleTheme);
+    const anchor = document.querySelector('[data-theme-anchor]') ||
+      document.querySelector('.theme-toggle-anchor') ||
+      document.querySelector('header .actions') ||
+      document.querySelector('header .navIcons') ||
+      document.querySelector('header');
+    if (anchor) {
+      button.classList.add('theme-toggle--inline');
+      anchor.appendChild(button);
+    } else {
+      document.body.appendChild(button);
+    }
+    applyTheme(currentTheme);
+  };
+
+  if (systemMedia && typeof systemMedia.addEventListener === 'function') {
+    systemMedia.addEventListener('change', (event) => {
+      if (!userLocked) {
+        applyTheme(event.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+</script>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>🅿️ Parking Timer</h1>
+    <p class="subtitle">Never forget your meter • Space = start • Esc = stop • 1-6 presets</p>
+  </header>
+
+  <div class="card">
+    <div class="label">Quick Presets</div>
+    <div class="presets">
+      <button class="preset" data-minutes="15">
+        <div class="time">15m</div>
+        <div class="label">Quick stop</div>
+      </button>
+      <button class="preset" data-minutes="30">
+        <div class="time">30m</div>
+        <div class="label">Short visit</div>
+      </button>
+      <button class="preset" data-minutes="60">
+        <div class="time">1h</div>
+        <div class="label">Standard</div>
+      </button>
+      <button class="preset" data-minutes="120">
+        <div class="time">2h</div>
+        <div class="label">Long stay</div>
+      </button>
+      <button class="preset" data-minutes="180">
+        <div class="time">3h</div>
+        <div class="label">Extended</div>
+      </button>
+      <button class="preset" data-minutes="240">
+        <div class="time">4h</div>
+        <div class="label">Max time</div>
+      </button>
+    </div>
+
+    <div class="label">or Custom Time</div>
+    <div class="customTime">
+      <input type="number" id="customHours" placeholder="0" min="0" max="12" />
+      <span>hours</span>
+      <input type="number" id="customMinutes" placeholder="0" min="0" max="59" />
+      <span>min</span>
+    </div>
+  </div>
+
+  <div class="timerDisplay" id="timerDisplay">
+    <div class="time" id="timeDisplay">--:--</div>
+    <div class="status" id="statusDisplay">Select duration above</div>
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="startBtn" disabled>Start Timer</button>
+    <button class="btn danger" id="stopBtn" style="display:none">Stop</button>
+  </div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  
+  const timeDisplay = $('timeDisplay');
+  const statusDisplay = $('statusDisplay');
+  const timerDisplayEl = $('timerDisplay');
+  const startBtn = $('startBtn');
+  const stopBtn = $('stopBtn');
+  const customHours = $('customHours');
+  const customMinutes = $('customMinutes');
+  
+  let selectedMinutes = 0;
+  let endTime = null;
+  let interval = null;
+  let notificationShown = false;
+  
+  // Request notification permission on load
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+  
+  // Preset buttons
+  document.querySelectorAll('.preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedMinutes = parseInt(btn.dataset.minutes);
+      customHours.value = '';
+      customMinutes.value = '';
+      startBtn.disabled = false;
+      statusDisplay.textContent = `${selectedMinutes} minutes selected`;
+    });
+  });
+  
+  // Custom time
+  function updateCustomTime() {
+    const hours = parseInt(customHours.value) || 0;
+    const mins = parseInt(customMinutes.value) || 0;
+    selectedMinutes = (hours * 60) + mins;
+    
+    if (selectedMinutes > 0) {
+      document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+      startBtn.disabled = false;
+      statusDisplay.textContent = `${selectedMinutes} minutes selected`;
+    } else {
+      startBtn.disabled = true;
+      statusDisplay.textContent = 'Select duration above';
+    }
+  }
+  
+  customHours.addEventListener('input', updateCustomTime);
+  customMinutes.addEventListener('input', updateCustomTime);
+  
+  function formatTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
+    if (hours > 0) {
+      return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+    return `${minutes}:${String(seconds).padStart(2, '0')}`;
+  }
+  
+  function updateTimer() {
+    const now = Date.now();
+    const remaining = endTime - now;
+    
+    if (remaining <= 0) {
+      stopTimer();
+      timeDisplay.textContent = '00:00';
+      statusDisplay.textContent = 'TIME EXPIRED!';
+      timerDisplayEl.classList.add('danger');
+      
+      // Show notification
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('⏰ Parking Timer', {
+          body: 'Your parking time has expired!',
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">🅿️</text></svg>'
+        });
+      }
+      return;
+    }
+    
+    timeDisplay.textContent = formatTime(remaining);
+    
+    // Update status
+    const remainingMinutes = Math.floor(remaining / 60000);
+    timerDisplayEl.classList.remove('warning', 'danger');
+    
+    if (remainingMinutes <= 2) {
+      timerDisplayEl.classList.add('danger');
+      statusDisplay.textContent = '⚠️ TIME RUNNING OUT!';
+    } else if (remainingMinutes <= 5) {
+      timerDisplayEl.classList.add('warning');
+      statusDisplay.textContent = '⚠️ Warning: 5 minutes left';
+      
+      // Show 5-min warning notification
+      if (!notificationShown && 'Notification' in window && Notification.permission === 'granted') {
+        notificationShown = true;
+        new Notification('⏰ Parking Timer', {
+          body: '5 minutes remaining!',
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">🅿️</text></svg>'
+        });
+      }
+    } else {
+      statusDisplay.textContent = `${remainingMinutes} minutes remaining`;
+    }
+  }
+  
+  function startTimer() {
+    if (selectedMinutes <= 0) return;
+    
+    endTime = Date.now() + (selectedMinutes * 60 * 1000);
+    notificationShown = false;
+    
+    interval = setInterval(updateTimer, 100);
+    updateTimer();
+    
+    startBtn.style.display = 'none';
+    stopBtn.style.display = 'block';
+    
+    // Save to localStorage
+    try {
+      localStorage.setItem('parkingTimer', JSON.stringify({
+        endTime,
+        selectedMinutes
+      }));
+    } catch {}
+  }
+  
+  function stopTimer() {
+    if (interval) clearInterval(interval);
+    interval = null;
+    endTime = null;
+    
+    startBtn.style.display = 'block';
+    stopBtn.style.display = 'none';
+    
+    timerDisplayEl.classList.remove('warning', 'danger');
+    timeDisplay.textContent = '--:--';
+    statusDisplay.textContent = 'Timer stopped';
+    
+    try {
+      localStorage.removeItem('parkingTimer');
+    } catch {}
+  }
+  
+  startBtn.addEventListener('click', startTimer);
+  stopBtn.addEventListener('click', stopTimer);
+  
+  // Restore from localStorage
+  try {
+    const saved = localStorage.getItem('parkingTimer');
+    if (saved) {
+      const data = JSON.parse(saved);
+      if (data.endTime > Date.now()) {
+        endTime = data.endTime;
+        selectedMinutes = data.selectedMinutes;
+        interval = setInterval(updateTimer, 100);
+        updateTimer();
+        startBtn.style.display = 'none';
+        stopBtn.style.display = 'block';
+      } else {
+        localStorage.removeItem('parkingTimer');
+      }
+    }
+  } catch {}
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    // Prevent shortcuts when typing in inputs
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    // Space = Start timer (if timer not running)
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (!interval && selectedMinutes > 0) {
+        startTimer();
+      }
+    }
+
+    // Escape = Stop timer
+    if (e.key === 'Escape') {
+      if (interval) {
+        stopTimer();
+      }
+    }
+
+    // Numbers 1-6 = Presets
+    const presets = document.querySelectorAll('.preset');
+    if (e.key >= '1' && e.key <= '6') {
+      const index = parseInt(e.key) - 1;
+      if (presets[index]) {
+        presets[index].click();
+      }
+    }
+  });
+</script>
+
+  <!-- DrumDrums Offline Module -->
+  <style>
+    .drumdrum-offline-shelf{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:min(320px,calc(100% - 48px));background:var(--panel,rgba(255,255,255,0.96));color:var(--text,#0f172a);box-shadow:0 20px 50px rgba(15,23,42,0.2);border-radius:24px;border:1px solid rgba(15,23,42,0.1);padding:20px;font-family:inherit;z-index:9999;line-height:1.4}
+    [data-theme="dark"] .drumdrum-offline-shelf{background:rgba(2,6,23,0.92);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35);box-shadow:0 25px 60px rgba(2,6,23,0.75)}
+    .drumdrum-offline-shelf[data-offline-hidden="true"]{display:none}
+    .drumdrum-offline-label{text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.12em;opacity:.75;margin-bottom:4px}
+    .drumdrum-offline-head h2{font-size:17px;margin:0 0 6px;font-weight:900}
+    .drumdrum-offline-head p{margin:0;font-size:13px;opacity:.9}
+    .drumdrum-offline-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+    .drumdrum-offline-actions button{border:none;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s ease,opacity .15s ease;background:var(--accent,#2563eb);color:#fff;box-shadow:0 10px 25px rgba(37,99,235,0.25)}
+    .drumdrum-offline-actions button.secondary{background:rgba(15,23,42,0.08);color:inherit;box-shadow:none;border:1px solid rgba(15,23,42,0.12)}
+    [data-theme="dark"] .drumdrum-offline-actions button.secondary{background:rgba(148,163,184,0.15);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35)}
+    .drumdrum-offline-actions button:disabled{opacity:.7;cursor:default}
+    .drumdrum-offline-actions button:active{transform:scale(0.98)}
+    .drumdrum-offline-guide{margin-top:14px;border-radius:14px;padding:12px;font-size:13px;background:rgba(15,23,42,0.05);border:1px dashed rgba(15,23,42,0.25)}
+    .drumdrum-offline-guide p{margin:8px 0 0}
+    .drumdrum-offline-guide ol{margin:8px 0 0;padding-left:18px}
+    [data-theme="dark"] .drumdrum-offline-guide{background:rgba(15,23,42,0.4);border-color:rgba(148,163,184,0.3)}
+    .drumdrum-offline-dismiss{position:absolute;top:6px;right:8px;border:none;background:rgba(15,23,42,0.08);color:inherit;font-size:22px;line-height:1;cursor:pointer;width:48px;height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0;border:2px solid rgba(15,23,42,0.15);box-shadow:0 6px 14px rgba(15,23,42,0.18);touch-action:manipulation}
+    [data-theme="dark"] .drumdrum-offline-dismiss{background:rgba(148,163,184,0.25);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.4);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
+    .drumdrum-offline-dismiss:focus-visible,.drumdrum-offline-actions button:focus-visible{outline:3px solid rgba(59,130,246,0.7);outline-offset:2px}
+    .drumdrum-mention{cursor:pointer}
+    .drumdrum-mention:not(.btn){background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline}
+    .drumdrum-mention.btn{cursor:pointer}
+    .drumdrum-offline-toggle{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:56px;height:56px;border-radius:999px;border:none;background:var(--accent,#2563eb);color:#fff;box-shadow:0 18px 35px rgba(15,23,42,0.18);cursor:pointer;font-size:20px;font-weight:700;z-index:9998;display:flex;align-items:center;justify-content:center;transition:transform .2s ease,box-shadow .2s ease}
+    [data-theme="dark"] .drumdrum-offline-toggle{background:rgba(37,99,235,0.92);box-shadow:0 20px 45px rgba(2,6,23,0.75)}
+    .drumdrum-offline-toggle:focus-visible{outline:3px solid rgba(59,130,246,0.6);outline-offset:2px}
+    .drumdrum-offline-toggle:active{transform:scale(0.95)}
+    @media (max-width:640px){.drumdrum-offline-shelf{left:16px;right:16px;width:auto;bottom:calc(16px + env(safe-area-inset-bottom, 0px));padding:16px}.drumdrum-offline-toggle{bottom:calc(16px + env(safe-area-inset-bottom, 0px));right:calc(16px + env(safe-area-inset-right, 0px));width:52px;height:52px}}
+  </style>
+  <section class="drumdrum-offline-shelf" data-drumdrum-offline>
+    <button type="button" class="drumdrum-offline-dismiss" data-offline-dismiss aria-label="Hide offline helper">×</button>
+    <div class="drumdrum-offline-head">
+      <p class="drumdrum-offline-label">DrumDrums Offline</p>
+      <h2>Save this DrumDrum</h2>
+      <p>Download once. Launch anywhere — even without internet.</p>
+    </div>
+    <div class="drumdrum-offline-actions">
+      <button type="button" data-offline-download>Save offline (.html)</button>
+      <button type="button" class="secondary" data-offline-guide>Home screen tips</button>
+    </div>
+    <div class="drumdrum-offline-guide" data-offline-guide-panel hidden>
+      <strong>Install on your phone</strong>
+      <ol>
+        <li>Tap your browser's share/menu button.</li>
+        <li>Choose “Add to Home Screen” / “Add shortcut”.</li>
+        <li>Launch it later. No signal required.</li>
+      </ol>
+      <p>Offline copies remove DrumDrums library links automatically.</p>
+    </div>
+  </section>
+  <button type="button" class="drumdrum-offline-toggle" data-offline-toggle hidden aria-label="Show DrumDrums Offline helper">⬇️</button>
+  <script>
+    (() => {
+      const ready = (fn) => (document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', fn) : fn();
+      ready(() => {
+        const shelf = document.querySelector('[data-drumdrum-offline]');
+        if (!shelf) return;
+        const downloadButton = shelf.querySelector('[data-offline-download]');
+        const guideButton = shelf.querySelector('[data-offline-guide]');
+        const guidePanel = shelf.querySelector('[data-offline-guide-panel]');
+        const dismissButton = shelf.querySelector('[data-offline-dismiss]');
+        const toggleButton = document.querySelector('[data-offline-toggle]');
+        const baseGuide = guidePanel ? guidePanel.innerHTML : '';
+        const guideDefaultLabel = guideButton ? guideButton.textContent.trim() : '';
+        const isLibraryHome = document.body && document.body.dataset.libraryHome === 'true';
+
+        const collapseShelf = ({ focusToggle = false } = {}) => {
+          shelf.setAttribute('data-offline-hidden', 'true');
+          if (toggleButton) {
+            toggleButton.hidden = false;
+            if (focusToggle) {
+              try {
+                toggleButton.focus({ preventScroll: true });
+              } catch (err) {
+                toggleButton.focus();
+              }
+            }
+          }
+        };
+
+        const revealShelf = () => {
+          shelf.removeAttribute('data-offline-hidden');
+          if (toggleButton) {
+            toggleButton.hidden = true;
+          }
+        };
+
+        if (downloadButton) {
+          const defaultText = downloadButton.textContent.trim();
+          downloadButton.addEventListener('click', () => {
+            const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const slug = (document.title || 'drumdrum-app')
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '') || 'drumdrum-app';
+            link.href = url;
+            link.download = slug + '.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+            downloadButton.textContent = 'Saved ✅';
+            downloadButton.disabled = true;
+            setTimeout(() => {
+              downloadButton.disabled = false;
+              downloadButton.textContent = defaultText;
+            }, 2200);
+          });
+        }
+
+        if (guideButton && guidePanel) {
+          guidePanel.hidden = true;
+          guideButton.addEventListener('click', () => {
+            if (guidePanel.hidden) {
+              guidePanel.innerHTML = baseGuide;
+              guidePanel.hidden = false;
+              guideButton.textContent = 'Hide tips';
+            } else {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        if (guidePanel) {
+          guidePanel.setAttribute('tabindex', '-1');
+        }
+
+        if (dismissButton) {
+          dismissButton.addEventListener('click', () => collapseShelf({ focusToggle: true }));
+        }
+
+        if (toggleButton) {
+          toggleButton.addEventListener('click', () => {
+            revealShelf();
+            if (guidePanel && guideButton) {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        const showMentionNote = (slug, label) => {
+          revealShelf();
+          if (!guidePanel) return;
+          guidePanel.hidden = false;
+          guidePanel.innerHTML = `<strong>${label || 'DrumDrum app'}</strong><p>This reference opens another DrumDrum app (${slug}). Download it separately when you're back online.</p>`;
+          if (guideButton) {
+            guideButton.textContent = 'Hide tips';
+          }
+          try {
+            guidePanel.focus({ preventScroll: false });
+          } catch (err) {
+            guidePanel.focus();
+          }
+        };
+
+        if (location.protocol === 'file:') {
+          document.querySelectorAll('a[href^="../"], a[href^="./"], a[href^="/"]').forEach((anchor) => {
+            const href = anchor.getAttribute('href');
+            if (!href || href.startsWith('#')) return;
+            const slug = href
+              .replace(/^\.\.\//, '')
+              .replace(/^\.\//, '')
+              .replace(/^\//, '')
+              .replace(/\/$/, '') || 'drumdrums-app';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.innerHTML = anchor.innerHTML;
+            const anchorClass = anchor.getAttribute('class');
+            button.className = anchorClass ? anchorClass + ' drumdrum-mention' : 'drumdrum-mention';
+            Array.from(anchor.attributes).forEach((attr) => {
+              if (['href', 'class', 'target', 'rel'].includes(attr.name)) return;
+              button.setAttribute(attr.name, attr.value);
+            });
+            button.addEventListener('click', () => showMentionNote(slug, anchor.textContent.trim()));
+            button.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showMentionNote(slug, anchor.textContent.trim());
+              }
+            });
+            anchor.replaceWith(button);
+          });
+        }
+
+        if (isLibraryHome) {
+          collapseShelf();
+        }
+      });
+    })();
+  </script>
+
+
+</body>
+</html>

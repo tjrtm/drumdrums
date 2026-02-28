@@ -1,0 +1,1416 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DrumDrums — One‑Tap Workout Planner</title>
+  <style>
+:root{
+      --r: 4px;
+      --accent:#22c55e;
+      --accent2:#00b7ff;
+      --danger:#e11d48;
+
+      --bg:#0b0f14;
+      --bg2:#05070a;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.03);
+      --text:#eaf2ff;
+      --muted: rgba(234,242,255,.62);
+      --line: rgba(255,255,255,.10);
+      --shadow: 0 0 30px rgba(34,197,94,0.10);
+    }
+
+    [data-theme="light"]{
+      --accent:#0077ff;
+      --accent2:#ff9a1f;
+
+      --bg:#f6f8fb;
+      --bg2:#eef3f9;
+      --panel: rgba(255,255,255,.92);
+      --panel2: rgba(255,255,255,.72);
+      --text:#0b1220;
+      --muted: rgba(11,18,32,.62);
+      --line: rgba(15,23,42,.12);
+      --shadow: 0 18px 44px rgba(15,23,42,.08);
+    }
+
+    *{box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, Segoe UI, Roboto, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(900px 520px at 14% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 62%),
+        radial-gradient(880px 520px at 88% 12%, color-mix(in srgb, var(--accent2) 14%, transparent), transparent 64%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      min-height:100vh;
+    }
+
+    /* Unique motif: subtle “training track” diagonal dashes */
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      background:
+        repeating-linear-gradient(135deg,
+          color-mix(in srgb, var(--text) 6%, transparent) 0 2px,
+          transparent 2px 18px
+        );
+      opacity:.18;
+    }
+    [data-theme="light"] body::before{opacity:.10}
+
+    header{
+      position:sticky; top:0; z-index:5;
+      background: color-mix(in srgb, var(--bg) 86%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom:1px solid var(--line);
+      padding: 12px 14px;
+    }
+
+    .top{max-width:1240px; margin:0 auto; display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap}
+    .brand{display:flex; gap:12px; align-items:flex-start}
+    .mark{width:40px;height:40px;border-radius:var(--r);border:1px solid var(--line);
+      background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 16%, transparent), color-mix(in srgb,var(--accent2) 12%, transparent));
+      box-shadow: var(--shadow);
+    }
+    h1{margin:0;font-size:15px; font-weight:950; letter-spacing:.2px}
+    .sub{color:var(--muted); font-size:12px; margin-top:3px}
+
+    .actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
+
+    .btn{
+      cursor:pointer;
+      border-radius: var(--r);
+      padding: 9px 11px;
+      border:1px solid var(--line);
+      background: linear-gradient(135deg, color-mix(in srgb,var(--accent) 14%, transparent), color-mix(in srgb,var(--accent2) 10%, transparent));
+      color: var(--text);
+      font-weight:900;
+      text-decoration:none;
+      user-select:none;
+    }
+    .btn.ghost{background: color-mix(in srgb, var(--panel) 85%, transparent)}
+    .btn.danger{border-color: color-mix(in srgb, var(--danger) 45%, transparent)}
+    .btn:focus{outline:2px solid color-mix(in srgb, var(--accent) 35%, transparent); outline-offset:2px}
+
+    .toggle{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);border:1px solid var(--line);background:color-mix(in srgb, var(--panel) 78%, transparent);color:var(--muted);font-size:12px;font-weight:900;user-select:none}
+    .toggle input{width:15px;height:15px}
+
+    main{max-width:1240px;margin:14px auto 28px;padding:0 14px; position:relative; z-index:1}
+
+    .layout{display:grid; grid-template-columns: 420px 1fr; gap:12px; align-items:start}
+    @media(max-width:980px){.layout{grid-template-columns:1fr}}
+
+    .card{background: color-mix(in srgb, var(--panel) 96%, transparent); border:1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); overflow:hidden}
+    .cardHead{padding:12px 14px; border-bottom:1px solid color-mix(in srgb, var(--line) 78%, transparent); display:flex; justify-content:space-between; align-items:baseline; gap:10px}
+    .cardHead b{font-size:12px; letter-spacing:1px; text-transform:uppercase; font-family: Space Grotesk, ui-monospace, Menlo, monospace; color: color-mix(in srgb, var(--text) 70%, transparent)}
+    .cardBody{padding:12px 14px}
+
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .hint{color:var(--muted);font-size:12px;line-height:1.35}
+
+    input[type="text"], input[type="number"], select, textarea{
+      width:100%;
+      padding: 10px 12px;
+      border-radius: var(--r);
+      border:1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 88%, transparent);
+      color: var(--text);
+      font: inherit;
+      outline:none;
+    }
+
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media(max-width:520px){.grid2{grid-template-columns:1fr}}
+
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 9px;border-radius:var(--r);border:1px solid var(--line);background:color-mix(in srgb, var(--panel2) 88%, transparent);color:color-mix(in srgb, var(--text) 88%, transparent);font-size:12px;font-weight:900}
+
+    /* Routine */
+    .steps{display:grid;gap:10px}
+    .step{
+      border:1px solid color-mix(in srgb, var(--line) 78%, transparent);
+      border-radius: var(--r);
+      background: color-mix(in srgb, var(--panel2) 92%, transparent);
+      padding:10px 12px;
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:10px;
+      align-items:start;
+    }
+    .sTitle{font-weight:950}
+    .sMeta{margin-top:4px;color:var(--muted);font-size:12px;display:flex;gap:10px;flex-wrap:wrap}
+    .mini{padding:6px 9px;border-radius:var(--r);border:1px solid var(--line);background:color-mix(in srgb, var(--panel) 86%, transparent);font-size:12px;font-weight:900;cursor:pointer;user-select:none}
+    .mini:focus{outline:2px solid color-mix(in srgb, var(--accent) 35%, transparent); outline-offset:2px}
+
+    /* History */
+    .hist{display:grid;gap:10px}
+    .hrow{cursor:pointer;border:1px solid color-mix(in srgb, var(--line) 78%, transparent);border-radius:var(--r);background:color-mix(in srgb, var(--panel2) 92%, transparent);padding:10px 12px;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .hrow:hover{border-color: color-mix(in srgb, var(--accent2) 26%, transparent)}
+
+    /* Workout mode */
+    .overlay{position:fixed; inset:0; z-index:50; display:none; background: color-mix(in srgb, var(--bg) 78%, #000);
+      backdrop-filter: blur(12px);
+      padding: 14px;
+    }
+    .overlay.on{display:block}
+    .work{
+      max-width:920px; margin:0 auto; height:100%;
+      display:grid; grid-template-rows: auto 1fr auto;
+      gap:12px;
+    }
+    .big{font-size:40px; font-weight:950; letter-spacing:.2px}
+    @media(max-width:520px){.big{font-size:32px}}
+    .timer{font: 56px/1 Space Grotesk, ui-monospace, Menlo, monospace; font-weight:800; letter-spacing:2px}
+    .center{display:grid; place-items:center; text-align:center; padding:10px}
+
+    .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:14px; z-index:60;
+      background: color-mix(in srgb, var(--bg) 72%, var(--panel));
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      padding:10px 12px;
+      box-shadow: var(--shadow);
+      display:none; gap:10px; align-items:center; max-width: min(760px, calc(100vw - 28px));
+      color: color-mix(in srgb, var(--text) 92%, transparent);
+      font-size: 12px;
+      backdrop-filter: blur(10px);
+    }
+    .toast.show{display:flex}
+
+    dialog{border:none;padding:0;background:transparent}
+    dialog::backdrop{background: rgba(0,0,0,.55)}
+    .dlg{width:min(920px, calc(100vw - 28px)); border-radius: var(--r); border:1px solid var(--line); background: color-mix(in srgb, var(--bg) 78%, var(--panel)); color: var(--text); overflow:hidden; box-shadow: var(--shadow)}
+    .dlgHead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid color-mix(in srgb, var(--line) 70%, transparent)}
+    .dlgBody{padding:12px 14px}
+
+    @media(prefers-reduced-motion: reduce){ body{transition:none} }
+  </style>
+<style data-inline-theme>
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: calc(env(safe-area-inset-right, 0px) + 16px);
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 85%, transparent);
+  color: var(--text, #0f172a);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  z-index: 999;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.5);
+  outline-offset: 3px;
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+:root[data-theme="dark"] .theme-toggle {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.55);
+}
+
+.theme-toggle__icon {
+  pointer-events: none;
+  display: inline-flex;
+}
+
+.theme-toggle__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.theme-toggle--inline {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 90%, transparent);
+  color: inherit;
+  box-shadow: none;
+  margin-left: 8px;
+}
+
+:root[data-theme="dark"] .theme-toggle--inline {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+}
+
+.theme-toggle--inline .theme-toggle__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.drumdrums-banner{
+  margin:12px auto;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px dashed rgba(15,23,42,0.16);
+  background:color-mix(in srgb, var(--panel, #ffffff) 86%, transparent);
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  max-width:460px;
+}
+:root[data-theme="dark"] .drumdrums-banner{
+  border-color:rgba(148,163,184,0.35);
+  background:rgba(10,15,25,0.6);
+}
+.drumdrums-banner strong{
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:11px;
+  display:block;
+  margin-bottom:4px;
+}
+.drumdrums-note{
+  font-weight:500;
+  font-size:12px;
+  color:var(--muted, #475569);
+}
+
+</style>
+<script data-inline-theme>
+(function () {
+  const STORAGE_KEY = 'drumdrums-theme';
+  const root = document.documentElement;
+  const systemMedia = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  const icons = {
+    moon: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 8.5 8.5 0 1 0 21 14.5Z" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+    sun: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-linecap="round" /></svg>'
+  };
+
+  const readStoredTheme = () => {
+    try {
+      return localStorage.getItem(STORAGE_KEY);
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const persistTheme = (value) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, value);
+    } catch (err) {
+      /* no-op */
+    }
+  };
+
+  const systemPrefersDark = () => systemMedia ? systemMedia.matches : false;
+
+  const initialStored = readStoredTheme();
+  let currentTheme = initialStored === 'light' || initialStored === 'dark'
+    ? initialStored
+    : (root.dataset.theme === 'light' || root.dataset.theme === 'dark')
+      ? root.dataset.theme
+      : (systemPrefersDark() ? 'dark' : 'light');
+  root.dataset.theme = currentTheme;
+  if (document.body) {
+    document.body.setAttribute('data-theme', currentTheme);
+  }
+
+  let userLocked = initialStored === 'light' || initialStored === 'dark';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'theme-toggle';
+  const srLabel = document.createElement('span');
+  srLabel.className = 'sr-only';
+  srLabel.textContent = 'Toggle color theme';
+  const iconSlot = document.createElement('span');
+  iconSlot.className = 'theme-toggle__icon';
+  button.append(srLabel, iconSlot);
+
+  const syncButton = () => {
+    button.setAttribute('aria-pressed', currentTheme === 'dark');
+    iconSlot.innerHTML = currentTheme === 'dark' ? icons.sun : icons.moon;
+    button.title = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  };
+
+  const applyTheme = (nextTheme, { persist } = { persist: false }) => {
+    currentTheme = nextTheme;
+    root.dataset.theme = nextTheme;
+    if (document.body) {
+      document.body.setAttribute('data-theme', nextTheme);
+    }
+    syncButton();
+    if (persist) {
+      persistTheme(nextTheme);
+      userLocked = true;
+    }
+  };
+
+  const toggleTheme = () => {
+    const next = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(next, { persist: true });
+  };
+
+  const init = () => {
+    if (document.querySelector('.theme-toggle')) return;
+    button.addEventListener('click', toggleTheme);
+    const anchor = document.querySelector('[data-theme-anchor]') ||
+      document.querySelector('.theme-toggle-anchor') ||
+      document.querySelector('header .actions') ||
+      document.querySelector('header .navIcons') ||
+      document.querySelector('header');
+    if (anchor) {
+      button.classList.add('theme-toggle--inline');
+      anchor.appendChild(button);
+    } else {
+      document.body.appendChild(button);
+    }
+    applyTheme(currentTheme);
+  };
+
+  if (systemMedia && typeof systemMedia.addEventListener === 'function') {
+    systemMedia.addEventListener('change', (event) => {
+      if (!userLocked) {
+        applyTheme(event.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+</script>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <h1>One‑Tap Workout Planner</h1>
+        <div class="sub">Goal → generate → start. Shortcuts: <b>Ctrl/Cmd+N</b> new • <b>Space</b> start/pause • <b>Ctrl/Cmd+E</b> export</div>
+      </div>
+    </div>
+    <div class="actions">
+      <label class="toggle" title="Sound cues">
+        <input id="sound" type="checkbox" />
+        <span>Sound</span>
+      </label>
+      <button class="btn" id="gen">Generate</button>
+      <button class="btn ghost" id="start">Start</button>
+      <button class="btn ghost" id="share">Share</button>
+      <button class="btn ghost" id="export">Export</button>
+</div>
+  </div>
+</header>
+
+<main>
+  <div class="layout">
+    <section class="card">
+      <div class="cardHead"><b>Plan</b><span class="hint" id="meta">—</span></div>
+      <div class="cardBody">
+        <div class="grid2">
+          <div>
+            <div class="hint" style="margin:0 0 6px">Goal</div>
+            <select id="goal">
+              <option value="strength" selected>Strength (no equipment)</option>
+              <option value="cardio">Cardio (low impact)</option>
+              <option value="mobility">Mobility</option>
+              <option value="core">Core</option>
+            </select>
+          </div>
+          <div>
+            <div class="hint" style="margin:0 0 6px">Time</div>
+            <select id="mins">
+              <option value="10">10 min</option>
+              <option value="20" selected>20 min</option>
+              <option value="30">30 min</option>
+            </select>
+          </div>
+          <div>
+            <div class="hint" style="margin:0 0 6px">Level</div>
+            <select id="level">
+              <option value="easy" selected>Easy</option>
+              <option value="normal">Normal</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+          <div>
+            <div class="hint" style="margin:0 0 6px">Equipment</div>
+            <select id="equip">
+              <option value="none" selected>None</option>
+              <option value="dumbbells">Dumbbells</option>
+              <option value="band">Resistance band</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <span class="pill">Warm-up + blocks + cooldown</span>
+          <span class="pill" id="est">Est: —</span>
+        </div>
+
+        <div class="hint" style="margin-top:10px">Click a step to edit. Up/Down reorders. Delete removes.</div>
+
+        <div class="steps" id="steps" style="margin-top:12px"></div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="cardHead"><b>History</b><span class="hint">last 10</span></div>
+      <div class="cardBody">
+        <div class="hint">Saved automatically when you Generate.</div>
+        <div class="hist" id="hist" style="margin-top:12px"></div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<!-- Workout overlay -->
+<div class="overlay" id="ov" aria-hidden="true">
+  <div class="work">
+    <div class="card">
+      <div class="cardHead"><b>Workout</b><span class="hint" id="ovMeta">Space start/pause • N next • P prev • Esc close</span></div>
+      <div class="cardBody">
+        <div class="center">
+          <div class="big" id="ovTitle">—</div>
+          <div class="hint" id="ovHint" style="margin-top:10px">—</div>
+          <div class="timer" id="ovTime" style="margin-top:16px">00:00</div>
+          <div class="row" style="justify-content:center;margin-top:14px">
+            <button class="btn ghost" id="prev">Prev</button>
+            <button class="btn" id="pause">Pause</button>
+            <button class="btn ghost" id="next">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardHead"><b>Up next</b><span class="hint" id="queue">—</span></div>
+      <div class="cardBody">
+        <div class="hint" id="upnext">—</div>
+      </div>
+    </div>
+
+    <div class="row" style="justify-content:space-between">
+      <button class="btn ghost" id="exit">Exit</button>
+      <button class="btn" id="finish">Finish</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span id="toastText">—</span>
+  <button class="mini" id="undo">Undo</button>
+  <button class="mini" id="dismiss">Dismiss</button>
+</div>
+
+<dialog id="dlgExport">
+  <div class="dlg">
+    <div class="dlgHead">
+      <div style="font-weight:950">Export</div>
+      <div class="row">
+        <button class="mini" id="copyMd">Copy Markdown</button>
+        <button class="mini" id="copyJson">Copy JSON</button>
+        <button class="mini" id="closeExport">Close</button>
+      </div>
+    </div>
+    <div class="dlgBody">
+      <textarea id="out" spellcheck="false" style="min-height:320px"></textarea>
+      <div class="hint">Export copies to clipboard. Share copies a link.</div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(() => {
+  const $ = (id)=>document.getElementById(id);
+
+  const KEY='workout-planner-v1';
+
+  const nowIso = ()=> new Date().toISOString();
+  const uid = ()=> {
+    try{ return crypto.randomUUID(); }catch{ return 'w_'+Math.random().toString(16).slice(2)+'_'+Date.now().toString(16); }
+  };
+
+  function blank(){
+    return {
+      settings: { goal:'strength', mins:20, level:'easy', equip:'none', sound:false },
+      routine: null,
+      history: [],
+      running: { on:false, idx:0, endAt:null, remaining:null }
+    };
+  }
+
+  function load(){
+    try{
+      const d = JSON.parse(localStorage.getItem(KEY) || '');
+      if(!d || typeof d !== 'object') return blank();
+      d.settings = (d.settings && typeof d.settings==='object') ? d.settings : blank().settings;
+      d.settings.mins = Number(d.settings.mins||20);
+      d.settings.sound = !!d.settings.sound;
+      d.routine = d.routine || null;
+      d.history = Array.isArray(d.history) ? d.history : [];
+      d.running = (d.running && typeof d.running==='object') ? d.running : blank().running;
+      return d;
+    }catch{ return blank(); }
+  }
+  function save(d){ localStorage.setItem(KEY, JSON.stringify(d)); }
+
+  // Theme (default dark)
+  // Toast/undo
+  let undoAction=null;
+  let undoTimer=null;
+  function showToast(text, action){
+    undoAction = action || null;
+    $('toastText').textContent = text;
+    $('toast').classList.add('show');
+    if(undoTimer) clearTimeout(undoTimer);
+    undoTimer = setTimeout(()=> $('toast').classList.remove('show'), 6500);
+  }
+  $('dismiss').onclick = ()=> $('toast').classList.remove('show');
+  $('undo').onclick = ()=>{
+    if(!undoAction) return;
+    const d = load();
+    undoAction(d);
+    save(d);
+    render();
+    $('toast').classList.remove('show');
+  };
+
+  function beep(){
+    const d = load();
+    if(!d.settings.sound) return;
+    try{
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const gain = ctx.createGain();
+      gain.gain.value = 0.25;
+      gain.connect(ctx.destination);
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.connect(gain);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.09);
+      setTimeout(()=>ctx.close().catch(()=>{}), 250);
+    }catch{}
+  }
+
+  function esc(s){
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;');
+  }
+
+  function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+
+  function step(title, sec, hint){
+    return { id: uid(), title, sec, hint: hint||'' };
+  }
+
+  function buildRoutine(settings){
+    const mins = clamp(Number(settings.mins||20), 5, 60);
+    const totalSec = mins * 60;
+
+    const goal = settings.goal;
+    const level = settings.level;
+    const equip = settings.equip;
+
+    const intensity = (level === 'hard') ? 1.2 : (level === 'normal' ? 1.0 : 0.85);
+
+    const warm = step('Warm‑up', 2*60, 'Gentle movement + breathing.');
+    const cool = step('Cooldown', 2*60, 'Slow down, stretch, breathe.');
+
+    let remaining = totalSec - warm.sec - cool.sec;
+    if(remaining < 6*60) remaining = 6*60;
+
+    // base blocks: 3 blocks of work + rest
+    const blocks = [];
+
+    function ex(name, sec, hint){
+      blocks.push(step(name, Math.round(sec), hint));
+    }
+    function rest(sec){
+      blocks.push(step('Rest', Math.round(sec), 'Shake it out.')); 
+    }
+
+    const work = Math.round(45 * intensity);
+    const shortRest = Math.round(20 / intensity);
+
+    if(goal === 'mobility'){
+      ex('World’s greatest stretch', work, 'Slow and controlled.'); rest(shortRest);
+      ex('Hip hinge reach', work, 'Back long.'); rest(shortRest);
+      ex('Thoracic rotations', work, 'Exhale on rotation.'); rest(shortRest);
+      ex('Ankles + calves', work, 'Small range → bigger.');
+    } else if(goal === 'cardio'){
+      ex('March in place', work, 'Arms active.'); rest(shortRest);
+      ex('Step‑touch', work, 'Light feet.'); rest(shortRest);
+      ex('Shadow boxing', work, 'Relax shoulders.'); rest(shortRest);
+      ex('Fast feet', work, 'Short bursts.');
+    } else if(goal === 'core'){
+      ex('Dead bug', work, 'Ribs down.'); rest(shortRest);
+      ex('Plank', work, 'Long spine.'); rest(shortRest);
+      ex('Side plank', work, 'Hips forward.'); rest(shortRest);
+      ex('Hollow hold', work, 'Breathe.');
+    } else {
+      // strength default
+      const tool = equip === 'dumbbells' ? ' (DB)' : (equip === 'band' ? ' (band)' : '');
+      ex('Squat'+tool, work, 'Knees track toes.'); rest(shortRest);
+      ex('Push‑up'+tool, work, 'Tight body.'); rest(shortRest);
+      ex('Row'+tool, work, 'Elbows back.'); rest(shortRest);
+      ex('Glute bridge'+tool, work, 'Squeeze at top.');
+    }
+
+    // Fit blocks into remaining time by repeating circuit
+    const circuit = blocks.slice();
+    let out = [warm];
+
+    let circuitSec = circuit.reduce((s,x)=>s+x.sec,0);
+    if(circuitSec <= 0) circuitSec = 1;
+
+    while(remaining - circuitSec > 60){
+      out = out.concat(circuit);
+      remaining -= circuitSec;
+    }
+
+    // add one more pass if we still have decent time
+    if(remaining > 2*60){
+      // scale last pass slightly
+      const scaled = circuit.map(s => ({...s, id: uid(), sec: Math.max(15, Math.round(s.sec * (remaining/circuitSec))) }));
+      out = out.concat(scaled);
+      remaining = 0;
+    }
+
+    out.push(cool);
+
+    // normalize: cap too-short steps
+    out = out.map(s => ({...s, sec: Math.max(10, Math.round(s.sec)) }));
+
+    return {
+      id: uid(),
+      createdAt: nowIso(),
+      settings: { ...settings },
+      steps: out
+    };
+  }
+
+  function totalSec(r){ return (r?.steps||[]).reduce((s,x)=>s+(Number(x.sec)||0),0); }
+  function fmtMMSS(sec){
+    sec = Math.max(0, Math.floor(sec));
+    const m = String(Math.floor(sec/60)).padStart(2,'0');
+    const s = String(sec%60).padStart(2,'0');
+    return `${m}:${s}`;
+  }
+
+  function applySettingsToUI(d){
+    $('goal').value = d.settings.goal || 'strength';
+    $('mins').value = String(d.settings.mins || 20);
+    $('level').value = d.settings.level || 'easy';
+    $('equip').value = d.settings.equip || 'none';
+    $('sound').checked = !!d.settings.sound;
+  }
+
+  function pullSettingsFromUI(d){
+    d.settings.goal = $('goal').value;
+    d.settings.mins = Number($('mins').value || 20);
+    d.settings.level = $('level').value;
+    d.settings.equip = $('equip').value;
+    d.settings.sound = $('sound').checked;
+  }
+
+  function pushHistory(d, routine){
+    const entry = {
+      id: routine.id,
+      createdAt: routine.createdAt,
+      label: `${routine.settings.goal} • ${routine.settings.mins}m • ${routine.settings.level}`,
+      routine
+    };
+    d.history.unshift(entry);
+    d.history = d.history.slice(0, 10);
+  }
+
+  // Share
+  function encodeRoutine(r){
+    const json = JSON.stringify(r);
+    const b64 = btoa(unescape(encodeURIComponent(json)));
+    return b64;
+  }
+  function decodeRoutine(b64){
+    const json = decodeURIComponent(escape(atob(b64)));
+    return JSON.parse(json);
+  }
+
+  async function copyText(t){
+    try{ await navigator.clipboard.writeText(t); return true; }
+    catch{
+      const ta=document.createElement('textarea');
+      ta.value=t; document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand('copy'); }catch{}
+      ta.remove();
+      return false;
+    }
+  }
+
+  // Overlay timer
+  let raf=0;
+  function openOverlay(){
+    const d=load();
+    if(!d.routine){ showToast('Generate a routine first.', null); return; }
+    $('ov').classList.add('on');
+    $('ov').setAttribute('aria-hidden','false');
+    d.running.on = false;
+    d.running.idx = clamp(d.running.idx||0, 0, d.routine.steps.length-1);
+    d.running.remaining = null;
+    d.running.endAt = null;
+    save(d);
+    repaintOverlay();
+  }
+
+  function closeOverlay(){
+    const d=load();
+    d.running.on = false;
+    d.running.endAt = null;
+    d.running.remaining = null;
+    save(d);
+    $('ov').classList.remove('on');
+    $('ov').setAttribute('aria-hidden','true');
+    if(raf) cancelAnimationFrame(raf);
+    raf=0;
+  }
+
+  function startStep(){
+    const d=load();
+    const s = d.routine.steps[d.running.idx];
+    d.running.on = true;
+    const remain = (d.running.remaining != null) ? d.running.remaining : s.sec;
+    d.running.endAt = Date.now() + remain*1000;
+    d.running.remaining = remain;
+    save(d);
+    tick();
+    repaintOverlay();
+  }
+
+  function pauseStep(){
+    const d=load();
+    if(!d.running.on){ startStep(); return; }
+    d.running.on = false;
+    d.running.remaining = Math.max(0, Math.ceil((d.running.endAt - Date.now())/1000));
+    d.running.endAt = null;
+    save(d);
+    repaintOverlay();
+  }
+
+  function nextStep(){
+    const d=load();
+    d.running.idx = clamp(d.running.idx+1, 0, d.routine.steps.length-1);
+    d.running.endAt = null;
+    d.running.remaining = null;
+    save(d);
+    beep();
+    repaintOverlay();
+  }
+
+  function prevStep(){
+    const d=load();
+    d.running.idx = clamp(d.running.idx-1, 0, d.routine.steps.length-1);
+    d.running.endAt = null;
+    d.running.remaining = null;
+    save(d);
+    repaintOverlay();
+  }
+
+  function tick(){
+    const d=load();
+    if(!d.running.on || !d.running.endAt){ raf=0; return; }
+
+    const rem = Math.ceil((d.running.endAt - Date.now())/1000);
+    d.running.remaining = Math.max(0, rem);
+
+    if(d.running.remaining <= 0){
+      // advance
+      if(d.running.idx < d.routine.steps.length-1){
+        d.running.idx++;
+        d.running.endAt = null;
+        d.running.remaining = null;
+        save(d);
+        beep();
+        repaintOverlay();
+        startStep();
+        return;
+      } else {
+        // end
+        d.running.on = false;
+        d.running.endAt = null;
+        d.running.remaining = null;
+        save(d);
+        repaintOverlay();
+        showToast('Workout finished.', null);
+        raf=0;
+        return;
+      }
+    }
+
+    save(d);
+    repaintOverlay();
+    raf = requestAnimationFrame(tick);
+  }
+
+  function repaintOverlay(){
+    const d=load();
+    if(!d.routine){ return; }
+    const steps = d.routine.steps;
+    const idx = clamp(d.running.idx||0, 0, steps.length-1);
+    const s = steps[idx];
+
+    $('ovTitle').textContent = s.title;
+    $('ovHint').textContent = s.hint || '—';
+
+    const shown = d.running.on && d.running.remaining != null ? d.running.remaining : (d.running.remaining != null ? d.running.remaining : s.sec);
+    $('ovTime').textContent = fmtMMSS(shown);
+
+    $('pause').textContent = d.running.on ? 'Pause' : 'Start';
+
+    const next = steps[idx+1];
+    $('upnext').textContent = next ? `${next.title} • ${fmtMMSS(next.sec)}` : 'Last step.';
+    $('queue').textContent = `${idx+1}/${steps.length}`;
+  }
+
+  function render(){
+    const d = load();
+    applySettingsToUI(d);
+
+    $('meta').textContent = d.routine ? `Routine generated ${new Date(d.routine.createdAt).toLocaleTimeString(undefined,{hour12:false})}` : 'No routine yet.';
+    $('est').textContent = d.routine ? ('Est: ' + fmtMMSS(totalSec(d.routine))) : 'Est: —';
+
+    // steps
+    const r = d.routine;
+    $('steps').innerHTML = (r?.steps||[]).map((s, idx)=>{
+      return `
+        <div class="step" data-open="${s.id}">
+          <div>
+            <div class="sTitle">${esc(s.title)}</div>
+            <div class="sMeta"><span>${fmtMMSS(s.sec)}</span><span>•</span><span>${esc(s.hint || '—')}</span></div>
+          </div>
+          <div class="row" style="justify-content:flex-end">
+            <button class="mini" data-up="${s.id}" title="Move up">↑</button>
+            <button class="mini" data-down="${s.id}" title="Move down">↓</button>
+            <button class="mini" data-del="${s.id}" title="Delete">Del</button>
+          </div>
+        </div>
+      `;
+    }).join('') || '<div class="hint">Press <b>Generate</b> to create a plan.</div>';
+
+    // history
+    $('hist').innerHTML = (d.history||[]).map(h => {
+      return `
+        <div class="hrow" data-load="${h.id}">
+          <div>
+            <div style="font-weight:950">${esc(h.label)}</div>
+            <div class="hint" style="margin-top:4px">${new Date(h.createdAt).toLocaleString(undefined,{hour12:false})}</div>
+          </div>
+          <div class="row" style="justify-content:flex-end">
+            <button class="mini" data-hshare="${h.id}">Share</button>
+            <button class="mini" data-hdel="${h.id}">Del</button>
+          </div>
+        </div>
+      `;
+    }).join('') || '<div class="hint">No history yet.</div>';
+  }
+
+  function generate(){
+    const d = load();
+    pullSettingsFromUI(d);
+    const routine = buildRoutine(d.settings);
+    d.routine = routine;
+    d.running = { on:false, idx:0, endAt:null, remaining:null };
+    pushHistory(d, routine);
+    save(d);
+    render();
+    showToast('Generated routine.', null);
+  }
+
+  function editStepById(id){
+    const d = load();
+    const s = d.routine?.steps?.find(x=>x.id===id);
+    if(!s) return;
+
+    const title = prompt('Step title:', s.title);
+    if(title == null) return;
+    const sec = prompt('Seconds:', String(s.sec));
+    if(sec == null) return;
+    const hint = prompt('Hint (optional):', s.hint || '');
+    if(hint == null) return;
+
+    const before = JSON.parse(JSON.stringify(d.routine));
+
+    s.title = String(title).trim().slice(0, 60) || s.title;
+    s.sec = clamp(parseInt(sec,10) || s.sec, 10, 60*15);
+    s.hint = String(hint).trim().slice(0, 120);
+
+    save(d);
+    render();
+    showToast('Step edited.', (dd)=>{ dd.routine = before; });
+  }
+
+  function moveStep(id, dir){
+    const d=load();
+    if(!d.routine) return;
+    const steps = d.routine.steps;
+    const idx = steps.findIndex(x=>x.id===id);
+    if(idx < 0) return;
+    const to = clamp(idx + dir, 0, steps.length-1);
+    if(to === idx) return;
+
+    const before = JSON.parse(JSON.stringify(d.routine));
+
+    const [m] = steps.splice(idx, 1);
+    steps.splice(to, 0, m);
+    save(d);
+    render();
+    showToast('Reordered.', (dd)=>{ dd.routine = before; });
+  }
+
+  function deleteStep(id){
+    const d=load();
+    if(!d.routine) return;
+    const before = JSON.parse(JSON.stringify(d.routine));
+    d.routine.steps = d.routine.steps.filter(x=>x.id!==id);
+    save(d);
+    render();
+    showToast('Deleted step.', (dd)=>{ dd.routine = before; });
+  }
+
+  function exportMd(d){
+    const r=d.routine;
+    if(!r) return '# Workout\n\nNo routine yet.';
+    const lines=[];
+    lines.push('# Workout');
+    lines.push('');
+    lines.push(`- Goal: **${r.settings.goal}**`);
+    lines.push(`- Time: **${r.settings.mins} min**`);
+    lines.push(`- Level: **${r.settings.level}**`);
+    lines.push(`- Equipment: **${r.settings.equip}**`);
+    lines.push('');
+    r.steps.forEach((s,i)=>{
+      lines.push(`${i+1}. **${s.title}** — ${fmtMMSS(s.sec)}${s.hint?`  \n   _${s.hint}_`:''}`);
+    });
+    return lines.join('\n');
+  }
+
+  function openExport(){
+    const d=load();
+    $('out').value = exportMd(d);
+    if($('dlgExport').showModal) $('dlgExport').showModal(); else $('dlgExport').setAttribute('open','');
+  }
+  function closeExport(){
+    if($('dlgExport').close) $('dlgExport').close(); else $('dlgExport').removeAttribute('open');
+  }
+
+  async function doShare(r){
+    const b64 = encodeRoutine(r);
+    const url = location.origin + location.pathname + '#r=' + encodeURIComponent(b64);
+    await copyText(url);
+    showToast('Share link copied.', null);
+  }
+
+  // Wiring
+  $('gen').onclick = generate;
+  $('start').onclick = openOverlay;
+  $('pause').onclick = pauseStep;
+  $('next').onclick = ()=>{ nextStep(); };
+  $('prev').onclick = ()=>{ prevStep(); };
+  $('exit').onclick = closeOverlay;
+  $('finish').onclick = ()=>{ closeOverlay(); showToast('Nice. Done.', null); };
+
+  $('sound').addEventListener('change', (e)=>{
+    const d=load();
+    d.settings.sound = !!e.target.checked;
+    save(d);
+    showToast(d.settings.sound ? 'Sound on.' : 'Sound off.', null);
+  });
+
+  $('share').onclick = async ()=>{
+    const d=load();
+    if(!d.routine){ showToast('Generate first.', null); return; }
+    await doShare(d.routine);
+  };
+
+  $('export').onclick = openExport;
+  $('closeExport').onclick = closeExport;
+  $('copyMd').onclick = async ()=>{
+    const d=load();
+    const txt = exportMd(d);
+    $('out').value = txt;
+    await copyText(txt);
+    showToast('Copied Markdown.', null);
+  };
+  $('copyJson').onclick = async ()=>{
+    const d=load();
+    const txt = JSON.stringify(d.routine, null, 2);
+    $('out').value = txt;
+    await copyText(txt);
+    showToast('Copied JSON.', null);
+  };
+
+  document.body.addEventListener('click', async (e)=>{
+    const up = e.target.getAttribute && e.target.getAttribute('data-up');
+    if(up){ moveStep(up, -1); return; }
+
+    const down = e.target.getAttribute && e.target.getAttribute('data-down');
+    if(down){ moveStep(down, +1); return; }
+
+    const del = e.target.getAttribute && e.target.getAttribute('data-del');
+    if(del){ deleteStep(del); return; }
+
+    const open = e.target.closest && e.target.closest('[data-open]');
+    if(open && !e.target.closest('button')){
+      editStepById(open.getAttribute('data-open'));
+      return;
+    }
+
+    const loadId = e.target.getAttribute && e.target.getAttribute('data-load');
+    if(loadId){
+      const d=load();
+      const h = d.history.find(x=>x.id===loadId);
+      if(!h) return;
+      d.routine = h.routine;
+      d.running = { on:false, idx:0, endAt:null, remaining:null };
+      save(d);
+      render();
+      showToast('Loaded routine.', null);
+      return;
+    }
+
+    const hs = e.target.getAttribute && e.target.getAttribute('data-hshare');
+    if(hs){
+      const d=load();
+      const h = d.history.find(x=>x.id===hs);
+      if(h) await doShare(h.routine);
+      return;
+    }
+
+    const hd = e.target.getAttribute && e.target.getAttribute('data-hdel');
+    if(hd){
+      const d=load();
+      const before = d.history.slice();
+      d.history = d.history.filter(x=>x.id!==hd);
+      save(d);
+      render();
+      showToast('Deleted history item.', (dd)=>{ dd.history = before; });
+    }
+  });
+
+  // Keyboard shortcuts
+  window.addEventListener('keydown', (e)=>{
+    const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+    const typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='n'){
+      e.preventDefault();
+      generate();
+      return;
+    }
+
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='e'){
+      e.preventDefault();
+      openExport();
+      return;
+    }
+
+    if(e.key === ' ' && $('ov').classList.contains('on') && !typing){
+      e.preventDefault();
+      pauseStep();
+      return;
+    }
+
+    if(e.key.toLowerCase()==='n' && $('ov').classList.contains('on') && !typing){
+      e.preventDefault();
+      nextStep();
+      return;
+    }
+
+    if(e.key.toLowerCase()==='p' && $('ov').classList.contains('on') && !typing){
+      e.preventDefault();
+      prevStep();
+      return;
+    }
+
+    if(e.key === 'Escape'){
+      closeExport();
+      if($('ov').classList.contains('on')) closeOverlay();
+      $('toast').classList.remove('show');
+    }
+  });
+
+  // Hydrate UI settings
+  ['goal','mins','level','equip'].forEach(id => $(id).addEventListener('change', ()=>{
+    const d=load();
+    pullSettingsFromUI(d);
+    save(d);
+  }));
+
+  // Restore from share hash
+  function tryLoadFromHash(){
+    const m = location.hash.match(/#r=([^&]+)/);
+    if(!m) return false;
+    try{
+      const r = decodeRoutine(decodeURIComponent(m[1]));
+      if(!r || !Array.isArray(r.steps)) throw new Error('bad');
+      const d=load();
+      d.routine = r;
+      d.running = { on:false, idx:0, endAt:null, remaining:null };
+      save(d);
+      showToast('Loaded shared routine.', null);
+      return true;
+    }catch{
+      showToast('Invalid share link.', null);
+      return false;
+    }
+  }
+
+  // Init
+  const d = load();
+  applySettingsToUI(d);
+  $('sound').checked = !!d.settings.sound;
+  if(!d.routine) generate();
+  tryLoadFromHash();
+  render();
+})();
+</script>
+
+  <!-- DrumDrums Offline Module -->
+  <style>
+    .drumdrum-offline-shelf{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:min(320px,calc(100% - 48px));background:var(--panel,rgba(255,255,255,0.96));color:var(--text,#0f172a);box-shadow:0 20px 50px rgba(15,23,42,0.2);border-radius:24px;border:1px solid rgba(15,23,42,0.1);padding:20px;font-family:inherit;z-index:9999;line-height:1.4}
+    [data-theme="dark"] .drumdrum-offline-shelf{background:rgba(2,6,23,0.92);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35);box-shadow:0 25px 60px rgba(2,6,23,0.75)}
+    .drumdrum-offline-shelf[data-offline-hidden="true"]{display:none}
+    .drumdrum-offline-label{text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.12em;opacity:.75;margin-bottom:4px}
+    .drumdrum-offline-head h2{font-size:17px;margin:0 0 6px;font-weight:900}
+    .drumdrum-offline-head p{margin:0;font-size:13px;opacity:.9}
+    .drumdrum-offline-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+    .drumdrum-offline-actions button{border:none;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s ease,opacity .15s ease;background:var(--accent,#2563eb);color:#fff;box-shadow:0 10px 25px rgba(37,99,235,0.25)}
+    .drumdrum-offline-actions button.secondary{background:rgba(15,23,42,0.08);color:inherit;box-shadow:none;border:1px solid rgba(15,23,42,0.12)}
+    [data-theme="dark"] .drumdrum-offline-actions button.secondary{background:rgba(148,163,184,0.15);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35)}
+    .drumdrum-offline-actions button:disabled{opacity:.7;cursor:default}
+    .drumdrum-offline-actions button:active{transform:scale(0.98)}
+    .drumdrum-offline-guide{margin-top:14px;border-radius:14px;padding:12px;font-size:13px;background:rgba(15,23,42,0.05);border:1px dashed rgba(15,23,42,0.25)}
+    .drumdrum-offline-guide p{margin:8px 0 0}
+    .drumdrum-offline-guide ol{margin:8px 0 0;padding-left:18px}
+    [data-theme="dark"] .drumdrum-offline-guide{background:rgba(15,23,42,0.4);border-color:rgba(148,163,184,0.3)}
+    .drumdrum-offline-dismiss{position:absolute;top:6px;right:8px;border:none;background:rgba(15,23,42,0.08);color:inherit;font-size:22px;line-height:1;cursor:pointer;width:48px;height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0;border:2px solid rgba(15,23,42,0.15);box-shadow:0 6px 14px rgba(15,23,42,0.18);touch-action:manipulation}
+    [data-theme="dark"] .drumdrum-offline-dismiss{background:rgba(148,163,184,0.25);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.4);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
+    .drumdrum-offline-dismiss:focus-visible,.drumdrum-offline-actions button:focus-visible{outline:3px solid rgba(59,130,246,0.7);outline-offset:2px}
+    .drumdrum-mention{cursor:pointer}
+    .drumdrum-mention:not(.btn){background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline}
+    .drumdrum-mention.btn{cursor:pointer}
+    .drumdrum-offline-toggle{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:56px;height:56px;border-radius:999px;border:none;background:var(--accent,#2563eb);color:#fff;box-shadow:0 18px 35px rgba(15,23,42,0.18);cursor:pointer;font-size:20px;font-weight:700;z-index:9998;display:flex;align-items:center;justify-content:center;transition:transform .2s ease,box-shadow .2s ease}
+    [data-theme="dark"] .drumdrum-offline-toggle{background:rgba(37,99,235,0.92);box-shadow:0 20px 45px rgba(2,6,23,0.75)}
+    .drumdrum-offline-toggle:focus-visible{outline:3px solid rgba(59,130,246,0.6);outline-offset:2px}
+    .drumdrum-offline-toggle:active{transform:scale(0.95)}
+    @media (max-width:640px){.drumdrum-offline-shelf{left:16px;right:16px;width:auto;bottom:calc(16px + env(safe-area-inset-bottom, 0px));padding:16px}.drumdrum-offline-toggle{bottom:calc(16px + env(safe-area-inset-bottom, 0px));right:calc(16px + env(safe-area-inset-right, 0px));width:52px;height:52px}}
+  </style>
+  <section class="drumdrum-offline-shelf" data-drumdrum-offline>
+    <button type="button" class="drumdrum-offline-dismiss" data-offline-dismiss aria-label="Hide offline helper">×</button>
+    <div class="drumdrum-offline-head">
+      <p class="drumdrum-offline-label">DrumDrums Offline</p>
+      <h2>Save this DrumDrum</h2>
+      <p>Download once. Launch anywhere — even without internet.</p>
+    </div>
+    <div class="drumdrum-offline-actions">
+      <button type="button" data-offline-download>Save offline (.html)</button>
+      <button type="button" class="secondary" data-offline-guide>Home screen tips</button>
+    </div>
+    <div class="drumdrum-offline-guide" data-offline-guide-panel hidden>
+      <strong>Install on your phone</strong>
+      <ol>
+        <li>Tap your browser's share/menu button.</li>
+        <li>Choose “Add to Home Screen” / “Add shortcut”.</li>
+        <li>Launch it later. No signal required.</li>
+      </ol>
+      <p>Offline copies remove DrumDrums library links automatically.</p>
+    </div>
+  </section>
+  <button type="button" class="drumdrum-offline-toggle" data-offline-toggle hidden aria-label="Show DrumDrums Offline helper">⬇️</button>
+  <script>
+    (() => {
+      const ready = (fn) => (document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', fn) : fn();
+      ready(() => {
+        const shelf = document.querySelector('[data-drumdrum-offline]');
+        if (!shelf) return;
+        const downloadButton = shelf.querySelector('[data-offline-download]');
+        const guideButton = shelf.querySelector('[data-offline-guide]');
+        const guidePanel = shelf.querySelector('[data-offline-guide-panel]');
+        const dismissButton = shelf.querySelector('[data-offline-dismiss]');
+        const toggleButton = document.querySelector('[data-offline-toggle]');
+        const baseGuide = guidePanel ? guidePanel.innerHTML : '';
+        const guideDefaultLabel = guideButton ? guideButton.textContent.trim() : '';
+        const isLibraryHome = document.body && document.body.dataset.libraryHome === 'true';
+
+        const collapseShelf = ({ focusToggle = false } = {}) => {
+          shelf.setAttribute('data-offline-hidden', 'true');
+          if (toggleButton) {
+            toggleButton.hidden = false;
+            if (focusToggle) {
+              try {
+                toggleButton.focus({ preventScroll: true });
+              } catch (err) {
+                toggleButton.focus();
+              }
+            }
+          }
+        };
+
+        const revealShelf = () => {
+          shelf.removeAttribute('data-offline-hidden');
+          if (toggleButton) {
+            toggleButton.hidden = true;
+          }
+        };
+
+        if (downloadButton) {
+          const defaultText = downloadButton.textContent.trim();
+          downloadButton.addEventListener('click', () => {
+            const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const slug = (document.title || 'drumdrum-app')
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '') || 'drumdrum-app';
+            link.href = url;
+            link.download = slug + '.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+            downloadButton.textContent = 'Saved ✅';
+            downloadButton.disabled = true;
+            setTimeout(() => {
+              downloadButton.disabled = false;
+              downloadButton.textContent = defaultText;
+            }, 2200);
+          });
+        }
+
+        if (guideButton && guidePanel) {
+          guidePanel.hidden = true;
+          guideButton.addEventListener('click', () => {
+            if (guidePanel.hidden) {
+              guidePanel.innerHTML = baseGuide;
+              guidePanel.hidden = false;
+              guideButton.textContent = 'Hide tips';
+            } else {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        if (guidePanel) {
+          guidePanel.setAttribute('tabindex', '-1');
+        }
+
+        if (dismissButton) {
+          dismissButton.addEventListener('click', () => collapseShelf({ focusToggle: true }));
+        }
+
+        if (toggleButton) {
+          toggleButton.addEventListener('click', () => {
+            revealShelf();
+            if (guidePanel && guideButton) {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        const showMentionNote = (slug, label) => {
+          revealShelf();
+          if (!guidePanel) return;
+          guidePanel.hidden = false;
+          guidePanel.innerHTML = `<strong>${label || 'DrumDrum app'}</strong><p>This reference opens another DrumDrum app (${slug}). Download it separately when you're back online.</p>`;
+          if (guideButton) {
+            guideButton.textContent = 'Hide tips';
+          }
+          try {
+            guidePanel.focus({ preventScroll: false });
+          } catch (err) {
+            guidePanel.focus();
+          }
+        };
+
+        if (location.protocol === 'file:') {
+          document.querySelectorAll('a[href^="../"], a[href^="./"], a[href^="/"]').forEach((anchor) => {
+            const href = anchor.getAttribute('href');
+            if (!href || href.startsWith('#')) return;
+            const slug = href
+              .replace(/^\.\.\//, '')
+              .replace(/^\.\//, '')
+              .replace(/^\//, '')
+              .replace(/\/$/, '') || 'drumdrums-app';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.innerHTML = anchor.innerHTML;
+            const anchorClass = anchor.getAttribute('class');
+            button.className = anchorClass ? anchorClass + ' drumdrum-mention' : 'drumdrum-mention';
+            Array.from(anchor.attributes).forEach((attr) => {
+              if (['href', 'class', 'target', 'rel'].includes(attr.name)) return;
+              button.setAttribute(attr.name, attr.value);
+            });
+            button.addEventListener('click', () => showMentionNote(slug, anchor.textContent.trim()));
+            button.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showMentionNote(slug, anchor.textContent.trim());
+              }
+            });
+            anchor.replaceWith(button);
+          });
+        }
+
+        if (isLibraryHome) {
+          collapseShelf();
+        }
+      });
+    })();
+  </script>
+
+
+</body>
+</html>

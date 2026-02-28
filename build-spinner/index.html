@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DrumDrums — Daily Build Spinner (mock)</title>
+  <style>
+    :root{
+      --bg:#fffaf2;
+      --bg-secondary:#ffffff;
+      --ink:#151515;
+      --muted:#5a5a5a;
+      --panel:#ffffff;
+      --panel-soft:#fff8ee;
+      --frame:#111827;
+      --accent:#111827;
+      --accent-contrast:#ffffff;
+      --shadow:8px 10px 0 rgba(0,0,0,0.08);
+      --glow-one:rgba(255,154,31,0.2);
+      --glow-two:rgba(17,24,39,0.1);
+      --wheel-1:#ff9a1f;
+      --wheel-2:#fef3c7;
+      --wheel-3:#111827;
+      --wheel-4:#fde68a;
+      --wheel-5:#334155;
+      --wheel-6:#ffffff;
+    }
+    :root[data-theme="dark"]{
+      --bg:#05070a;
+      --bg-secondary:#0b1220;
+      --ink:#f8fafc;
+      --muted:rgba(226,232,240,0.78);
+      --panel:rgba(2,6,23,0.92);
+      --panel-soft:rgba(15,23,42,0.82);
+      --frame:rgba(226,232,240,0.45);
+      --accent:#fbbf24;
+      --accent-contrast:#0b1220;
+      --shadow:8px 10px 0 rgba(0,0,0,0.45);
+      --glow-one:rgba(251,191,36,0.18);
+      --glow-two:rgba(59,130,246,0.18);
+      --wheel-1:#fbbf24;
+      --wheel-2:#92400e;
+      --wheel-3:#cbd5f5;
+      --wheel-4:#ea580c;
+      --wheel-5:#1f2937;
+      --wheel-6:#0b1220;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;
+      color:var(--ink);
+      background:
+        radial-gradient(900px 600px at 18% 0%, var(--glow-one), transparent 58%),
+        radial-gradient(900px 640px at 90% 20%, var(--glow-two), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg-secondary));
+      background-attachment: fixed, fixed, fixed;
+      min-height:100vh;
+      padding:20px;
+    }
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1100px;margin:0 auto 14px;flex-wrap:wrap}
+    h1{margin:0;font-size:18px;letter-spacing:.2px}
+    .muted{color:var(--muted);font-size:12px}
+    .btn{
+      cursor:pointer;
+      border-radius:14px;
+      padding:12px 14px;
+      border:2px solid var(--frame);
+      background:var(--panel);
+      color:var(--ink);
+      font-weight:800;
+      min-height:44px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+    .btn.primary{
+      background:var(--accent);
+      color:var(--accent-contrast);
+      border-color:var(--accent);
+    }
+
+    .wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns: 1fr 380px;gap:14px}
+    .card{
+      background:var(--panel);
+      border:2px solid var(--frame);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      overflow:hidden
+    }
+    .head{
+      padding:12px 14px;
+      border-bottom:2px solid var(--frame);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .head b{letter-spacing:1px;text-transform:uppercase}
+    .body{padding:14px}
+
+    .spinner{display:grid;place-items:center;padding:10px}
+    .wheel{
+      width:320px;
+      height:320px;
+      border-radius:999px;
+      border:3px solid var(--frame);
+      background:conic-gradient(var(--wheel-1) 0 60deg, var(--wheel-2) 60deg 120deg, var(--wheel-3) 120deg 180deg, var(--wheel-4) 180deg 240deg, var(--wheel-5) 240deg 300deg, var(--wheel-6) 300deg 360deg);
+      position:relative;
+    }
+    .wheel::after{
+      content:"";
+      position:absolute;
+      inset:26px;
+      border-radius:999px;
+      background:var(--panel);
+      border:2px solid var(--frame)
+    }
+    .pin{
+      width:0;
+      height:0;
+      border-left:10px solid transparent;
+      border-right:10px solid transparent;
+      border-bottom:18px solid var(--accent);
+      margin:0 auto 10px
+    }
+    .prompt{
+      margin-top:12px;
+      padding:12px;
+      border:2px dashed var(--frame);
+      border-radius:16px;
+      background:var(--panel-soft)
+    }
+    .prompt h2{margin:0 0 6px;font-size:14px}
+    .prompt .big{font-weight:900;font-size:18px}
+
+    .grid{display:grid;gap:10px}
+    label{font-size:12px;color:var(--muted)}
+    select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:14px;
+      border:2px solid var(--frame);
+      background:var(--panel);
+      color:var(--ink);
+      font-weight:700;
+      min-height:44px;
+    }
+    .hist{display:grid;gap:8px;margin-top:10px}
+    .h{
+      padding:10px;
+      border:1px solid var(--frame);
+      border-radius:14px;
+      background:var(--panel-soft)
+    }
+
+    dialog{
+      border:2px solid var(--frame);
+      border-radius:16px;
+      padding:14px;
+      max-width:720px;
+      width:calc(100% - 24px);
+      background:var(--panel);
+      color:var(--ink);
+    }
+    #promptBox{
+      width:100%;
+      min-height:220px;
+      border-radius:14px;
+      border:2px solid var(--frame);
+      padding:10px 12px;
+      font:inherit;
+      background:var(--panel-soft);
+      color:var(--ink);
+    }
+
+    @media(max-width:980px){
+      .wrap{grid-template-columns:1fr}
+    }
+  </style>
+<style data-inline-theme>
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: calc(env(safe-area-inset-right, 0px) + 16px);
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 85%, transparent);
+  color: var(--text, #0f172a);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  z-index: 999;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(99, 102, 241, 0.5);
+  outline-offset: 3px;
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+:root[data-theme="dark"] .theme-toggle {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.55);
+}
+
+.theme-toggle__icon {
+  pointer-events: none;
+  display: inline-flex;
+}
+
+.theme-toggle__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.theme-toggle--inline {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: color-mix(in srgb, var(--panel, #ffffff) 90%, transparent);
+  color: inherit;
+  box-shadow: none;
+  margin-left: 8px;
+}
+
+:root[data-theme="dark"] .theme-toggle--inline {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #f8fafc;
+}
+
+.theme-toggle--inline .theme-toggle__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.drumdrums-banner{
+  margin:12px auto;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px dashed rgba(15,23,42,0.16);
+  background:color-mix(in srgb, var(--panel, #ffffff) 86%, transparent);
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  max-width:460px;
+}
+:root[data-theme="dark"] .drumdrums-banner{
+  border-color:rgba(148,163,184,0.35);
+  background:rgba(10,15,25,0.6);
+}
+.drumdrums-banner strong{
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:11px;
+  display:block;
+  margin-bottom:4px;
+}
+.drumdrums-note{
+  font-weight:500;
+  font-size:12px;
+  color:var(--muted, #475569);
+}
+
+</style>
+<script data-inline-theme>
+(function () {
+  const STORAGE_KEY = 'drumdrums-theme';
+  const root = document.documentElement;
+  const systemMedia = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  const icons = {
+    moon: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 8.5 8.5 0 1 0 21 14.5Z" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+    sun: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-linecap="round" /></svg>'
+  };
+
+  const readStoredTheme = () => {
+    try {
+      return localStorage.getItem(STORAGE_KEY);
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const persistTheme = (value) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, value);
+    } catch (err) {
+      /* no-op */
+    }
+  };
+
+  const systemPrefersDark = () => systemMedia ? systemMedia.matches : false;
+
+  const initialStored = readStoredTheme();
+  let currentTheme = initialStored === 'light' || initialStored === 'dark'
+    ? initialStored
+    : (root.dataset.theme === 'light' || root.dataset.theme === 'dark')
+      ? root.dataset.theme
+      : (systemPrefersDark() ? 'dark' : 'light');
+  root.dataset.theme = currentTheme;
+  if (document.body) {
+    document.body.setAttribute('data-theme', currentTheme);
+  }
+
+  let userLocked = initialStored === 'light' || initialStored === 'dark';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'theme-toggle';
+  const srLabel = document.createElement('span');
+  srLabel.className = 'sr-only';
+  srLabel.textContent = 'Toggle color theme';
+  const iconSlot = document.createElement('span');
+  iconSlot.className = 'theme-toggle__icon';
+  button.append(srLabel, iconSlot);
+
+  const syncButton = () => {
+    button.setAttribute('aria-pressed', currentTheme === 'dark');
+    iconSlot.innerHTML = currentTheme === 'dark' ? icons.sun : icons.moon;
+    button.title = currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  };
+
+  const applyTheme = (nextTheme, { persist } = { persist: false }) => {
+    currentTheme = nextTheme;
+    root.dataset.theme = nextTheme;
+    if (document.body) {
+      document.body.setAttribute('data-theme', nextTheme);
+    }
+    syncButton();
+    if (persist) {
+      persistTheme(nextTheme);
+      userLocked = true;
+    }
+  };
+
+  const toggleTheme = () => {
+    const next = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(next, { persist: true });
+  };
+
+  const init = () => {
+    if (document.querySelector('.theme-toggle')) return;
+    button.addEventListener('click', toggleTheme);
+    const anchor = document.querySelector('[data-theme-anchor]') ||
+      document.querySelector('.theme-toggle-anchor') ||
+      document.querySelector('header .actions') ||
+      document.querySelector('header .navIcons') ||
+      document.querySelector('header');
+    if (anchor) {
+      button.classList.add('theme-toggle--inline');
+      anchor.appendChild(button);
+    } else {
+      document.body.appendChild(button);
+    }
+    applyTheme(currentTheme);
+  };
+
+  if (systemMedia && typeof systemMedia.addEventListener === 'function') {
+    systemMedia.addEventListener('change', (event) => {
+      if (!userLocked) {
+        applyTheme(event.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+</script>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Daily Build Spinner</h1>
+    <div class="muted">A weirdly effective way to force shipping something.</div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+<button class="btn primary" id="spin">Spin</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card">
+    <div class="head"><b>Spin</b><span class="muted">neo‑brutal</span></div>
+    <div class="body">
+      <div class="spinner">
+        <div class="pin"></div>
+        <div class="wheel" id="wheel" aria-hidden="true"></div>
+        <div class="prompt" id="prompt">
+          <h2>Prompt</h2>
+          <div class="big">—</div>
+          <div class="muted" id="spec">—</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="card">
+    <div class="head"><b>Constraints</b><span class="muted">saved</span></div>
+    <div class="body">
+      <div class="grid">
+        <div>
+          <label>Timebox</label>
+          <select id="timebox"><option>15 min</option><option selected>30 min</option><option>60 min</option></select>
+        </div>
+        <div>
+          <label>Vibe</label>
+          <select id="vibe"><option selected>Elegant</option><option>Playful</option><option>Serious</option><option>Weird</option></select>
+        </div>
+        <div>
+          <label>Constraint</label>
+          <select id="cons"><option selected>One page</option><option>Offline only</option><option>Keyboard first</option><option>Mobile first</option></select>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn" id="copyLast" title="Copy current prompt + constraints">Copy last</button>
+        <button class="btn" id="exportMd" title="Copy history as Markdown">Export .md</button>
+        <button class="btn" id="editPrompts" title="Customize prompt list">Edit prompts</button>
+      </div>
+
+      <div class="muted" style="margin-top:12px">History</div>
+      <div class="hist" id="hist"></div>
+    </div>
+  </aside>
+</main>
+
+<dialog id="dlg">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+    <b style="letter-spacing:1px;text-transform:uppercase">Edit prompts</b>
+    <button class="btn" id="closeDlg">Close</button>
+  </div>
+  <div class="muted" style="margin:8px 0 10px">One prompt per line. Saved locally in your browser.</div>
+  <textarea id="promptBox"></textarea>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+    <button class="btn primary" id="savePrompts">Save</button>
+    <button class="btn" id="resetPrompts">Reset defaults</button>
+  </div>
+</dialog>
+
+<script>
+  const KEY='spinner-v1';
+  const KEY_PROMPTS='spinner-prompts-v1';
+  const wheel=document.getElementById('wheel');
+  const prompt=document.getElementById('prompt');
+  const spec=document.getElementById('spec');
+  const hist=document.getElementById('hist');
+
+  const DEFAULT_PROMPTS=[
+    'Build an instant expense splitter',
+    'Make a packing checklist with progress bar',
+    'Design a calm focus timer with sound toggle',
+    'Create a “what’s on soon” olympics widget',
+    'Make a grocery list with aisle grouping',
+    'Build a tiny habit tracker (forgiving streak)'
+  ];
+
+  function loadPrompts(){
+    try{
+      const raw = localStorage.getItem(KEY_PROMPTS);
+      if(!raw) return DEFAULT_PROMPTS.slice();
+      const lines = raw.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+      return lines.length ? lines : DEFAULT_PROMPTS.slice();
+    }catch{return DEFAULT_PROMPTS.slice()}
+  }
+
+  let P = loadPrompts();
+  let lastSpin = null;
+
+  function load(){ try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return []} }
+  function save(x){ localStorage.setItem(KEY, JSON.stringify(x)); }
+
+  function renderHist(){
+    const items=load().slice(0,6);
+    hist.innerHTML = items.map(i=>`<div class="h"><b>${i.title}</b><div class="muted">${i.spec}</div></div>`).join('') || '<div class="muted">No spins yet.</div>';
+  }
+
+  function spin(){
+    const tb=document.getElementById('timebox').value;
+    const vibe=document.getElementById('vibe').value;
+    const cons=document.getElementById('cons').value;
+
+    // avoid immediate repeats if possible
+    let title = P[Math.floor(Math.random()*P.length)];
+    if(lastSpin && P.length > 1){
+      for(let tries=0; tries<5 && title===lastSpin.title; tries++){
+        title = P[Math.floor(Math.random()*P.length)];
+      }
+    }
+
+    const s = `${tb} • ${vibe} • ${cons}`;
+
+    wheel.animate([
+      {transform:'rotate(0deg)'},
+      {transform:`rotate(${720 + Math.floor(Math.random()*720)}deg)`}
+    ], {duration:900, easing:'cubic-bezier(.2,.8,.2,1)'});
+
+    prompt.querySelector('.big').textContent = title;
+    spec.textContent = s;
+
+    lastSpin = { title, spec:s, at:Date.now() };
+
+    const items=load();
+    items.unshift(lastSpin);
+    save(items);
+    renderHist();
+  }
+
+  async function copyText(t){
+    try{
+      await navigator.clipboard.writeText(t);
+      return true;
+    }catch{
+      const ta=document.createElement('textarea');
+      ta.value=t; document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand('copy'); }catch{}
+      ta.remove();
+      return false;
+    }
+  }
+
+  document.getElementById('copyLast').onclick=async()=>{
+    if(!lastSpin) return;
+    await copyText(`${lastSpin.title}\n${lastSpin.spec}`);
+  };
+
+  document.getElementById('exportMd').onclick=async()=>{
+    const items=load().slice(0,12);
+    const md = [
+      '# Build Spinner — history',
+      '',
+      ...items.map(i=>`- **${i.title}** — ${i.spec}`)
+    ].join('\n');
+    await copyText(md);
+  };
+
+  const dlg=document.getElementById('dlg');
+  const promptBox=document.getElementById('promptBox');
+
+  function openDlg(){
+    P = loadPrompts();
+    promptBox.value = P.join('\n');
+    if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
+  }
+  function closeDlg(){
+    if(dlg.close) dlg.close(); else dlg.removeAttribute('open');
+  }
+
+  document.getElementById('editPrompts').onclick=openDlg;
+  document.getElementById('closeDlg').onclick=closeDlg;
+
+  document.getElementById('savePrompts').onclick=()=>{
+    localStorage.setItem(KEY_PROMPTS, promptBox.value);
+    P = loadPrompts();
+    closeDlg();
+  };
+
+  document.getElementById('resetPrompts').onclick=()=>{
+    localStorage.removeItem(KEY_PROMPTS);
+    P = loadPrompts();
+    promptBox.value = P.join('\n');
+  };
+
+  document.getElementById('spin').onclick=spin;
+
+  // keyboard: Space to spin, Ctrl/Cmd+E export, Ctrl/Cmd+P edit prompts
+  window.addEventListener('keydown', (e)=>{
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='e'){
+      e.preventDefault();
+      document.getElementById('exportMd').click();
+      return;
+    }
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='p'){
+      e.preventDefault();
+      openDlg();
+      return;
+    }
+    if(e.key === ' ' && !(e.target && ['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))){
+      e.preventDefault();
+      spin();
+    }
+  });
+
+  ['timebox','vibe','cons'].forEach(id=>document.getElementById(id).oninput=()=>renderHist());
+
+  renderHist();
+  spin();
+</script>
+
+  <!-- DrumDrums Offline Module -->
+  <style>
+    .drumdrum-offline-shelf{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:min(320px,calc(100% - 48px));background:var(--panel,rgba(255,255,255,0.96));color:var(--text,#0f172a);box-shadow:0 20px 50px rgba(15,23,42,0.2);border-radius:24px;border:1px solid rgba(15,23,42,0.1);padding:20px;font-family:inherit;z-index:9999;line-height:1.4}
+    [data-theme="dark"] .drumdrum-offline-shelf{background:rgba(2,6,23,0.92);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35);box-shadow:0 25px 60px rgba(2,6,23,0.75)}
+    .drumdrum-offline-shelf[data-offline-hidden="true"]{display:none}
+    .drumdrum-offline-label{text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.12em;opacity:.75;margin-bottom:4px}
+    .drumdrum-offline-head h2{font-size:17px;margin:0 0 6px;font-weight:900}
+    .drumdrum-offline-head p{margin:0;font-size:13px;opacity:.9}
+    .drumdrum-offline-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+    .drumdrum-offline-actions button{border:none;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s ease,opacity .15s ease;background:var(--accent,#2563eb);color:#fff;box-shadow:0 10px 25px rgba(37,99,235,0.25)}
+    .drumdrum-offline-actions button.secondary{background:rgba(15,23,42,0.08);color:inherit;box-shadow:none;border:1px solid rgba(15,23,42,0.12)}
+    [data-theme="dark"] .drumdrum-offline-actions button.secondary{background:rgba(148,163,184,0.15);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35)}
+    .drumdrum-offline-actions button:disabled{opacity:.7;cursor:default}
+    .drumdrum-offline-actions button:active{transform:scale(0.98)}
+    .drumdrum-offline-guide{margin-top:14px;border-radius:14px;padding:12px;font-size:13px;background:rgba(15,23,42,0.05);border:1px dashed rgba(15,23,42,0.25)}
+    .drumdrum-offline-guide p{margin:8px 0 0}
+    .drumdrum-offline-guide ol{margin:8px 0 0;padding-left:18px}
+    [data-theme="dark"] .drumdrum-offline-guide{background:rgba(15,23,42,0.4);border-color:rgba(148,163,184,0.3)}
+    .drumdrum-offline-dismiss{position:absolute;top:6px;right:8px;border:none;background:rgba(15,23,42,0.08);color:inherit;font-size:22px;line-height:1;cursor:pointer;width:48px;height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0;border:2px solid rgba(15,23,42,0.15);box-shadow:0 6px 14px rgba(15,23,42,0.18);touch-action:manipulation}
+    [data-theme="dark"] .drumdrum-offline-dismiss{background:rgba(148,163,184,0.25);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.4);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
+    .drumdrum-offline-dismiss:focus-visible,.drumdrum-offline-actions button:focus-visible{outline:3px solid rgba(59,130,246,0.7);outline-offset:2px}
+    .drumdrum-mention{cursor:pointer}
+    .drumdrum-mention:not(.btn){background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline}
+    .drumdrum-mention.btn{cursor:pointer}
+    .drumdrum-offline-toggle{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:56px;height:56px;border-radius:999px;border:none;background:var(--accent,#2563eb);color:#fff;box-shadow:0 18px 35px rgba(15,23,42,0.18);cursor:pointer;font-size:20px;font-weight:700;z-index:9998;display:flex;align-items:center;justify-content:center;transition:transform .2s ease,box-shadow .2s ease}
+    [data-theme="dark"] .drumdrum-offline-toggle{background:rgba(37,99,235,0.92);box-shadow:0 20px 45px rgba(2,6,23,0.75)}
+    .drumdrum-offline-toggle:focus-visible{outline:3px solid rgba(59,130,246,0.6);outline-offset:2px}
+    .drumdrum-offline-toggle:active{transform:scale(0.95)}
+    @media (max-width:640px){.drumdrum-offline-shelf{left:16px;right:16px;width:auto;bottom:calc(16px + env(safe-area-inset-bottom, 0px));padding:16px}.drumdrum-offline-toggle{bottom:calc(16px + env(safe-area-inset-bottom, 0px));right:calc(16px + env(safe-area-inset-right, 0px));width:52px;height:52px}}
+  </style>
+  <section class="drumdrum-offline-shelf" data-drumdrum-offline>
+    <button type="button" class="drumdrum-offline-dismiss" data-offline-dismiss aria-label="Hide offline helper">×</button>
+    <div class="drumdrum-offline-head">
+      <p class="drumdrum-offline-label">DrumDrums Offline</p>
+      <h2>Save this DrumDrum</h2>
+      <p>Download once. Launch anywhere — even without internet.</p>
+    </div>
+    <div class="drumdrum-offline-actions">
+      <button type="button" data-offline-download>Save offline (.html)</button>
+      <button type="button" class="secondary" data-offline-guide>Home screen tips</button>
+    </div>
+    <div class="drumdrum-offline-guide" data-offline-guide-panel hidden>
+      <strong>Install on your phone</strong>
+      <ol>
+        <li>Tap your browser's share/menu button.</li>
+        <li>Choose “Add to Home Screen” / “Add shortcut”.</li>
+        <li>Launch it later. No signal required.</li>
+      </ol>
+      <p>Offline copies remove DrumDrums library links automatically.</p>
+    </div>
+  </section>
+  <button type="button" class="drumdrum-offline-toggle" data-offline-toggle hidden aria-label="Show DrumDrums Offline helper">⬇️</button>
+  <script>
+    (() => {
+      const ready = (fn) => (document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', fn) : fn();
+      ready(() => {
+        const shelf = document.querySelector('[data-drumdrum-offline]');
+        if (!shelf) return;
+        const downloadButton = shelf.querySelector('[data-offline-download]');
+        const guideButton = shelf.querySelector('[data-offline-guide]');
+        const guidePanel = shelf.querySelector('[data-offline-guide-panel]');
+        const dismissButton = shelf.querySelector('[data-offline-dismiss]');
+        const toggleButton = document.querySelector('[data-offline-toggle]');
+        const baseGuide = guidePanel ? guidePanel.innerHTML : '';
+        const guideDefaultLabel = guideButton ? guideButton.textContent.trim() : '';
+        const isLibraryHome = document.body && document.body.dataset.libraryHome === 'true';
+
+        const collapseShelf = ({ focusToggle = false } = {}) => {
+          shelf.setAttribute('data-offline-hidden', 'true');
+          if (toggleButton) {
+            toggleButton.hidden = false;
+            if (focusToggle) {
+              try {
+                toggleButton.focus({ preventScroll: true });
+              } catch (err) {
+                toggleButton.focus();
+              }
+            }
+          }
+        };
+
+        const revealShelf = () => {
+          shelf.removeAttribute('data-offline-hidden');
+          if (toggleButton) {
+            toggleButton.hidden = true;
+          }
+        };
+
+        if (downloadButton) {
+          const defaultText = downloadButton.textContent.trim();
+          downloadButton.addEventListener('click', () => {
+            const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const slug = (document.title || 'drumdrum-app')
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '') || 'drumdrum-app';
+            link.href = url;
+            link.download = slug + '.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+            downloadButton.textContent = 'Saved ✅';
+            downloadButton.disabled = true;
+            setTimeout(() => {
+              downloadButton.disabled = false;
+              downloadButton.textContent = defaultText;
+            }, 2200);
+          });
+        }
+
+        if (guideButton && guidePanel) {
+          guidePanel.hidden = true;
+          guideButton.addEventListener('click', () => {
+            if (guidePanel.hidden) {
+              guidePanel.innerHTML = baseGuide;
+              guidePanel.hidden = false;
+              guideButton.textContent = 'Hide tips';
+            } else {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        if (guidePanel) {
+          guidePanel.setAttribute('tabindex', '-1');
+        }
+
+        if (dismissButton) {
+          dismissButton.addEventListener('click', () => collapseShelf({ focusToggle: true }));
+        }
+
+        if (toggleButton) {
+          toggleButton.addEventListener('click', () => {
+            revealShelf();
+            if (guidePanel && guideButton) {
+              guidePanel.hidden = true;
+              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
+            }
+          });
+        }
+
+        const showMentionNote = (slug, label) => {
+          revealShelf();
+          if (!guidePanel) return;
+          guidePanel.hidden = false;
+          guidePanel.innerHTML = `<strong>${label || 'DrumDrum app'}</strong><p>This reference opens another DrumDrum app (${slug}). Download it separately when you're back online.</p>`;
+          if (guideButton) {
+            guideButton.textContent = 'Hide tips';
+          }
+          try {
+            guidePanel.focus({ preventScroll: false });
+          } catch (err) {
+            guidePanel.focus();
+          }
+        };
+
+        if (location.protocol === 'file:') {
+          document.querySelectorAll('a[href^="../"], a[href^="./"], a[href^="/"]').forEach((anchor) => {
+            const href = anchor.getAttribute('href');
+            if (!href || href.startsWith('#')) return;
+            const slug = href
+              .replace(/^\.\.\//, '')
+              .replace(/^\.\//, '')
+              .replace(/^\//, '')
+              .replace(/\/$/, '') || 'drumdrums-app';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.innerHTML = anchor.innerHTML;
+            const anchorClass = anchor.getAttribute('class');
+            button.className = anchorClass ? anchorClass + ' drumdrum-mention' : 'drumdrum-mention';
+            Array.from(anchor.attributes).forEach((attr) => {
+              if (['href', 'class', 'target', 'rel'].includes(attr.name)) return;
+              button.setAttribute(attr.name, attr.value);
+            });
+            button.addEventListener('click', () => showMentionNote(slug, anchor.textContent.trim()));
+            button.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showMentionNote(slug, anchor.textContent.trim());
+              }
+            });
+            anchor.replaceWith(button);
+          });
+        }
+
+        if (isLibraryHome) {
+          collapseShelf();
+        }
+      });
+    })();
+  </script>
+
+
+</body>
+</html>

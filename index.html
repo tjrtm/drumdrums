@@ -150,6 +150,16 @@
       .hero { grid-template-columns: 1fr; }
       .toolbar { grid-template-columns: 1fr; }
     }
+    footer {
+      border-top: 1px solid rgba(148,163,184,.25);
+      padding: 1.25rem 0 2rem;
+    }
+    .footer-links {
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
@@ -196,20 +206,67 @@
     </div>
   </div>
 
+  <footer class="container" aria-label="Footer links">
+    <div class="footer-links">
+      <a class="btn ghost" href="./builder-log/">Blog</a>
+      <a class="btn ghost" href="./log/">Log</a>
+    </div>
+  </footer>
+
   <script>
     const apps = [
-      { title: 'Focus Timer', path: './focus-timer/', category: 'Productivity', description: 'Start focused sessions quickly with a clean timer UI.' },
-      { title: 'Meeting Cost Calculator', path: './meeting-cost-calculator/', category: 'Work', description: 'Estimate the real-time cost of meetings and improve planning.' },
-      { title: 'Smart Grocery List', path: './smart-grocery-list/', category: 'Life', description: 'Quickly build and track grocery items in one simple flow.' },
-      { title: 'Unit Converter', path: './unit-converter/', category: 'Utilities', description: 'Convert common units for cooking, travel, and day-to-day work.' },
-      { title: 'QR Code Generator', path: './qr-code-generator/', category: 'Utilities', description: 'Generate QR codes for URLs, text, contacts, and more.' },
-      { title: 'Quick Mood Tracker', path: './quick-mood-tracker/', category: 'Health', description: 'Log mood and energy in seconds and review your trends.' },
-      { title: 'Pomodoro', path: './pomodoro/', category: 'Productivity', description: 'Use Pomodoro intervals to sustain deep work sessions.' },
-      { title: 'Tip Calculator', path: './tip-calc/', category: 'Utilities', description: 'Split bills and calculate tips accurately in seconds.' },
-      { title: 'Timezone Converter', path: './timezone-converter/', category: 'Work', description: 'Convert time between common city zones for team scheduling.' },
-      { title: 'Breath Timer', path: './breath-timer/', category: 'Health', description: 'Follow guided breath patterns for stress reset and focus.' },
-      { title: 'JSON Formatter', path: './json-formatter/', category: 'Developer', description: 'Format and validate JSON quickly when debugging payloads.' },
-      { title: 'Password Generator', path: './password-gen/', category: 'Security', description: 'Create strong random passwords with one tap.' }
+      { title: 'Age Calculator', path: './age-calculator/', category: 'Utilities', description: 'Calculate exact age and milestones from a selected date.' },
+      { title: 'Base64 Encoder & Decoder', path: './base64/', category: 'Developer', description: 'Convert plain text to Base64 and decode it back instantly.' },
+      { title: 'BMI Calculator', path: './bmi-calculator/', category: 'Health', description: 'Check body-mass index quickly with simple height and weight input.' },
+      { title: 'Breath Timer', path: './breath-timer/', category: 'Health', description: 'Follow guided breathing intervals to reset stress and focus.' },
+      { title: 'Build Spinner', path: './build-spinner/', category: 'Fun', description: 'Spin and pick a random build prompt in seconds.' },
+      { title: 'Clipboard CSV Mapper', path: './clipboard-csv-mapper/', category: 'Developer', description: 'Map and transform CSV columns directly from clipboard data.' },
+      { title: 'Coin Flip', path: './coin-flip/', category: 'Fun', description: 'Flip a virtual coin for quick yes/no decisions.' },
+      { title: 'Collections', path: './collections/', category: 'Directory', description: 'Browse grouped mini app collections by use case.' },
+      { title: 'Color Palette Generator', path: './color-palette-generator/', category: 'Design', description: 'Generate quick color palettes for UI and brand ideas.' },
+      { title: 'Corporate Excuse Generator', path: './corporate-excuse-generator/', category: 'Fun', description: 'Generate lighthearted corporate-style excuse lines.' },
+      { title: 'Cost In', path: './cost-in/', category: 'Finance', description: 'Track and estimate costs with a fast simple interface.' },
+      { title: 'Countdown', path: './countdown/', category: 'Productivity', description: 'Set a countdown and keep an eye on time remaining.' },
+      { title: 'Daily Priorities 3-3', path: './daily-priorities-3-3/', category: 'Productivity', description: 'Pick key priorities and stay focused on what matters today.' },
+      { title: 'Decision Log One Pager', path: './decision-log-one-pager/', category: 'Work', description: 'Capture context, decisions, and outcomes on one page.' },
+      { title: 'Dice Roller', path: './dice-roller/', category: 'Fun', description: 'Roll virtual dice for games and random choices.' },
+      { title: 'Featured', path: './featured/', category: 'Directory', description: 'Open a curated list of highlighted mini apps.' },
+      { title: 'Focus Timer', path: './focus-timer/', category: 'Productivity', description: 'Run focus sessions with a clean and simple timer.' },
+      { title: 'Gift Ideas Budget', path: './gift-ideas-budget/', category: 'Finance', description: 'Plan gift ideas while staying within a target budget.' },
+      { title: 'Home Inventory Mock', path: './home-inventory-mock/', category: 'Life', description: 'Track household items and inventory entries quickly.' },
+      { title: 'Idea Board', path: './idea-board/', category: 'Creativity', description: 'Capture and organize quick ideas on a lightweight board.' },
+      { title: 'Idea Roulette', path: './idea-roulette/', category: 'Creativity', description: 'Get random prompts to break creative blocks.' },
+      { title: 'JSON Formatter', path: './json-formatter/', category: 'Developer', description: 'Format and validate JSON payloads for faster debugging.' },
+      { title: 'Live Build Log', path: './live-build-log/', category: 'Work', description: 'Track live build progress and updates in one place.' },
+      { title: 'Markdown Preview', path: './markdown-preview/', category: 'Developer', description: 'Write Markdown and see a rendered preview instantly.' },
+      { title: 'Meeting Agenda Builder', path: './meeting-agenda-builder/', category: 'Work', description: 'Draft structured meeting agendas in a few quick steps.' },
+      { title: 'Meeting Cost Calculator', path: './meeting-cost-calculator/', category: 'Work', description: 'Estimate the real-time cost of meetings and attendees.' },
+      { title: 'Micro Habit', path: './micro-habit/', category: 'Health', description: 'Create tiny repeatable habits and keep momentum daily.' },
+      { title: 'Night Builds Feb 10', path: './night-builds-feb10/', category: 'Work', description: 'Review night build status and related updates.' },
+      { title: 'One Page Travel Checklist Generator', path: './one-page-travel-checklist-generator/', category: 'Travel', description: 'Generate a printable one-page travel checklist.' },
+      { title: 'One Tap Workout Planner Mock', path: './one-tap-workout-planner-mock/', category: 'Health', description: 'Sketch fast workout plans with one-tap interactions.' },
+      { title: 'Parking Timer', path: './parking-timer/', category: 'Utilities', description: 'Set parking reminders so you never overstay your meter.' },
+      { title: 'Password Generator', path: './password-gen/', category: 'Security', description: 'Create strong random passwords with configurable rules.' },
+      { title: 'Pomodoro', path: './pomodoro/', category: 'Productivity', description: 'Use Pomodoro intervals for focused deep-work sessions.' },
+      { title: 'Procrastination Speedrun', path: './procrastination-speedrun/', category: 'Fun', description: 'Race through playful anti-procrastination challenge rounds.' },
+      { title: 'QR Code Generator', path: './qr-code-generator/', category: 'Utilities', description: 'Generate QR codes for links, text, and contact details.' },
+      { title: 'Quick Expense Split', path: './quick-expense-split/', category: 'Finance', description: 'Split shared expenses quickly across friends or teammates.' },
+      { title: 'Quick Habit Contract', path: './quick-habit-contract/', category: 'Health', description: 'Create a simple personal commitment contract for habits.' },
+      { title: 'Quick Mood Tracker', path: './quick-mood-tracker/', category: 'Health', description: 'Log mood and energy in seconds and review trends.' },
+      { title: 'Random Decision', path: './random-decision/', category: 'Fun', description: 'Let randomness pick between options when you are stuck.' },
+      { title: 'Receipt Scanner Mock', path: './receipt-scanner-mock/', category: 'Finance', description: 'Mock receipt capture and item extraction workflow.' },
+      { title: 'Smart Grocery List', path: './smart-grocery-list/', category: 'Life', description: 'Build and manage shopping lists in a simple flow.' },
+      { title: 'Stats', path: './stats/', category: 'Directory', description: 'View portal-wide mini app metrics and quick stats.' },
+      { title: 'Stopwatch', path: './stopwatch/', category: 'Utilities', description: 'Measure elapsed time with a straightforward stopwatch.' },
+      { title: 'Text Case Converter', path: './text-case-converter/', category: 'Utilities', description: 'Convert text between uppercase, lowercase, and other cases.' },
+      { title: 'Timezone Converter', path: './timezone-converter/', category: 'Work', description: 'Convert times between regions for meeting coordination.' },
+      { title: 'Tip Calculator', path: './tip-calc/', category: 'Finance', description: 'Calculate tips and split bills with clear totals.' },
+      { title: 'Tonights Builds', path: './tonights-builds/', category: 'Work', description: 'Track tonight\'s build updates and status summary.' },
+      { title: 'Trip Packing', path: './trip-packing/', category: 'Travel', description: 'Create and check off packing lists before trips.' },
+      { title: 'Unit Converter', path: './unit-converter/', category: 'Utilities', description: 'Convert common units for daily and technical tasks.' },
+      { title: 'URL Slug Generator', path: './url-slug-generator/', category: 'Developer', description: 'Turn titles into clean URL-safe slugs instantly.' },
+      { title: 'Voice Memo', path: './voice-memo/', category: 'Utilities', description: 'Capture quick spoken notes in a minimal interface.' },
+      { title: 'WiFi QR', path: './wifi-qr/', category: 'Utilities', description: 'Generate a QR code for easy WiFi sharing.' }
     ];
 
     const grid = document.getElementById('grid');

@@ -1,1718 +1,333 @@
 <!doctype html>
-<html lang="en" data-theme="light" data-palette="ocean">
+<html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="description" content="DrumDrums library of mobile-first mini apps. Install useful DrumDrum tools for everyday tasks." />
-<title>DrumDrums — Mini App Library</title>
-  <link rel="stylesheet" href="./shared/theme.css" />
-  <script src="./shared/theme.js" defer></script>
-<style>
-  .skip-link{
-    position:absolute;
-    top:-40px;
-    left:0;
-    background:var(--accent);
-    color:white;
-    padding:8px 16px;
-    text-decoration:none;
-    z-index:9999;
-    font-weight:800;
-    border-radius:0 0 8px 0;
-    transition:top 150ms ease;
-  }
-  .skip-link:focus{
-    top:0;
-  }
-
-  :root{
-    --r: 8px;
-    --accent:#1d4ed8;
-    --accent2:#0ea5e9;
-    --accent3:#14b8a6;
-    --bg:#f1f5ff;
-    --bg2:#e2e8f0;
-    --panel:#ffffff;
-    --text:#0f172a;
-    --muted:#475569;
-    --line:rgba(15,23,42,.12);
-    --shadow: 0 10px 30px rgba(15,23,42,.08);
-  }
-
-  :root[data-theme="dark"]{
-    --bg:#020617;
-    --bg2:#0f172a;
-    --panel:rgba(15,23,42,0.92);
-    --text:#e2e8f0;
-    --muted:#a5b4fc;
-    --line:rgba(148,163,184,.3);
-    --shadow: 0 20px 50px rgba(2,6,23,0.8);
-    --accent:#38bdf8;
-    --accent2:#60a5fa;
-    --accent3:#34d399;
-  }
-
-  :root[data-palette="sunset"]{
-    --accent:#f97316;
-    --accent2:#fb7185;
-    --accent3:#fbbf24;
-    --bg:#fff7ed;
-    --bg2:#fde4cf;
-    --panel:#fffaf5;
-    --text:#3b0b0b;
-    --muted:#8c4a3b;
-    --line:rgba(91,33,30,.18);
-    --shadow:0 10px 30px rgba(120,53,15,.12);
-  }
-  :root[data-theme="dark"][data-palette="sunset"]{
-    --bg:#2b0d05;
-    --bg2:#3b170c;
-    --panel:rgba(15,9,7,.92);
-    --text:#fdecdc;
-    --muted:#f7ad90;
-    --line:rgba(249,115,22,.35);
-    --shadow:0 20px 50px rgba(124,45,18,.7);
-    --accent:#fb923c;
-    --accent2:#f472b6;
-    --accent3:#fbbf24;
-  }
-
-  :root[data-palette="forest"]{
-    --accent:#0f9d58;
-    --accent2:#34d399;
-    --accent3:#84cc16;
-    --bg:#f3fff5;
-    --bg2:#e3f2e5;
-    --panel:#ffffff;
-    --text:#102418;
-    --muted:#4a6b57;
-    --line:rgba(16,36,24,.14);
-    --shadow:0 10px 30px rgba(15,37,24,.08);
-  }
-  :root[data-theme="dark"][data-palette="forest"]{
-    --bg:#06150c;
-    --bg2:#0b2515;
-    --panel:rgba(7,24,14,.92);
-    --text:#d9fbe6;
-    --muted:#8fe3b8;
-    --line:rgba(74,107,87,.4);
-    --shadow:0 20px 50px rgba(3,18,10,.85);
-    --accent:#22c55e;
-    --accent2:#a7f3d0;
-    --accent3:#4ade80;
-  }
-
-  :root[data-palette="lavender"]{
-    --accent:#8b5cf6;
-    --accent2:#a855f7;
-    --accent3:#f472b6;
-    --bg:#f7f2ff;
-    --bg2:#ece1ff;
-    --panel:#ffffff;
-    --text:#29144a;
-    --muted:#6b4d9b;
-    --line:rgba(41,20,74,.12);
-    --shadow:0 10px 30px rgba(72,39,116,.12);
-  }
-  :root[data-theme="dark"][data-palette="lavender"]{
-    --bg:#14061f;
-    --bg2:#1f0f2d;
-    --panel:rgba(24,16,35,.94);
-    --text:#f5eafe;
-    --muted:#d6bcfa;
-    --line:rgba(167,139,250,.35);
-    --shadow:0 20px 50px rgba(20,6,31,.85);
-    --accent:#c084fc;
-    --accent2:#f472b6;
-    --accent3:#facc15;
-  }
-
-  :root[data-palette="graphite"]{
-    --accent:#475569;
-    --accent2:#94a3b8;
-    --accent3:#f8fafc;
-    --bg:#f5f5f5;
-    --bg2:#e4e4e7;
-    --panel:#ffffff;
-    --text:#111827;
-    --muted:#6b7280;
-    --line:rgba(17,24,39,.12);
-    --shadow:0 10px 30px rgba(15,15,15,.1);
-  }
-  :root[data-theme="dark"][data-palette="graphite"]{
-    --bg:#050607;
-    --bg2:#111315;
-    --panel:rgba(15,17,19,.94);
-    --text:#f5f5f5;
-    --muted:#9ca3af;
-    --line:rgba(148,163,184,.25);
-    --shadow:0 20px 50px rgba(0,0,0,.8);
-    --accent:#9ca3af;
-    --accent2:#6b7280;
-    --accent3:#d1d5db;
-  }
-
-  :root[data-palette="mint"]{
-    --accent:#0ea5a3;
-    --accent2:#2dd4bf;
-    --accent3:#a7f3d0;
-    --bg:#f0fffa;
-    --bg2:#dff7f1;
-    --panel:#ffffff;
-    --text:#073b35;
-    --muted:#3f7c74;
-    --line:rgba(7,59,53,.12);
-    --shadow:0 10px 30px rgba(7,59,53,.08);
-  }
-  :root[data-theme="dark"][data-palette="mint"]{
-    --bg:#021714;
-    --bg2:#072722;
-    --panel:rgba(4,22,19,.92);
-    --text:#e6fffa;
-    --muted:#94f3da;
-    --line:rgba(45,212,191,.35);
-    --shadow:0 20px 50px rgba(1,10,8,.85);
-    --accent:#34d399;
-    --accent2:#5eead4;
-    --accent3:#bef8ec;
-  }
-
-  :root[data-palette="coral"]{
-    --accent:#f43f5e;
-    --accent2:#fb7185;
-    --accent3:#fdba74;
-    --bg:#fff3f3;
-    --bg2:#ffe0df;
-    --panel:#fff8f7;
-    --text:#3c0d12;
-    --muted:#8c4f57;
-    --line:rgba(60,13,18,.12);
-    --shadow:0 10px 30px rgba(122,23,36,.1);
-  }
-  :root[data-theme="dark"][data-palette="coral"]{
-    --bg:#2d070c;
-    --bg2:#3f1118;
-    --panel:rgba(20,7,10,.94);
-    --text:#ffe6e6;
-    --muted:#fda4af;
-    --line:rgba(244,63,94,.4);
-    --shadow:0 20px 50px rgba(45,7,12,.85);
-    --accent:#fb7185;
-    --accent2:#fbbf24;
-    --accent3:#fdba74;
-  }
-
-  :root[data-palette="midnight"]{
-    --accent:#2563eb;
-    --accent2:#7c3aed;
-    --accent3:#9333ea;
-    --bg:#eef2ff;
-    --bg2:#e0e7ff;
-    --panel:#ffffff;
-    --text:#0f172a;
-    --muted:#475569;
-    --line:rgba(15,23,42,.12);
-    --shadow:0 10px 30px rgba(15,23,42,.08);
-  }
-  :root[data-theme="dark"][data-palette="midnight"]{
-    --bg:#020617;
-    --bg2:#0f172a;
-    --panel:rgba(8,14,31,.94);
-    --text:#e2e8f0;
-    --muted:#a5b4fc;
-    --line:rgba(99,102,241,.35);
-    --shadow:0 20px 50px rgba(2,6,23,.85);
-    --accent:#60a5fa;
-    --accent2:#a78bfa;
-    --accent3:#22d3ee;
-  }
-
-  :root[data-palette="sand"]{
-    --accent:#d97706;
-    --accent2:#fbbf24;
-    --accent3:#ca8a04;
-    --bg:#fff9ed;
-    --bg2:#f6e7cc;
-    --panel:#fffdf7;
-    --text:#3b2305;
-    --muted:#8b6b37;
-    --line:rgba(59,35,5,.16);
-    --shadow:0 10px 30px rgba(90,56,10,.1);
-  }
-  :root[data-theme="dark"][data-palette="sand"]{
-    --bg:#201104;
-    --bg2:#2f1b08;
-    --panel:rgba(24,14,6,.94);
-    --text:#fff3d8;
-    --muted:#f4d28c;
-    --line:rgba(233,173,35,.35);
-    --shadow:0 20px 50px rgba(20,11,4,.82);
-    --accent:#fbbf24;
-    --accent2:#fed7aa;
-    --accent3:#f59e0b;
-  }
-
-  :root[data-palette="noir"]{
-    --accent:#111827;
-    --accent2:#334155;
-    --accent3:#64748b;
-    --bg:#f8f8f8;
-    --bg2:#ececec;
-    --panel:#ffffff;
-    --text:#111111;
-    --muted:#52525b;
-    --line:rgba(17,17,17,.12);
-    --shadow:0 10px 30px rgba(0,0,0,.1);
-  }
-  :root[data-theme="dark"][data-palette="noir"]{
-    --bg:#050505;
-    --bg2:#111111;
-    --panel:rgba(10,10,10,.92);
-    --text:#f4f4f5;
-    --muted:#a1a1aa;
-    --line:rgba(82,82,91,.35);
-    --shadow:0 20px 50px rgba(0,0,0,.85);
-    --accent:#6b7280;
-    --accent2:#d4d4d8;
-    --accent3:#94a3b8;
-  }
-
-
-  *{box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; margin:0; padding:0}
-  html,body{height:100%; overflow:hidden}
-  body{
-    font-family: Inter, system-ui, sans-serif;
-    color: var(--text);
-    background:
-      radial-gradient(at 20% 30%, rgba(99, 102, 241, 0.15), transparent 50%),
-      radial-gradient(at 80% 20%, rgba(236, 72, 153, 0.15), transparent 50%),
-      radial-gradient(at 40% 70%, rgba(20, 184, 166, 0.1), transparent 50%),
-      linear-gradient(180deg, var(--bg), var(--bg2));
-    display:grid;
-    grid-template-rows: auto 1fr;
-  }
-  
-  [data-theme="dark"] body{
-    background:
-      radial-gradient(at 20% 30%, rgba(99, 102, 241, 0.3), transparent 50%),
-      radial-gradient(at 80% 20%, rgba(236, 72, 153, 0.25), transparent 50%),
-      radial-gradient(at 40% 70%, rgba(20, 184, 166, 0.2), transparent 50%),
-      linear-gradient(180deg, var(--bg), var(--bg2));
-  }
-
-  /* MOBILE-FIRST HEADER */
-  header{
-    position:sticky;
-    top:0;
-    z-index:100;
-    background:color-mix(in srgb, var(--bg) 92%, transparent);
-    backdrop-filter:blur(16px);
-    border-bottom:1px solid var(--line);
-  }
-
-  .headerBar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:12px 16px;
-    gap:12px;
-  }
-
-  .brand{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    text-decoration:none;
-    color:var(--text);
-  }
-  .mark{
-    width:32px;
-    height:32px;
-    border-radius:6px;
-    background:linear-gradient(135deg, var(--accent), var(--accent2));
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:16px;
-  }
-  .brandText{font-size:14px; font-weight:800; letter-spacing:-0.2px}
-
-  .navIcons{display:flex; align-items:center; gap:8px}
-  .iconBtn{
-    width:40px;
-    height:40px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:8px;
-    border:1px solid var(--line);
-    background:color-mix(in srgb, var(--panel) 88%, transparent);
-    cursor:pointer;
-    font-size:18px;
-    transition: background 150ms;
-  }
-  .iconBtn:active{background:color-mix(in srgb, var(--panel) 100%, transparent)}
-
-  /* COMPACT MOBILE MENU */
-  .mobileMenu{
-    max-height:0;
-    overflow:hidden;
-    transition: max-height 300ms ease;
-    background:color-mix(in srgb, var(--bg) 96%, transparent);
-    border-top:1px solid var(--line);
-  }
-  .mobileMenu.open{max-height:80vh; overflow-y:auto; -webkit-overflow-scrolling:touch}
-  .menuContent{padding:12px}
-
-  .menuSection{margin-bottom:12px}
-  .menuSection:last-child{margin-bottom:0}
-  .menuLabel{font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:6px; font-weight:900}
-
-  /* Compact horizontal nav */
-  .menuNav{display:grid; grid-template-columns:repeat(3,1fr); gap:6px}
-  .navItem{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:4px;
-    padding:8px 4px;
-    border-radius:8px;
-    background:color-mix(in srgb, var(--panel) 88%, transparent);
-    border:1px solid var(--line);
-    text-decoration:none;
-    color:var(--text);
-    font-size:11px;
-    font-weight:800;
-    text-align:center;
-  }
-  .navItem .icon{font-size:18px}
-  .navItem:active{background:color-mix(in srgb, var(--panel) 100%, transparent)}
-
-  .searchWrapper{position:relative}
-  input[type="search"],
-  select{
-    width:100%;
-    padding:10px;
-    border-radius:8px;
-    border:1px solid var(--line);
-    background:color-mix(in srgb, var(--panel) 88%, transparent);
-    color:var(--text);
-    font-size:13px;
-    font-weight:600;
-  }
-  input[type="search"]{padding-right:36px}
-  .clearBtn{
-    position:absolute;
-    right:8px;
-    top:50%;
-    transform:translateY(-50%);
-    background:none;
-    border:none;
-    color:var(--muted);
-    font-size:20px;
-    cursor:pointer;
-    display:none;
-    padding:4px;
-    line-height:1;
-    transition: color 150ms;
-  }
-  .clearBtn.visible{display:block}
-
-  .filterRow{display:flex; gap:6px; margin-top:6px}
-  .filterRow select{flex:1}
-  .filterRow label{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    padding:8px 10px;
-    border-radius:8px;
-    border:1px solid var(--line);
-    background:color-mix(in srgb, var(--panel) 88%, transparent);
-    font-size:11px;
-    font-weight:800;
-    white-space:nowrap;
-  }
-  .filterRow input[type="checkbox"]{width:16px; height:16px}
-
-
-  .chipsContainer{
-    max-height:180px;
-    overflow-y:auto;
-    -webkit-overflow-scrolling:touch;
-    margin-top:8px;
-  }
-  .chips{display:flex; gap:10px; flex-wrap:wrap}
-  .chip{
-    cursor:pointer;
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    font-size:14px;
-    padding:10px 16px;
-    border-radius:10px;
-    border:2px solid var(--line);
-    background:var(--panel);
-    color:var(--text);
-    font-weight:800;
-    transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow:0 2px 4px rgba(0,0,0,0.06);
-    min-height:44px; /* Better touch target */
-  }
-  .chip .chipIcon{
-    font-size:18px;
-    opacity:0.9;
-    transition:transform 0.2s ease;
-  }
-  .chip .chipText{
-    opacity:0.85;
-  }
-  .chip.on{
-    background:linear-gradient(135deg, var(--accent), var(--accent2));
-    color:white;
-    border-color:transparent;
-    box-shadow:0 4px 12px rgba(99,102,241,0.4), 
-                0 0 0 3px rgba(99,102,241,0.15);
-    transform:translateY(-1px);
-  }
-  .chip.on .chipIcon{
-    opacity:1;
-    transform:scale(1.1);
-  }
-  .chip.on .chipText{
-    opacity:1;
-  }
-
-  /* MAIN CONTENT */
-  main{
-    overflow:auto;
-    -webkit-overflow-scrolling: touch;
-    padding:16px;
-    padding-bottom:calc(220px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .meta{
-    color:var(--muted);
-    font-size:12px;
-    margin-bottom:16px;
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-  .pill{
-    padding:6px 10px;
-    border-radius:6px;
-    border:1px solid var(--line);
-    background:color-mix(in srgb, var(--panel) 78%, transparent);
-    font-weight:800;
-  }
-
-  .grid{display:grid; grid-template-columns:1fr; gap:12px}
-
-  .card{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:16px;
-    box-shadow:var(--shadow);
-    overflow:hidden;
-    transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .cardHead{
-    padding:14px 16px;
-    border-bottom:1px solid var(--line);
-    display:flex;
-    justify-content:space-between;
-    gap:12px;
-  }
-  .cardTitle{font-weight:900; font-size:15px; letter-spacing:-0.2px}
-  .tagline{margin-top:6px; color:var(--muted); font-size:13px; line-height:1.4}
-
-  .badges{display:flex; gap:6px; flex-wrap:wrap}
-  .badge{
-    font-size:10px;
-    padding:4px 10px;
-    border-radius:8px;
-    background:rgba(113,113,122,0.1);
-    border:1px solid rgba(113,113,122,0.2);
-    color:var(--muted);
-    font-weight:800;
-    text-transform:uppercase;
-    letter-spacing:0.5px;
-  }
-  .badge.popular{
-    background:linear-gradient(135deg, rgba(236,72,153,0.15), rgba(236,72,153,0.1));
-    color:#ec4899;
-    border-color:rgba(236,72,153,0.3);
-  }
-  [data-theme="dark"] .badge.popular{
-    background:linear-gradient(135deg, rgba(236,72,153,0.25), rgba(236,72,153,0.15));
-    color:#f9a8d4;
-  }
-
-  .cardBody{padding:14px 16px; display:flex; flex-direction:column; gap:12px}
-  .cats{display:flex; gap:6px; flex-wrap:wrap}
-  .cta{display:flex; gap:8px}
-  .btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    padding:0 18px;
-    min-height:42px;
-    border-radius:999px;
-    border:1px solid rgba(15,23,42,0.12);
-    background:color-mix(in srgb, var(--panel) 90%, transparent);
-    color:var(--text);
-    font-weight:700;
-    font-size:13px;
-    text-decoration:none;
-    cursor:pointer;
-    transition:background 150ms ease, border-color 150ms ease, color 150ms ease;
-  }
-  .btn-primary{
-    background:color-mix(in srgb, var(--accent) 40%, transparent);
-    color:#fff;
-    border-color:transparent;
-  }
-  .btn-ghost{
-    background:transparent;
-    border-color:rgba(15,23,42,0.18);
-  }
-  .btn:active{
-    transform:scale(0.98);
-  }
-
-  .palette-switcher{
-    position:fixed;
-    bottom:calc(env(safe-area-inset-bottom,0px) + 16px);
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:10px 16px;
-    border-radius:999px;
-    border:1px solid rgba(15,23,42,0.12);
-    background:color-mix(in srgb, var(--panel) 90%, transparent);
-    box-shadow:0 10px 30px rgba(15,23,42,0.12);
-    z-index:996;
-  }
-  [data-theme="dark"] .palette-switcher{
-    background:rgba(10,15,25,0.9);
-    border-color:rgba(148,163,184,0.2);
-    box-shadow:0 18px 40px rgba(2,6,23,0.7);
-  }
-  .palette-nav{
-    border:none;
-    background:rgba(15,23,42,0.08);
-    color:inherit;
-    border-radius:8px;
-    width:32px;
-    height:32px;
-    font-size:16px;
-    cursor:pointer;
-  }
-  [data-theme="dark"] .palette-nav{
-    background:rgba(248,250,252,0.12);
-  }
-  .palette-meta{
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-    min-width:140px;
-  }
-  .palette-label{
-    font-size:12px;
-    font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:1px;
-  }
-  .palette-dots{
-    display:flex;
-    gap:4px;
-    flex-wrap:nowrap;
-  }
-  .palette-dot{
-    width:12px;
-    height:12px;
-    border-radius:999px;
-    border:1px solid rgba(15,23,42,0.2);
-    background:rgba(15,23,42,0.08);
-    cursor:pointer;
-  }
-  [data-theme="dark"] .palette-dot{
-    border-color:rgba(248,250,252,0.35);
-    background:rgba(248,250,252,0.25);
-  }
-  .palette-dot.active{
-    background:var(--accent);
-    border-color:var(--accent);
-  }
-  .btn.ghost{background:color-mix(in srgb, var(--panel) 88%, transparent)}
-
-  .emptyState{
-    text-align:center;
-    padding:40px 20px;
-    color:var(--muted);
-  }
-  .emptyState .icon{font-size:48px; margin-bottom:16px; opacity:0.5}
-  .emptyState .title{font-size:16px; font-weight:800; margin-bottom:8px; color:var(--text)}
-  .emptyState .msg{font-size:13px; line-height:1.5}
-
-  /* HELP MODAL */
-  .help-modal{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    background:rgba(0,0,0,0.6);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    z-index:2000;
-  }
-  .help-modal-content{
-    background:var(--panel);
-    border-radius:16px;
-    max-width:500px;
-    width:100%;
-    box-shadow:0 20px 60px rgba(0,0,0,0.4);
-    max-height:90vh;
-    overflow-y:auto;
-  }
-  .help-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:24px 24px 16px;
-    border-bottom:2px solid var(--line);
-  }
-  .help-header h2{
-    font-size:22px;
-    font-weight:900;
-  }
-  .help-close{
-    background:none;
-    border:none;
-    font-size:32px;
-    color:var(--muted);
-    cursor:pointer;
-    padding:0;
-    line-height:1;
-    transition:color 0.2s ease;
-  }
-  .help-body{
-    padding:20px 24px;
-  }
-  .help-section{
-    margin-bottom:24px;
-  }
-  .help-section:last-child{
-    margin-bottom:0;
-  }
-  .help-section h3{
-    font-size:14px;
-    font-weight:900;
-    text-transform:uppercase;
-    letter-spacing:0.5px;
-    color:var(--muted);
-    margin-bottom:12px;
-  }
-  .shortcut-list{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-  .shortcut-item{
-    display:flex;
-    align-items:center;
-    gap:12px;
-  }
-  .shortcut-item kbd{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    min-width:32px;
-    padding:6px 10px;
-    background:var(--bg);
-    border:2px solid var(--line);
-    border-radius:6px;
-    font-size:13px;
-    font-weight:800;
-    font-family:monospace;
-    box-shadow:0 2px 4px rgba(0,0,0,0.06);
-  }
-  .shortcut-item span{
-    font-size:14px;
-    color:var(--text);
-  }
-  .help-tips{
-    list-style:none;
-    padding:0;
-    margin:0;
-  }
-  .help-tips li{
-    padding:8px 0;
-    font-size:14px;
-    color:var(--muted);
-    line-height:1.5;
-  }
-  .help-tips li kbd{
-    display:inline-block;
-    padding:2px 6px;
-    background:var(--bg);
-    border:1px solid var(--line);
-    border-radius:4px;
-    font-size:12px;
-    font-family:monospace;
-  }
-  .help-footer{
-    padding:16px 24px;
-    border-top:2px solid var(--line);
-    display:flex;
-    justify-content:flex-end;
-  }
-
-  /* ACCESSIBILITY - Focus states */
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible,
-  textarea:focus-visible{
-    outline:3px solid var(--accent);
-    outline-offset:2px;
-  }
-
-  .chip:focus-visible{
-    outline:3px solid var(--accent);
-    outline-offset:3px;
-    transform:translateY(-2px);
-  }
-
-  .btn:focus-visible{
-    outline:3px solid var(--accent);
-    outline-offset:2px;
-    box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent);
-  }
-
-  /* Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration:0.01ms !important;
-      animation-iteration-count:1 !important;
-      transition-duration:0.01ms !important;
-    }
-  }
-
-  /* DESKTOP */
-  @media(min-width:768px){
-    .grid{grid-template-columns:repeat(2,1fr); gap:16px}
-    main{padding:20px}
-  }
-  @media(min-width:1200px){
-    .grid{grid-template-columns:repeat(3,1fr)}
-    main{max-width:1400px; margin:0 auto}
-  }
-
-  ::-webkit-scrollbar{width:8px; height:8px}
-  ::-webkit-scrollbar-thumb{background:color-mix(in srgb, var(--text) 15%, transparent); border-radius:8px}
-  ::-webkit-scrollbar-track{background:transparent}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="DrumDrums Portal — discover, preview, and download practical mini apps." />
+  <title>DrumDrums Portal</title>
   <link rel="manifest" href="./manifest.json" />
-  <meta name="theme-color" content="#1d4ed8" />
-</head>
-<body data-library-home="true">
-  <a class="skip-link" href="#main-content">Skip to content</a>
-
-<header>
-  <div class="headerBar">
-    <a href="./index.html" class="brand">
-      <div class="mark" aria-hidden="true">🥁</div>
-      <div>
-        <span class="brandText">DrumDrums</span>
-        <div class="sub">Phone-ready mini apps</div>
-      </div>
-    </a>
-
-    <div class="navIcons">
-      <button class="iconBtn" id="menuToggle" aria-label="Menu">☰</button>
-    </div>
-  </div>
-
-  <div class="mobileMenu" id="mobileMenu">
-    <div class="menuContent">
-      <div class="menuSection">
-        <div class="menuLabel">Navigate</div>
-        <div class="menuNav">
-          <a href="./index.html" class="navItem">
-            <span class="icon">🏠</span>
-            <span>All DrumDrums</span>
-          </a>
-          <a href="./featured/" class="navItem">
-            <span class="icon">🏆</span>
-            <span>Featured DrumDrums</span>
-          </a>
-          <a href="./collections/" class="navItem">
-            <span class="icon">📚</span>
-            <span>Collections</span>
-          </a>
-          <a href="./stats/" class="navItem">
-            <span class="icon">📊</span>
-            <span>Stats</span>
-          </a>
-          <a href="./builder-log/" class="navItem">
-            <span class="icon">📝</span>
-            <span>Log</span>
-          </a>
-          <a href="./idea-board/" class="navItem">
-            <span class="icon">💡</span>
-            <span>Ideas</span>
-          </a>
-          <button class="navItem" id="randomBtn" style="cursor:pointer; background:none; border:none; text-align:left; width:100%; color:inherit; font:inherit;">
-            <span class="icon">🎲</span>
-            <span>Surprise Me!</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="menuSection">
-        <div class="menuLabel">Search</div>
-        <div class="searchWrapper">
-          <input id="q" type="search" placeholder="Search apps..." />
-          <button id="clearSearch" class="clearBtn" aria-label="Clear search">&times;</button>
-        </div>
-      </div>
-
-      <div class="menuSection">
-        <div class="menuLabel">Filters</div>
-        <div class="filterRow">
-          <select id="sort">
-            <option value="ready" selected>Ready first</option>
-            <option value="new">Newest</option>
-            <option value="az">A → Z</option>
-            <option value="popular">Most Used</option>
-          </select>
-          <label>
-            <input id="readyOnly" type="checkbox" />
-            <span>Ready</span>
-          </label>
-        </div>
-      </div>
-
-      <div class="menuSection">
-        <div class="menuLabel">Categories</div>
-        <div class="chipsContainer">
-          <div class="chips" id="chips"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</header>
-
-<main role="main" aria-label="App library" id="main-content">
-  <div class="drumdrums-banner">
-    <strong>Offline DrumDrums</strong>
-    <span class="drumdrums-note">Tap “Download” on any card to save the app as an offline HTML file. Open it in your phone browser or “Add to Home Screen”.</span>
-  </div>
-  <div class="meta" id="meta" role="status" aria-live="polite" aria-atomic="true"></div>
-  <div class="grid" id="grid" role="list" aria-label="App cards"></div>
-</main>
-
-<div class="palette-switcher" id="paletteSwitcher" aria-label="Color palette picker">
-  <button class="palette-nav" id="palettePrev" aria-label="Previous palette">‹</button>
-  <div class="palette-meta">
-    <div class="palette-label" id="paletteLabel">Ocean</div>
-    <div class="palette-dots" id="paletteDots"></div>
-  </div>
-  <button class="palette-nav" id="paletteNext" aria-label="Next palette">›</button>
-</div>
-
-<!-- Keyboard Shortcuts Help Modal -->
-<div id="helpModal" class="help-modal" style="display:none;">
-  <div class="help-modal-content">
-    <div class="help-header">
-      <h2>⌨️ Keyboard Shortcuts</h2>
-      <button onclick="closeHelpModal()" class="help-close">&times;</button>
-    </div>
-    <div class="help-body">
-      <div class="help-section">
-        <h3>Navigation</h3>
-        <div class="shortcut-list">
-          <div class="shortcut-item">
-            <kbd>/</kbd>
-            <span>Focus search</span>
-          </div>
-          <div class="shortcut-item">
-            <kbd>R</kbd>
-            <span>Random app (Surprise Me!)</span>
-          </div>
-          <div class="shortcut-item">
-            <kbd>Esc</kbd>
-            <span>Clear search / Close modals</span>
-          </div>
-        </div>
-      </div>
-      <div class="help-section">
-        <h3>Tips</h3>
-        <ul class="help-tips">
-          <li>Most apps support <kbd>Esc</kbd> to reset or go back</li>
-          <li>Use arrow keys in apps with sliders</li>
-          <li>Press <kbd>?</kbd> or <kbd>/</kbd> anytime to see this help</li>
-        </ul>
-      </div>
-    </div>
-    <div class="help-footer">
-      <button onclick="closeHelpModal()" class="btn primary">Got it!</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  const DATA = {"updatedAt":"2026-02-11T03:01:25.781Z","apps":[{"id":"idea-password-gen","slug":"password-gen","title":"Password Generator","tagline":"Secure passwords with presets - Basic (12), Strong (16), Paranoid (24).","categories":["Security","Utilities"],"scenario":"Need a secure password? Tap preset or customize length + complexity. Generate, copy, done. No password manager needed for quick cases.","status":"ready","url":"./password-gen/","ready":true},{"id":"idea-tip-calc","slug":"tip-calc","title":"Tip Calculator","tagline":"Quick tip math with preset buttons - no calculator needed.","categories":["Money","Utilities"],"scenario":"At restaurant, enter bill, tap tip %, see total instantly. Copy or export for expense tracking.","status":"ready","url":"./tip-calc/","ready":true},{"id":"idea-random-decision","slug":"random-decision","title":"Random Decision Maker","tagline":"Can't decide? Add options with weights, tap to let fate choose.","categories":["Utilities","Life"],"scenario":"Stuck choosing between pizza, tacos, or sushi? Add them, set weights if you secretly prefer one, tap decide. Done.","status":"ready","url":"./random-decision/","ready":true},{"id":"idea-url-slug-generator","slug":"url-slug-generator","title":"URL Slug Generator","tagline":"Convert titles to URL-friendly slugs with options (lowercase, stop words, max length).","categories":["Utilities","Writing"],"scenario":"Writing a blog post? Paste your title, get a clean URL slug instantly. Customize with options, copy, done.","status":"ready","url":"./url-slug-generator/","ready":true},{"id":"idea-wifi-qr","slug":"wifi-qr","title":"WiFi QR Code Generator","tagline":"Generate scannable WiFi QR codes - guests connect without typing passwords.","categories":["Utilities","Life"],"scenario":"Hosting guests? Generate a WiFi QR code, print it, stick it on your fridge. They scan and connect - no password typing.","status":"ready","url":"./wifi-qr/","ready":true},{"id":"idea-text-case-converter","slug":"text-case-converter","title":"Text Case Converter","tagline":"One-tap conversion: UPPERCASE, lowercase, camelCase, snake_case, and 5 more.","categories":["Utilities","Writing"],"scenario":"Paste text, instantly see it in 9 different cases. Click any to copy. Perfect for variable naming, formatting, or quick text transforms.","status":"ready","url":"./text-case-converter/","ready":true},{"id":"idea-cost-in","slug":"cost-in","title":"What Would This Cost In...","tagline":"Absurd real-world equivalents for any dollar amount (lattes, avocados, Teslas).","categories":["Money","Utilities"],"scenario":"Enter any dollar amount and see how many coffees, avocados, iPhones, or Teslas it could buy. Great for perspective on big purchases.","status":"ready","url":"./cost-in/","ready":true},{"id":"idea-parking-timer","slug":"parking-timer","title":"Parking Timer","tagline":"Tap duration, never forget your meter - with notifications.","categories":["Utilities","Life"],"scenario":"Parked at a meter? Tap the duration, get notified before it expires.","status":"ready","url":"./parking-timer/","ready":true},{"id":"idea-quick-expense-split","slug":"quick-expense-split","title":"Quick Expense Split","tagline":"Button-first bill splitting - tap tip presets, equal/custom splits, no math.","categories":["Money","Utilities"],"scenario":"After dinner, quickly split the bill by tapping tip %, number of people, and copying the breakdown to share.","status":"ready","url":"./quick-expense-split/","ready":true},{"id":"idea-creative-roulette","slug":"idea-roulette","title":"Idea Roulette","tagline":"Random constraints for creative builds. Spin the wheel, embrace chaos.","categories":["Meta","Creativity"],"scenario":"You are stuck in a creative rut. Spin the wheel and build whatever absurd constraint combo you get.","status":"ready","url":"./idea-roulette/","ready":true},{"id":"idea-meta-buildlog","slug":"live-build-log","title":"Live Build Log","tagline":"Track what you are building in real-time. Meta productivity for makers.","categories":["Meta","Productivity"],"scenario":"You build stuff but forget what you built. Log it as you go, export your build history.","status":"ready","url":"./live-build-log/","ready":true},{"id":"idea-proc-speedrun","slug":"procrastination-speedrun","title":"Procrastination Speedrun","tagline":"How long can you resist checking back? Gamified self-control timer.","categories":["Productivity","Games"],"scenario":"You know you will check back in 3 minutes. Might as well track your failure.","status":"ready","url":"./procrastination-speedrun/","ready":true},{"id":"idea-meeting-cost","slug":"meeting-cost-calculator","title":"Meeting Cost Calculator","tagline":"Watch money burn in real-time during meetings. Brutal honesty.","categories":["Productivity","Money"],"scenario":"That 2-hour planning meeting just cost dollar 2,400. Want to see the damage live?","status":"ready","url":"./meeting-cost-calculator/","ready":true},{"id":"idea-excuse-gen","slug":"corporate-excuse-generator","title":"Corporate Excuse Generator","tagline":"Sliders for urgency, plausibility, and jargon. Meeting-ready excuses on demand.","categories":["Utilities","Writing"],"scenario":"You need to sound busy without saying anything. Adjust sliders, generate excuse, done.","status":"ready","url":"./corporate-excuse-generator/","ready":true},{"id":"idea-d59f47-19c405742d3","slug":"one-page-travel-checklist-generator","title":"One-Page Travel Checklist Generator","tagline":"Pick trip type + duration and generate a checklist you can export.","categories":["Life","Utilities"],"scenario":"You need a fast packing list without overthinking.","status":"ready","url":"./one-page-travel-checklist-generator/","ready":true},{"id":"idea-2c4a9f-19c3fe96558","slug":"gift-ideas-budget","title":"Gift Ideas + Budget","tagline":"Collect gift ideas with price links and export a clean list.","categories":["Life","Money"],"scenario":"You're planning gifts and want a quick organized list.","status":"ready","url":"./gift-ideas-budget/","ready":true},{"id":"idea-5c4deb-19c3e69d533","slug":"clipboard-csv-mapper","title":"Clipboard → CSV Mapper","tagline":"Paste messy lines, split into columns, export CSV.","categories":["Utilities"],"scenario":"You have messy text from chat/email and need a quick CSV export.","status":"ready","url":"./clipboard-csv-mapper/","ready":true},{"id":"idea-d03b84-19c3de41226","slug":"quick-habit-contract","title":"Quick Habit Contract","tagline":"Define one habit, rules, and a 7-day commitment you can print/export.","categories":["Health","Productivity"],"scenario":"You want a lightweight commitment sheet without a full tracker.","status":"ready","url":"./quick-habit-contract/","ready":true},{"id":"idea-ff10f8-19c3dad2522","slug":"meeting-agenda-builder","title":"Meeting Agenda Builder","tagline":"Build a tight agenda (topics + timeboxes) and export it.","categories":["Productivity"],"scenario":"Before a call, draft an agenda quickly and paste it into chat/email.","status":"ready","url":"./meeting-agenda-builder/","ready":true},{"id":"idea-10e848-19c3d7631a9","slug":"decision-log-one-pager","title":"Decision Log (One-pager)","tagline":"Capture decisions with date/context and export a clean log.","categories":["Productivity","Writing"],"scenario":"After a meeting, record decisions with short rationale and share/export.","status":"ready","url":"./decision-log-one-pager/","ready":true},{"id":"idea-73312c-19c3d3eb011","slug":"daily-priorities-3-3","title":"Daily Priorities (3×3)","tagline":"Pick 3 priorities + 3 tiny next actions, then export/copy.","categories":["Productivity"],"scenario":"In the morning you quickly decide what matters today and export it to send/share.","status":"ready","url":"./daily-priorities-3-3/","ready":true},{"id":"idea-010","slug":"home-inventory-mock","title":"Home Inventory (mock)","tagline":"Track stuff + warranty dates + reminders.","categories":["Life","Utilities"],"scenario":"quick prototype","status":"ready","url":"./home-inventory-mock/","ready":true},{"id":"idea-008","slug":"one-tap-workout-planner-mock","title":"One-Tap Workout Planner (mock)","tagline":"Pick goal → auto 20-min routine you can actually do.","categories":["Health"],"scenario":"quick prototype","status":"ready","url":"./one-tap-workout-planner-mock/","ready":true},{"id":"idea-007","slug":"receipt-scanner-mock","title":"Receipt Scanner (mock)","tagline":"Drop a photo, it extracts items + totals (later OCR).","categories":["Life","Utilities"],"scenario":"quick prototype","status":"ready","url":"./receipt-scanner-mock/","ready":true},{"id":"idea-002","slug":"smart-grocery-list","title":"Smart Grocery List (2-min mode)","tagline":"Ultra-fast add + store-aisle grouping + 'forgot again' reminders (mock)","categories":["Life","Utilities"],"scenario":"quick prototype","status":"ready","url":"./smart-grocery-list/","ready":true},{"id":"idea-003","slug":"build-spinner","title":"Daily 'What should I build?' Spinner","tagline":"A living idea generator that rotates prompts + constraints (mock)","categories":["Meta","Productivity"],"scenario":"quick prototype","status":"ready","url":"./build-spinner/","ready":true},{"id":"idea-004","slug":"micro-habit","title":"Micro Habit Tracker (no guilt)","tagline":"Track 3 tiny habits with streaks that forgive misses (mock)","categories":["Health"],"scenario":"quick prototype","status":"ready","url":"./micro-habit/","ready":true},{"id":"idea-005","slug":"trip-packing","title":"Trip/Packing Assistant","tagline":"Packing checklist + weather + last-minute tasks (mock)","categories":["Utilities"],"scenario":"quick prototype","status":"ready","url":"./trip-packing/","ready":true},{"id":"idea-focus-timer","slug":"focus-timer","title":"Focus Timer","tagline":"Minimal focus timer with gentle UX (mock)","categories":["Health","Productivity"],"scenario":"Start a short focus session with one click; pause/reset fast.","status":"ready","url":"./focus-timer/","ready":true},{"id":"idea-f6bd9c-19c41a3c02f","slug":"quick-mood-tracker","title":"Quick Mood Tracker","tagline":"Log your mood with emoji buttons + energy/stress sliders - no typing required.","categories":["Health","Life"],"scenario":"Throughout the day, quickly log how you feel by tapping emoji buttons, adjusting sliders for energy and stress, and optionally picking context tags. Review patterns over time and export your data.","status":"ready","url":"./quick-mood-tracker/","ready":true},{"id":"idea-breath-timer","slug":"breath-timer","title":"Breath Timer","tagline":"Button-driven breathing exercises — 4-7-8, Box, 5-5 patterns.","categories":["Health","Productivity"],"scenario":"Need to calm down or focus? Pick a breathing pattern, tap start, follow the circle. Perfect for meditation, anxiety, or pre-sleep.","status":"ready","url":"./breath-timer/","ready":true},{"id":"idea-unit-converter","slug":"unit-converter","title":"Unit Converter","tagline":"Button-driven unit conversions — Temp, Distance, Weight, Volume.","categories":["Productivity"],"scenario":"Need to convert units quickly? Pick category, tap preset or enter value, get instant results. Perfect for cooking, travel, or science.","status":"ready","url":"./unit-converter/","ready":true},{"id":"idea-color-palette-generator","slug":"color-palette-generator","title":"Color Palette Generator","tagline":"Button-driven color schemes — Complementary, Analogous, Triadic, Monochromatic.","categories":["Creativity","Utilities"],"scenario":"Need a color scheme for design? Pick scheme type, generate palette, tap any color to copy hex. Perfect for quick color inspiration.","status":"ready","url":"./color-palette-generator/","ready":true},{"id":"idea-timezone-converter","slug":"timezone-converter","title":"Time Zone Converter","tagline":"Button-driven timezone conversion — 6 major cities, live updates.","categories":["Utilities"],"scenario":"Need to check time in another city? Tap city preset, see live time. Perfect for scheduling calls across timezones.","status":"ready","url":"./timezone-converter/","ready":true},{"id":"idea-qr-code-generator","slug":"qr-code-generator","title":"QR Code Generator","tagline":"Generate QR codes from text/URLs — WiFi, vCard, SMS, Email presets.","categories":["Utilities"],"scenario":"Need a QR code? Enter text or URL, or use preset templates for WiFi/contact sharing. Generate and download instantly.","status":"ready","url":"./qr-code-generator/","ready":true}]};
-
-
-
-
-  const $ = id => document.getElementById(id);
-  const PALETTES = [
-    { id: 'ocean', name: 'Ocean' },
-    { id: 'sunset', name: 'Sunset' },
-    { id: 'forest', name: 'Forest' },
-    { id: 'lavender', name: 'Lavender' },
-    { id: 'graphite', name: 'Graphite' },
-    { id: 'mint', name: 'Mint' },
-    { id: 'coral', name: 'Coral' },
-    { id: 'midnight', name: 'Midnight' },
-    { id: 'sand', name: 'Sandstone' },
-    { id: 'noir', name: 'Noir' }
-  ];
-  const PALETTE_KEY = 'drumdrums-palette-v1';
-  const storedPalette = localStorage.getItem(PALETTE_KEY) || document.documentElement.getAttribute('data-palette') || 'ocean';
-  document.documentElement.setAttribute('data-palette', storedPalette);
-  const paletteLabelEl = document.getElementById('paletteLabel');
-  const paletteDotsEl = document.getElementById('paletteDots');
-  const palettePrevEl = document.getElementById('palettePrev');
-  const paletteNextEl = document.getElementById('paletteNext');
-
-  // Search state
-  let searchQuery = '';
-  let searchTimeout = null;
-
-  // Usage tracking
-  const USAGE_KEY = 'drumdrums_app_usage_v1';
-
-  function getUsageData() {
-    try {
-      const data = localStorage.getItem(USAGE_KEY);
-      return data ? JSON.parse(data) : {};
-    } catch (e) {
-      return {};
-    }
-  }
-
-  function incrementUsage(slug) {
-    const usage = getUsageData();
-    usage[slug] = (usage[slug] || 0) + 1;
-    localStorage.setItem(USAGE_KEY, JSON.stringify(usage));
-  }
-
-  function getUsageCount(slug) {
-    const usage = getUsageData();
-    return usage[slug] || 0;
-  }
-
-  // Mobile menu toggle
-  $('menuToggle').addEventListener('click', () => {
-    $('mobileMenu').classList.toggle('open');
-  });
-
-  // Filter & render
-  let activeCat = 'All';
-
-  // Category icons for better UX
-  const catIcons = {
-    'All': '🌟',
-    'Creativity': '🎨',
-    'Games': '🎮',
-    'Health': '💚',
-    'Life': '🏡',
-    'Meta': '🔄',
-    'Money': '💰',
-    'Productivity': '⚡',
-    'Security': '🔐',
-    'Utilities': '🔧',
-    'Writing': '✍️'
-  };
-
-  const chips = ['All'].concat(DATA.cats);
-  $('chips').innerHTML = chips.map(c => {
-    const icon = catIcons[c] || '📦';
-    return `<button class="chip" data-cat="${c}" aria-label="Filter by ${c}" role="button">
-      <span class="chipIcon" aria-hidden="true">${icon}</span>
-      <span class="chipText">${c}</span>
-    </button>`;
-  }).join('');
-
-  function isReady(app) {
-    return app.ready === true || app.status === 'ready';
-  }
-
-  function filtered() {
-    const readyOnly = $('readyOnly').checked;
-    return DATA.apps.filter(a => {
-      // Ready filter
-      if (readyOnly && !isReady(a)) return false;
-
-      // Category filter
-      const catOk = (activeCat === 'All') || (a.categories||[]).includes(activeCat);
-      if (!catOk) return false;
-
-      // Search filter
-      if (!searchQuery) return true;
-
-      // Multi-word search: split by spaces, check if all words match
-      const words = searchQuery.toLowerCase().split(/\s+/).filter(w => w.length > 0);
-      const haystack = [
-        a.title || '',
-        a.tagline || '',
-        a.scenario || '',
-        ...(a.categories || [])
-      ].join(' ').toLowerCase();
-
-      return words.every(word => haystack.includes(word));
-    });
-  }
-
-  function sortList(list) {
-    const mode = $('sort').value;
-    const copy = list.slice();
-    const idxOf = slug => DATA.apps.findIndex(x => x.slug === slug);
-    if (mode === 'az') copy.sort((a,b) => (a.title||'').localeCompare(b.title||''));
-    else if (mode === 'ready') copy.sort((a,b) => Number(isReady(b)) - Number(isReady(a)) || (idxOf(a.slug) - idxOf(b.slug)));
-    else if (mode === 'popular') {
-      copy.sort((a,b) => {
-        const countA = getUsageCount(a.slug);
-        const countB = getUsageCount(b.slug);
-        return countB - countA || (idxOf(a.slug) - idxOf(b.slug));
-      });
-    }
-    else copy.sort((a,b) => idxOf(a.slug) - idxOf(b.slug));
-    return copy;
-  }
-
-  function render() {
-    const list = sortList(filtered());
-    const readyCount = DATA.apps.filter(isReady).length;
-
-    // Update meta display with search results
-    const metaParts = [];
-    if (searchQuery) {
-      metaParts.push(`<span class="pill"><b>${list.length}</b> results for "${searchQuery}"</span>`);
-    } else {
-      metaParts.push(`<span class="pill"><b>${list.length}</b> visible</span>`);
-    }
-    metaParts.push(`<span class="pill"><b>${readyCount}</b> ready</span>`);
-    metaParts.push(`<span class="pill"><b>${DATA.apps.length}</b> total</span>`);
-
-    $('meta').innerHTML = metaParts.join('');
-
-    // Show empty state if no results
-    if (list.length === 0) {
-      let emptyMsg = '';
-      if (searchQuery) {
-        emptyMsg = `
-          <div class="emptyState">
-            <div class="icon">🔍</div>
-            <div class="title">No apps match "${searchQuery}"</div>
-            <div class="msg">Try different keywords or clear the search to see all apps</div>
-          </div>
-        `;
-      } else {
-        emptyMsg = `
-          <div class="emptyState">
-            <div class="icon">📦</div>
-            <div class="title">No apps found</div>
-            <div class="msg">Try adjusting your filters</div>
-          </div>
-        `;
-      }
-      $('grid').innerHTML = emptyMsg;
-      return;
-    }
-
-    $('grid').innerHTML = list.map(a => {
-      const badges = [];
-      const usageCount = getUsageCount(a.slug);
-      if (usageCount > 5) {
-        badges.push(`<span class="badge popular">↑ ${usageCount}</span>`);
-      }
-
-      const catBadges = (a.categories||[]).slice(0,3).map(c => `<span class="badge">${c}</span>`).join('');
-
-      return `
-        <article class="card" role="listitem" aria-labelledby="title-${a.slug}">
-          <div class="cardHead">
-            <div>
-              <h3 class="cardTitle" id="title-${a.slug}">${a.title}</h3>
-              <p class="tagline">${a.tagline||''}</p>
-            </div>
-            <div class="badges" role="group" aria-label="App status badges">${badges.join('')}</div>
-          </div>
-          <div class="cardBody">
-            <div class="cats" role="group" aria-label="Categories">${catBadges}</div>
-            <div class="cta">
-              <a class="btn btn-primary" href="${a.url}" data-slug="${a.slug}" aria-label="Open ${a.title}">Open</a>
-              <button class="btn btn-ghost" data-download="${a.url}" data-name="${a.slug}" aria-label="Download ${a.title} for offline use">Download</button>
-              <button class="btn btn-ghost" data-copy="${a.url}" aria-label="Copy link for ${a.title}">Copy link</button>
-              <button class="btn btn-ghost" onclick="openAddToCollection('${a.slug}', '${a.title.replace(/'/g, "\\'")}', '${a.url}')" aria-label="Save ${a.title} to a collection">Save</button>
-            </div>
-          </div>
-        </article>
-      `;
-    }).join('');
-
-    // Add click tracking to all Open buttons
-    document.querySelectorAll('.btn[data-slug]').forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        const slug = this.getAttribute('data-slug');
-        if (slug) {
-          incrementUsage(slug);
-        }
-      });
-    });
-
-    document.querySelectorAll('[data-copy]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const target = btn.getAttribute('data-copy');
-        const absolute = new URL(target, window.location.href).href;
-        try {
-          await navigator.clipboard.writeText(absolute);
-          const original = btn.textContent;
-          btn.textContent = 'Copied';
-          setTimeout(() => { btn.textContent = original; }, 1600);
-        } catch (err) {
-          alert('Copy failed. Try manually copying: ' + absolute);
-        }
-      });
-    });
-
-    document.querySelectorAll('[data-download]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const target = btn.getAttribute('data-download');
-        const name = btn.getAttribute('data-name') || 'drumdrums-app';
-        try {
-          const response = await fetch(target, { cache: 'no-store' });
-          const text = await response.text();
-          const blob = new Blob([text], { type: 'text/html;charset=utf-8' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${name}.html`;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          URL.revokeObjectURL(url);
-        } catch (err) {
-          alert('Download failed. Open the app and use “Save Page As…” instead.');
-        }
-      });
-    });
-  }
-
-  function applyPalette(id, persist = true) {
-    const palette = PALETTES.find(p => p.id === id) || PALETTES[0];
-    document.documentElement.setAttribute('data-palette', palette.id);
-    if (persist) {
-      localStorage.setItem(PALETTE_KEY, palette.id);
-    }
-    if (paletteLabelEl) {
-      paletteLabelEl.textContent = palette.name;
-    }
-    updatePaletteDots(palette.id);
-  }
-
-  function updatePaletteDots(activeId) {
-    if (!paletteDotsEl) return;
-    paletteDotsEl.querySelectorAll('.palette-dot').forEach(dot => {
-      dot.classList.toggle('active', dot.getAttribute('data-palette') === activeId);
-    });
-  }
-
-  function cyclePalette(step) {
-    const currentId = document.documentElement.getAttribute('data-palette') || PALETTES[0].id;
-    const currentIndex = PALETTES.findIndex(p => p.id === currentId);
-    const nextIndex = (currentIndex + step + PALETTES.length) % PALETTES.length;
-    applyPalette(PALETTES[nextIndex].id);
-  }
-
-  function initPaletteSelector() {
-    if (!paletteLabelEl || !paletteDotsEl || !palettePrevEl || !paletteNextEl) return;
-    paletteDotsEl.innerHTML = PALETTES.map(p =>
-      `<button class="palette-dot${p.id === document.documentElement.getAttribute('data-palette') ? ' active' : ''}" data-palette="${p.id}" aria-label="Use ${p.name} palette"></button>`
-    ).join('');
-    paletteDotsEl.addEventListener('click', (e) => {
-      const dot = e.target.closest('.palette-dot');
-      if (!dot) return;
-      applyPalette(dot.getAttribute('data-palette'));
-    });
-    palettePrevEl.addEventListener('click', () => cyclePalette(-1));
-    paletteNextEl.addEventListener('click', () => cyclePalette(1));
-    applyPalette(document.documentElement.getAttribute('data-palette') || PALETTES[0].id, false);
-  }
-
-  // Search input handler with debounce
-  $('q').addEventListener('input', (e) => {
-    const value = e.target.value.trim();
-
-    // Show/hide clear button
-    $('clearSearch').classList.toggle('visible', value.length > 0);
-
-    // Debounce search
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      searchQuery = value;
-      render();
-    }, 200);
-  });
-
-  // Clear search button
-  $('clearSearch').addEventListener('click', () => {
-    $('q').value = '';
-    searchQuery = '';
-    $('clearSearch').classList.remove('visible');
-    render();
-    $('q').blur();
-  });
-
-  // Keyboard shortcuts
-  document.addEventListener('keydown', (e) => {
-    // / (slash) to focus search
-    if (e.key === '/' && document.activeElement !== $('q')) {
-      e.preventDefault();
-      $('q').focus();
-      // Open mobile menu if closed
-      if (!$('mobileMenu').classList.contains('open')) {
-        $('mobileMenu').classList.add('open');
-      }
-    }
-
-    // Esc to clear search and blur
-    if (e.key === 'Escape' && document.activeElement === $('q')) {
-      e.preventDefault();
-      $('q').value = '';
-      searchQuery = '';
-      $('clearSearch').classList.remove('visible');
-      $('q').blur();
-      render();
-    }
-    
-    // R key for random app
-    if (e.key === 'r' && document.activeElement !== $('q')) {
-      e.preventDefault();
-      const readyApps = DATA.apps.filter(a => isReady(a));
-      if (readyApps.length === 0) return;
-      const random = readyApps[Math.floor(Math.random() * readyApps.length)];
-      window.location.href = random.url;
-    }
-  });
-
-  // Category chips
-  document.body.addEventListener('click', e => {
-    const randomBtn = e.target.closest('#randomBtn');
-    if (randomBtn) {
-      e.preventDefault();
-      const readyApps = DATA.apps.filter(a => isReady(a));
-      if (readyApps.length === 0) return;
-      const random = readyApps[Math.floor(Math.random() * readyApps.length)];
-      window.location.href = random.url;
-      return;
-    }
-
-    const b = e.target.closest('.chip');
-    if (!b) return;
-    activeCat = b.getAttribute('data-cat') || 'All';
-    document.querySelectorAll('.chip').forEach(x =>
-      x.classList.toggle('on', x.getAttribute('data-cat') === activeCat)
-    );
-    render();
-  });
-
-  // Other filter controls
-  ['sort','readyOnly'].forEach(id => $(id).addEventListener('input', render));
-
-  document.querySelector('.chip[data-cat="All"]').classList.add('on');
-
-  render();
-  initPaletteSelector();
-
-  // Service Worker registration for offline support
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('✅ SW registered'))
-        .catch(err => console.log('SW registration failed:', err));
-    });
-  }
-
-  // Performance monitoring (dev tool)
-  window.addEventListener('load', () => {
-    if (performance.getEntriesByType) {
-      setTimeout(() => {
-        const perf = performance.getEntriesByType('navigation')[0];
-        if (perf) {
-          const loadTime = (perf.loadEventEnd - perf.fetchStart) / 1000;
-          const domReady = (perf.domContentLoadedEventEnd - perf.fetchStart) / 1000;
-          console.log(`⚡ Performance: DOM ready ${domReady.toFixed(2)}s | Full load ${loadTime.toFixed(2)}s`);
-        }
-      }, 0);
-    }
-  });
-
-  // Collections feature
-  const COLLECTIONS_KEY = 'drumdrums_collections_v1';
-  let pendingApp = null;
-
-  function getCollections() {
-    try {
-      return JSON.parse(localStorage.getItem(COLLECTIONS_KEY) || '[]');
-    } catch (e) {
-      return [];
-    }
-  }
-
-  function saveCollections(collections) {
-    localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(collections));
-  }
-
-  function openAddToCollection(slug, title, url) {
-    const collections = getCollections();
-    
-    if (collections.length === 0) {
-      if (confirm('No collections yet! Create one now?')) {
-        window.location.href = './collections/';
-      }
-      return;
-    }
-
-    pendingApp = { slug, title, url };
-    
-    const modal = document.createElement('div');
-    modal.id = 'collectionModal';
-    modal.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; padding:20px; z-index:1000;';
-    
-    modal.innerHTML = `
-      <div style="background:var(--panel); border-radius:16px; padding:24px; max-width:400px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-        <div style="font-size:18px; font-weight:800; margin-bottom:16px;">Add "${title}" to...</div>
-        <div style="display:flex; flex-direction:column; gap:8px; max-height:300px; overflow-y:auto;">
-          ${collections.map(col => `
-            <button onclick="addAppToCollection('${col.id}')" style="padding:12px; border:2px solid var(--line); border-radius:8px; background:var(--panel); color:var(--text); font-weight:600; text-align:left; cursor:pointer; transition:all 0.15s ease;">
-              <div style="font-size:14px;">${col.name}</div>
-              <div style="font-size:12px; color:var(--muted); margin-top:4px;">${col.apps ? col.apps.length : 0} apps</div>
-            </button>
-          `).join('')}
-        </div>
-        <div style="margin-top:16px; display:flex; gap:12px; justify-content:flex-end;">
-          <button onclick="closeCollectionModal()" style="padding:10px 16px; border-radius:8px; border:2px solid var(--line); background:var(--panel); color:var(--text); font-weight:800; cursor:pointer;">Cancel</button>
-          <a href="./collections/" style="padding:10px 16px; border-radius:8px; border:2px solid var(--accent); background:var(--accent); color:white; font-weight:800; text-decoration:none; display:inline-block;">➕ New Collection</a>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(modal);
-    modal.addEventListener('click', (e) => {
-      if (e.target.id === 'collectionModal') closeCollectionModal();
-    });
-  }
-
-  function addAppToCollection(collectionId) {
-    if (!pendingApp) return;
-
-    const collections = getCollections();
-    const collection = collections.find(c => c.id === collectionId);
-    
-    if (!collection) return;
-
-    // Check if app already in collection
-    if (collection.apps && collection.apps.some(a => a.slug === pendingApp.slug)) {
-      alert('App already in this collection!');
-      closeCollectionModal();
-      return;
-    }
-
-    // Initialize apps array if needed
-    if (!collection.apps) collection.apps = [];
-
-    // Add app
-    collection.apps.push(pendingApp);
-    saveCollections(collections);
-
-    // Show success feedback
-    const btn = event.target;
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '✓ Added!';
-    btn.style.background = 'color-mix(in srgb, var(--accent3) 15%, var(--panel))';
-    btn.style.borderColor = 'var(--accent3)';
-    
-    setTimeout(() => {
-      closeCollectionModal();
-    }, 600);
-  }
-
-  function closeCollectionModal() {
-    const modal = document.getElementById('collectionModal');
-    if (modal) modal.remove();
-    pendingApp = null;
-  }
-
-  // Close on escape
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && document.getElementById('collectionModal')) {
-      closeCollectionModal();
-    }
-  });
-
-  // Keyboard shortcuts help
-  function openHelpModal() {
-    document.getElementById('helpModal').style.display = 'flex';
-  }
-
-  function closeHelpModal() {
-    document.getElementById('helpModal').style.display = 'none';
-  }
-
-  // Global keyboard shortcuts
-  document.addEventListener('keydown', (e) => {
-    // Don't trigger if user is typing in an input
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-      return;
-    }
-
-    // Show help on / or ?
-    if (e.key === '/' || e.key === '?') {
-      e.preventDefault();
-      openHelpModal();
-    }
-
-    // Close help on Esc
-    if (e.key === 'Escape' && document.getElementById('helpModal').style.display === 'flex') {
-      closeHelpModal();
-    }
-
-    // Focus search on /
-    if (e.key === '/') {
-      e.preventDefault();
-      $('q').focus();
-    }
-  });
-
-  // Click outside to close help modal
-  document.getElementById('helpModal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'helpModal') {
-      closeHelpModal();
-    }
-  });
-</script>
-
-  <!-- DrumDrums Offline Module -->
   <style>
-    .drumdrum-offline-shelf{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:min(320px,calc(100% - 48px));background:var(--panel,rgba(255,255,255,0.96));color:var(--text,#0f172a);box-shadow:0 20px 50px rgba(15,23,42,0.2);border-radius:24px;border:1px solid rgba(15,23,42,0.1);padding:20px;font-family:inherit;z-index:9999;line-height:1.4}
-    [data-theme="dark"] .drumdrum-offline-shelf{background:rgba(2,6,23,0.92);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35);box-shadow:0 25px 60px rgba(2,6,23,0.75)}
-    .drumdrum-offline-shelf[data-offline-hidden="true"]{display:none}
-    .drumdrum-offline-label{text-transform:uppercase;font-size:11px;font-weight:800;letter-spacing:.12em;opacity:.75;margin-bottom:4px}
-    .drumdrum-offline-head h2{font-size:17px;margin:0 0 6px;font-weight:900}
-    .drumdrum-offline-head p{margin:0;font-size:13px;opacity:.9}
-    .drumdrum-offline-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
-    .drumdrum-offline-actions button{border:none;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s ease,opacity .15s ease;background:var(--accent,#2563eb);color:#fff;box-shadow:0 10px 25px rgba(37,99,235,0.25)}
-    .drumdrum-offline-actions button.secondary{background:rgba(15,23,42,0.08);color:inherit;box-shadow:none;border:1px solid rgba(15,23,42,0.12)}
-    [data-theme="dark"] .drumdrum-offline-actions button.secondary{background:rgba(148,163,184,0.15);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.35)}
-    .drumdrum-offline-actions button:disabled{opacity:.7;cursor:default}
-    .drumdrum-offline-actions button:active{transform:scale(0.98)}
-    .drumdrum-offline-guide{margin-top:14px;border-radius:14px;padding:12px;font-size:13px;background:rgba(15,23,42,0.05);border:1px dashed rgba(15,23,42,0.25)}
-    .drumdrum-offline-guide p{margin:8px 0 0}
-    .drumdrum-offline-guide ol{margin:8px 0 0;padding-left:18px}
-    [data-theme="dark"] .drumdrum-offline-guide{background:rgba(15,23,42,0.4);border-color:rgba(148,163,184,0.3)}
-    .drumdrum-offline-dismiss{position:absolute;top:6px;right:8px;border:none;background:rgba(15,23,42,0.08);color:inherit;font-size:22px;line-height:1;cursor:pointer;width:48px;height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0;border:2px solid rgba(15,23,42,0.15);box-shadow:0 6px 14px rgba(15,23,42,0.18);touch-action:manipulation}
-    [data-theme="dark"] .drumdrum-offline-dismiss{background:rgba(148,163,184,0.25);color:var(--text,#f8fafc);border-color:rgba(148,163,184,0.4);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
-    .drumdrum-offline-dismiss:focus-visible,.drumdrum-offline-actions button:focus-visible{outline:3px solid rgba(59,130,246,0.7);outline-offset:2px}
-    .drumdrum-mention{cursor:pointer}
-    .drumdrum-mention:not(.btn){background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline}
-    .drumdrum-mention.btn{cursor:pointer}
-    .drumdrum-offline-toggle{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom, 0px));right:calc(24px + env(safe-area-inset-right, 0px));width:56px;height:56px;border-radius:999px;border:none;background:var(--accent,#2563eb);color:#fff;box-shadow:0 18px 35px rgba(15,23,42,0.18);cursor:pointer;font-size:20px;font-weight:700;z-index:9998;display:flex;align-items:center;justify-content:center;transition:transform .2s ease,box-shadow .2s ease}
-    [data-theme="dark"] .drumdrum-offline-toggle{background:rgba(37,99,235,0.92);box-shadow:0 20px 45px rgba(2,6,23,0.75)}
-    .drumdrum-offline-toggle:focus-visible{outline:3px solid rgba(59,130,246,0.6);outline-offset:2px}
-    .drumdrum-offline-toggle:active{transform:scale(0.95)}
-    @media (max-width:640px){.drumdrum-offline-shelf{left:16px;right:16px;width:auto;bottom:calc(16px + env(safe-area-inset-bottom, 0px));padding:16px}.drumdrum-offline-toggle{bottom:calc(16px + env(safe-area-inset-bottom, 0px));right:calc(16px + env(safe-area-inset-right, 0px));width:52px;height:52px}}
+    :root {
+      --bg: #060b1a;
+      --panel: #0f172a;
+      --soft: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent2: #22d3ee;
+      --ok: #34d399;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top right, #1e3a8a 0%, #060b1a 40%), var(--bg);
+      min-height: 100vh;
+    }
+    .container { width: min(1120px, 92vw); margin: 0 auto; }
+    header { padding: 2rem 0 1rem; }
+    .hero {
+      background: linear-gradient(130deg, rgba(56,189,248,.2), rgba(34,211,238,.1));
+      border: 1px solid rgba(148,163,184,.22);
+      border-radius: calc(var(--radius) + 4px);
+      padding: clamp(1rem, 4vw, 2rem);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+    }
+    .hero h1 { margin: 0 0 .5rem; font-size: clamp(1.5rem, 4vw, 2.6rem); }
+    .hero p { margin: 0; color: var(--muted); max-width: 65ch; }
+    .row { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1rem; }
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: .7rem 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .4rem;
+    }
+    .btn.primary { background: linear-gradient(120deg, var(--accent), var(--accent2)); color: #00131f; }
+    .btn.ghost { background: #0b1220; color: var(--text); border: 1px solid rgba(148,163,184,.35); }
+    .stats {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: .5rem;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+    main { padding: 1rem 0 3rem; }
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: .75rem;
+      margin-bottom: 1rem;
+    }
+    input, select {
+      width: 100%;
+      background: #0b1220;
+      color: var(--text);
+      border: 1px solid rgba(148,163,184,.25);
+      border-radius: 10px;
+      padding: .72rem .8rem;
+      font-size: .95rem;
+    }
+    .grid {
+      display: grid;
+      gap: .9rem;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    }
+    article {
+      background: rgba(15,23,42,.9);
+      border: 1px solid rgba(148,163,184,.22);
+      border-radius: var(--radius);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .8rem;
+    }
+    .badge {
+      display: inline-block;
+      border: 1px solid rgba(148,163,184,.3);
+      color: var(--muted);
+      padding: .25rem .55rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      margin-right: .25rem;
+    }
+    article h3 { margin: 0; font-size: 1.04rem; }
+    article p { margin: 0; color: var(--muted); font-size: .94rem; line-height: 1.45; }
+    .actions { margin-top: auto; display: flex; gap: .5rem; flex-wrap: wrap; }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 20;
+    }
+    .modal.open { display: flex; }
+    .modal-panel {
+      width: min(1080px, 100%);
+      height: min(760px, 90vh);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(148,163,184,.25);
+      background: #020617;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f172a;
+      padding: .7rem .8rem;
+    }
+    iframe { width: 100%; height: 100%; border: 0; background: #fff; }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    @media (max-width: 780px) {
+      .hero { grid-template-columns: 1fr; }
+      .toolbar { grid-template-columns: 1fr; }
+    }
   </style>
-  <section class="drumdrum-offline-shelf" data-drumdrum-offline>
-    <button type="button" class="drumdrum-offline-dismiss" data-offline-dismiss aria-label="Hide offline helper">×</button>
-    <div class="drumdrum-offline-head">
-      <p class="drumdrum-offline-label">DrumDrums Offline</p>
-      <h2>Save this DrumDrum</h2>
-      <p>Download once. Launch anywhere — even without internet.</p>
+</head>
+<body>
+  <header class="container">
+    <section class="hero">
+      <div>
+        <h1>🥁 DrumDrums Portal</h1>
+        <p>Find useful mini apps fast, launch a live preview instantly, and download apps to your device for offline use.</p>
+        <div class="row">
+          <button id="installBtn" class="btn primary">Install DrumDrums</button>
+          <a href="#apps" class="btn ghost">Browse Apps</a>
+        </div>
+      </div>
+      <ul class="stats" aria-label="Portal status">
+        <li><strong id="appCount">0</strong> apps available</li>
+        <li><strong>Instant preview</strong> with in-portal runner</li>
+        <li><strong>Offline download</strong> as standalone HTML</li>
+      </ul>
+    </section>
+  </header>
+
+  <main class="container" id="apps">
+    <section class="toolbar" aria-label="App filters">
+      <label>
+        <span class="sr-only">Search apps</span>
+        <input id="search" type="search" placeholder="Search apps (timer, health, productivity...)" />
+      </label>
+      <label>
+        <span class="sr-only">Filter by category</span>
+        <select id="category"></select>
+      </label>
+    </section>
+
+    <section id="grid" class="grid" aria-live="polite"></section>
+  </main>
+
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <strong id="modalTitle">Preview</strong>
+        <button id="closeModal" class="btn ghost">Close</button>
+      </div>
+      <iframe id="previewFrame" title="Mini app preview"></iframe>
     </div>
-    <div class="drumdrum-offline-actions">
-      <button type="button" data-offline-download>Save offline (.html)</button>
-      <button type="button" class="secondary" data-offline-guide>Home screen tips</button>
-    </div>
-    <div class="drumdrum-offline-guide" data-offline-guide-panel hidden>
-      <strong>Install on your phone</strong>
-      <ol>
-        <li>Tap your browser's share/menu button.</li>
-        <li>Choose “Add to Home Screen” / “Add shortcut”.</li>
-        <li>Launch it later. No signal required.</li>
-      </ol>
-      <p>Offline copies remove DrumDrums library links automatically.</p>
-    </div>
-  </section>
-  <button type="button" class="drumdrum-offline-toggle" data-offline-toggle hidden aria-label="Show DrumDrums Offline helper">⬇️</button>
+  </div>
+
   <script>
-    (() => {
-      const ready = (fn) => (document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', fn) : fn();
-      ready(() => {
-        const shelf = document.querySelector('[data-drumdrum-offline]');
-        if (!shelf) return;
-        const downloadButton = shelf.querySelector('[data-offline-download]');
-        const guideButton = shelf.querySelector('[data-offline-guide]');
-        const guidePanel = shelf.querySelector('[data-offline-guide-panel]');
-        const dismissButton = shelf.querySelector('[data-offline-dismiss]');
-        const toggleButton = document.querySelector('[data-offline-toggle]');
-        const baseGuide = guidePanel ? guidePanel.innerHTML : '';
-        const guideDefaultLabel = guideButton ? guideButton.textContent.trim() : '';
-        const isLibraryHome = document.body && document.body.dataset.libraryHome === 'true';
+    const apps = [
+      { title: 'Focus Timer', path: './focus-timer/', category: 'Productivity', description: 'Start focused sessions quickly with a clean timer UI.' },
+      { title: 'Meeting Cost Calculator', path: './meeting-cost-calculator/', category: 'Work', description: 'Estimate the real-time cost of meetings and improve planning.' },
+      { title: 'Smart Grocery List', path: './smart-grocery-list/', category: 'Life', description: 'Quickly build and track grocery items in one simple flow.' },
+      { title: 'Unit Converter', path: './unit-converter/', category: 'Utilities', description: 'Convert common units for cooking, travel, and day-to-day work.' },
+      { title: 'QR Code Generator', path: './qr-code-generator/', category: 'Utilities', description: 'Generate QR codes for URLs, text, contacts, and more.' },
+      { title: 'Quick Mood Tracker', path: './quick-mood-tracker/', category: 'Health', description: 'Log mood and energy in seconds and review your trends.' },
+      { title: 'Pomodoro', path: './pomodoro/', category: 'Productivity', description: 'Use Pomodoro intervals to sustain deep work sessions.' },
+      { title: 'Tip Calculator', path: './tip-calc/', category: 'Utilities', description: 'Split bills and calculate tips accurately in seconds.' },
+      { title: 'Timezone Converter', path: './timezone-converter/', category: 'Work', description: 'Convert time between common city zones for team scheduling.' },
+      { title: 'Breath Timer', path: './breath-timer/', category: 'Health', description: 'Follow guided breath patterns for stress reset and focus.' },
+      { title: 'JSON Formatter', path: './json-formatter/', category: 'Developer', description: 'Format and validate JSON quickly when debugging payloads.' },
+      { title: 'Password Generator', path: './password-gen/', category: 'Security', description: 'Create strong random passwords with one tap.' }
+    ];
 
-        const collapseShelf = ({ focusToggle = false } = {}) => {
-          shelf.setAttribute('data-offline-hidden', 'true');
-          if (toggleButton) {
-            toggleButton.hidden = false;
-            if (focusToggle) {
-              try {
-                toggleButton.focus({ preventScroll: true });
-              } catch (err) {
-                toggleButton.focus();
-              }
-            }
-          }
-        };
+    const grid = document.getElementById('grid');
+    const search = document.getElementById('search');
+    const category = document.getElementById('category');
+    const appCount = document.getElementById('appCount');
+    const modal = document.getElementById('modal');
+    const frame = document.getElementById('previewFrame');
+    const modalTitle = document.getElementById('modalTitle');
+    const closeModal = document.getElementById('closeModal');
 
-        const revealShelf = () => {
-          shelf.removeAttribute('data-offline-hidden');
-          if (toggleButton) {
-            toggleButton.hidden = true;
-          }
-        };
+    const categories = ['All', ...new Set(apps.map(app => app.category))];
+    category.innerHTML = categories.map(name => `<option value="${name}">${name}</option>`).join('');
+    appCount.textContent = String(apps.length);
 
-        if (downloadButton) {
-          const defaultText = downloadButton.textContent.trim();
-          downloadButton.addEventListener('click', () => {
-            const html = '<!doctype html>\n' + document.documentElement.outerHTML;
-            const blob = new Blob([html], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            const slug = (document.title || 'drumdrum-app')
-              .toLowerCase()
-              .replace(/[^a-z0-9]+/g, '-')
-              .replace(/^-+|-+$/g, '') || 'drumdrum-app';
-            link.href = url;
-            link.download = slug + '.html';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            setTimeout(() => URL.revokeObjectURL(url), 1500);
-            downloadButton.textContent = 'Saved ✅';
-            downloadButton.disabled = true;
-            setTimeout(() => {
-              downloadButton.disabled = false;
-              downloadButton.textContent = defaultText;
-            }, 2200);
-          });
-        }
+    function downloadApp(app) {
+      fetch(app.path + 'index.html')
+        .then((res) => {
+          if (!res.ok) throw new Error('Unable to fetch app HTML');
+          return res.blob();
+        })
+        .then((blob) => {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          const slug = app.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+          link.href = url;
+          link.download = `${slug}.html`;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 1200);
+        })
+        .catch(() => alert('Download failed. Please open the app and use browser Save Page as fallback.'));
+    }
 
-        if (guideButton && guidePanel) {
-          guidePanel.hidden = true;
-          guideButton.addEventListener('click', () => {
-            if (guidePanel.hidden) {
-              guidePanel.innerHTML = baseGuide;
-              guidePanel.hidden = false;
-              guideButton.textContent = 'Hide tips';
-            } else {
-              guidePanel.hidden = true;
-              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
-            }
-          });
-        }
+    function openPreview(app) {
+      modalTitle.textContent = `${app.title} — Live Preview`;
+      frame.src = app.path;
+      modal.classList.add('open');
+      closeModal.focus();
+    }
 
-        if (guidePanel) {
-          guidePanel.setAttribute('tabindex', '-1');
-        }
+    function render() {
+      const term = search.value.trim().toLowerCase();
+      const selected = category.value;
 
-        if (dismissButton) {
-          dismissButton.addEventListener('click', () => collapseShelf({ focusToggle: true }));
-        }
-
-        if (toggleButton) {
-          toggleButton.addEventListener('click', () => {
-            revealShelf();
-            if (guidePanel && guideButton) {
-              guidePanel.hidden = true;
-              guideButton.textContent = guideDefaultLabel || guideButton.textContent;
-            }
-          });
-        }
-
-        const showMentionNote = (slug, label) => {
-          revealShelf();
-          if (!guidePanel) return;
-          guidePanel.hidden = false;
-          guidePanel.innerHTML = `<strong>${label || 'DrumDrum app'}</strong><p>This reference opens another DrumDrum app (${slug}). Download it separately when you're back online.</p>`;
-          if (guideButton) {
-            guideButton.textContent = 'Hide tips';
-          }
-          try {
-            guidePanel.focus({ preventScroll: false });
-          } catch (err) {
-            guidePanel.focus();
-          }
-        };
-
-        if (location.protocol === 'file:') {
-          document.querySelectorAll('a[href^="../"], a[href^="./"], a[href^="/"]').forEach((anchor) => {
-            const href = anchor.getAttribute('href');
-            if (!href || href.startsWith('#')) return;
-            const slug = href
-              .replace(/^\.\.\//, '')
-              .replace(/^\.\//, '')
-              .replace(/^\//, '')
-              .replace(/\/$/, '') || 'drumdrums-app';
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.innerHTML = anchor.innerHTML;
-            const anchorClass = anchor.getAttribute('class');
-            button.className = anchorClass ? anchorClass + ' drumdrum-mention' : 'drumdrum-mention';
-            Array.from(anchor.attributes).forEach((attr) => {
-              if (['href', 'class', 'target', 'rel'].includes(attr.name)) return;
-              button.setAttribute(attr.name, attr.value);
-            });
-            button.addEventListener('click', () => showMentionNote(slug, anchor.textContent.trim()));
-            button.addEventListener('keydown', (event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                showMentionNote(slug, anchor.textContent.trim());
-              }
-            });
-            anchor.replaceWith(button);
-          });
-        }
-
-        if (isLibraryHome) {
-          collapseShelf();
-        }
+      const filtered = apps.filter((app) => {
+        const matchesTerm = !term || `${app.title} ${app.description} ${app.category}`.toLowerCase().includes(term);
+        const matchesCategory = selected === 'All' || app.category === selected;
+        return matchesTerm && matchesCategory;
       });
-    })();
+
+      if (!filtered.length) {
+        grid.innerHTML = '<article><h3>No apps found</h3><p>Try a different search term or category.</p></article>';
+        return;
+      }
+
+      grid.innerHTML = '';
+      for (const app of filtered) {
+        const card = document.createElement('article');
+        card.innerHTML = `
+          <div>
+            <span class="badge">${app.category}</span>
+          </div>
+          <h3>${app.title}</h3>
+          <p>${app.description}</p>
+          <div class="actions">
+            <button class="btn primary" data-action="try">Try now</button>
+            <a class="btn ghost" href="${app.path}" target="_blank" rel="noopener">Open</a>
+            <button class="btn ghost" data-action="download">Download</button>
+          </div>
+        `;
+
+        card.querySelector('[data-action="try"]').addEventListener('click', () => openPreview(app));
+        card.querySelector('[data-action="download"]').addEventListener('click', () => downloadApp(app));
+        grid.appendChild(card);
+      }
+    }
+
+    search.addEventListener('input', render);
+    category.addEventListener('change', render);
+    closeModal.addEventListener('click', () => {
+      modal.classList.remove('open');
+      frame.src = 'about:blank';
+    });
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.classList.remove('open');
+        frame.src = 'about:blank';
+      }
+    });
+
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+    installBtn.disabled = true;
+    installBtn.textContent = 'Install unavailable';
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredPrompt = event;
+      installBtn.disabled = false;
+      installBtn.textContent = 'Install DrumDrums';
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) {
+        alert('To install now: open browser menu and choose “Install app” or “Add to Home Screen”.');
+        return;
+      }
+      deferredPrompt.prompt();
+      const outcome = await deferredPrompt.userChoice;
+      if (outcome.outcome === 'accepted') {
+        installBtn.textContent = 'Installed ✓';
+      }
+      deferredPrompt = null;
+    });
+
+    render();
   </script>
-
-
 </body>
 </html>
